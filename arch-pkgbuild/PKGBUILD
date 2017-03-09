@@ -1,0 +1,22 @@
+# Contributor: Alex Peltzer <alex.peltzer@gmail.com>
+# Maintainer: Alex Peltzer <alex.peltzer@gmail.com>
+
+pkgname=damageprofiler
+pkgver=0.2
+pkgrel=1
+pkgdesc="An improved damage calculator than mapDamage."
+arch=('any')
+url="http://it.inf.uni-tuebingen.de/?page_id=161"
+license=('custom')
+depends=('java-runtime')
+source=("DamageProfiler-${pkgver}.jar" "starter.sh")
+noextract=("DamageProfiler-${pkgver}.jar")
+md5sums=('SKIP' 'SKIP')
+
+package() {
+	  cd "$srcdir"
+          install -D -m755 "${srcdir}/DamageProfiler-${pkgver}.jar" "${pkgdir}/opt/$pkgname/DamageProfiler-${pkgver}.jar"
+          install -D -m755 "${srcdir}/starter.sh" "${pkgdir}/opt/$pkgname/starter.sh"
+          install -D -m755 "${pkgdir}/opt/$pkgname/starter.sh" "${pkgdir}/usr/bin/$pkgname"
+	}
+
