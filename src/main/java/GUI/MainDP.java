@@ -19,7 +19,6 @@ import java.awt.event.MouseEvent;
 public class MainDP {
 
 
-    private static final String VERSION = "0.2";
     private JButton selectInputFileButton;
     private JButton selectReferenceButton;
     private JButton selectOutputButton;
@@ -43,9 +42,9 @@ public class MainDP {
 
     }
 
-    public MainDP(Communicator c, StartCalculations starter) throws Exception {
+    public MainDP(Communicator c, StartCalculations starter, String version) throws Exception {
 
-        frame = new JFrame("DamageProfiler " + VERSION);
+        frame = new JFrame("DamageProfiler v" + version);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setContentPane(masterpanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

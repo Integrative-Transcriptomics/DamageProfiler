@@ -27,7 +27,7 @@ public class RunDamageProfiler {
 
         StartCalculations starter = new StartCalculations();
         if(args.length==0){
-            MainDP damageProfilerGUI = new MainDP(c, starter);
+            MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
         } else {
             UserOptionsParser userOptions = new UserOptionsParser(args, c);
             starter.start(c);
