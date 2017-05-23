@@ -22,6 +22,7 @@ import java.util.List;
 public class  DamageProfiler {
 
     private final SamReader inputSam;
+    private final Functions useful_functions;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
     private int numberOfAllReads;
@@ -53,6 +54,7 @@ public class  DamageProfiler {
         this.lengthDistribution = new LengthDistribution();
         this.lengthDistribution.init();
         this.identity = new ArrayList();
+        useful_functions = new Functions();
     }
 
 
@@ -161,7 +163,7 @@ public class  DamageProfiler {
 
         // report length distribution
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
-        int hamming = getHammingDistance(record_aligned, reference_aligned);
+        int hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
         double id = (double)(record_aligned.length()-hamming) / (double)record_aligned.length();
         this.identity.add(id);
 
@@ -188,35 +190,7 @@ public class  DamageProfiler {
 
     }
 
-    /**
-     * Get the hamming distance between two string sequences
-     *
-     * @param sequence1 - the first sequence
-     * @param sequence2 - the second sequence
-     * @return the hamming distance
-     */
-    public static int getHammingDistance(String sequence1, String sequence2){
-        int distance =0;
-        if(sequence1 == null || sequence2==null)
-            System.exit(0);
 
-        sequence1 = sequence1.toUpperCase();
-        sequence2 = sequence2.toUpperCase();
-
-        if(sequence1.length() != sequence2.length())
-        {
-            System.out.println("The string are not equal in length ,Please enter the strings wit equal lengths ");
-        }
-
-        for(int i=0;i < sequence1.length();i++)
-        {
-            if(sequence1.charAt(i)!=sequence2.charAt(i))
-                distance++;
-        }
-
-        return distance;
-
-    }
 
 
     /*

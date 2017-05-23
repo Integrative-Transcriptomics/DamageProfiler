@@ -14,24 +14,14 @@ import java.io.IOException;
  * Created by neukamm on 11.11.2016.
  */
 public class StartCalculations {
-    private long currtime_prior_execution;
 
+    private long currtime_prior_execution;  // start time to get overall runtime
 
-
-    public StartCalculations() throws Exception {
-
-    }
-
+    public StartCalculations(){ }
 
     public void start(Communicator c) throws Exception {
 
         currtime_prior_execution = System.currentTimeMillis();
-
-         /*
-
-                  start damage calculations
-
-          */
 
         String input = c.getInput();
         String outfolder = c.getOutfolder();
@@ -42,9 +32,7 @@ public class StartCalculations {
         int threshold = c.getThreshold();
         boolean use_only_merged_reads = !c.isUse_merged_and_mapped_reads();
 
-
-
-        // decompress file
+        // decompress input file if necessary
         if(input.endsWith(".gz")){
             Unzip unzip = new Unzip();
             input = unzip.decompress(input);
@@ -55,7 +43,7 @@ public class StartCalculations {
         String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
         String output_folder = createOutputFolder(outfolder);
 
-        // create variables for tax id and gi id if specie is set
+        // create variables for tax id and gi ID if specie is set
         if(rname != null){
             String gi = "";
 

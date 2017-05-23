@@ -7,7 +7,7 @@ import org.apache.commons.cli.*;
  */
 public class UserOptionsParser {
 
-    private static final String CLASS_NAME = "starter.DamageProfilerStart";
+    private static final String CLASS_NAME = "User option parser";
     private String[] args;
     private Communicator communicator;
 
@@ -160,6 +160,8 @@ public class UserOptionsParser {
         try {
             CommandLine cmd = parser.parse(options, args);
 
+            // input files
+
             if (cmd.hasOption('i')) {
                 communicator.setInput(cmd.getOptionValue('i'));
             }
@@ -169,27 +171,35 @@ public class UserOptionsParser {
             if (cmd.hasOption('o')) {
                 communicator.setOutfolder(cmd.getOptionValue('o'));
             }
-            if (cmd.hasOption('t')) {
-                communicator.setThreshold(Integer.parseInt(cmd.getOptionValue('t')));
-            }
+
+            // damage calculation
+
             if (cmd.hasOption('s')) {
                 communicator.setRname(cmd.getOptionValue('s'));
             }
             if (cmd.hasOption('l')) {
                 communicator.setLength(Integer.parseInt(cmd.getOptionValue('l')));
             }
-            if(cmd.hasOption("title")) {
-                communicator.setTitle_plots(cmd.getOptionValue("title"));
-            }
             if(cmd.hasOption("all_mapped_reads")) {
                 communicator.setUse_merged_and_mapped_reads(false);
             }
+
+            // Plotting
+
+            if(cmd.hasOption("title")) {
+                communicator.setTitle_plots(cmd.getOptionValue("title"));
+            }
+            if (cmd.hasOption('t')) {
+                communicator.setThreshold(Integer.parseInt(cmd.getOptionValue('t')));
+            }
+
+
+            // options for rescaling
+
             if(cmd.hasOption("Rescaling_misincorporations")) {
                 communicator.setPerform_rescaling(true);
             }
 
-
-            // input options for rescaling
             if(cmd.hasOption("rand")) {
                 communicator.setRand(Integer.parseInt(cmd.getOptionValue("rand")));
             }

@@ -7,26 +7,24 @@ import calculations.StartCalculations;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.2";
-    private Communicator c;
+    private static final String VERSION = "0.3.3";
 
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) throws Exception {
-        //System.setProperty("java.awt.headless", "true");
         System.out.println("DamageProfiler v" + VERSION);
-        // init communicator
         Communicator c = new Communicator();
 
          /*
 
                   get input parameters
+
+                    $ damageprofiler                    :   starts GUI
+
+                    $ damageprofiler -i <> -o <> ....   :   parse command line arguments
+
           */
 
-
-        // if DamageProfiler is run with only one argument (damageprofiler),
-        // start GUI
-        // otherwise : parse command line arguments to communicator
         StartCalculations starter = new StartCalculations();
         if(args.length==0){
             MainDP damageProfilerGUI = new MainDP(c, starter);
@@ -35,10 +33,6 @@ public class RunDamageProfiler {
             starter.start(c);
         }
 
-
-
     }
-
-
 
 }

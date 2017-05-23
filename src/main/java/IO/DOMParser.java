@@ -14,12 +14,16 @@ import java.io.IOException;
 
 /**
  * Created by neukamm on 06.10.2016.
+ *
+ *
+ * This class parses XML file from NCBI te get scientific name of a specie.
+ *
  */
 public class DOMParser {
 
     public String parse(String filepathXML) throws ParserConfigurationException, SAXException, IOException {
 
-        String species=null;
+        String species = null;
         try {
 
             File inputFile = new File(filepathXML);
@@ -37,7 +41,6 @@ public class DOMParser {
                     if (eElement.getAttribute("Name").equals("ScientificName")) {
                         species = eElement.getTextContent();
                         break;
-
                     }
                 }
             }

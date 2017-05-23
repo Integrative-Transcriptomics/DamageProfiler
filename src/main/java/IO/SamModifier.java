@@ -4,6 +4,9 @@ import java.io.*;
 
 /**
  * Created by neukamm on 19.05.16.
+ *
+ * This class extracts one specie from SAM/BAM file with multiple species.
+ *
  */
 public class SamModifier {
 
@@ -18,8 +21,13 @@ public class SamModifier {
     }
 
 
-
-
+    /**
+     * Starts process builder to process bash file
+     *
+     * @param specie
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public void extractSpecieSequences(String specie) throws IOException, InterruptedException {
 
 

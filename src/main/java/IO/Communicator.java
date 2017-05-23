@@ -9,18 +9,24 @@ public class Communicator {
     private String input;
     private String reference="";
     private String outfolder;
+
+    // damage calculation
     private int threshold = 25;
     private int length = 100;
+    private boolean use_merged_and_mapped_reads = true;
+
+    // specie filtering
     private String rname = null;
     private String specie_name;
 
-    private boolean use_merged_and_mapped_reads = true;
-    private boolean perform_rescaling = false;
+    // plot settings
     private String title_plots;
 
 
 
     // options recsaling
+    private boolean perform_rescaling = false;
+
     private int rand = 30;          // Number of random starting points for the likelihood optimization
     private int burn = 10000;       // Number of burnin iterations
     private int adjust = 10;        // Number of adjust proposal variance parameters iterations

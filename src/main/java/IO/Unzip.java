@@ -16,6 +16,13 @@ public class Unzip {
     }
 
 
+    /**
+     * decompress zipped/compressed file
+     *
+     * @param infile
+     * @return
+     * @throws Exception
+     */
     public String decompress(String infile) throws Exception {
 
         GZIPInputStream in = new GZIPInputStream(new FileInputStream(infile));

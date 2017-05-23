@@ -71,7 +71,7 @@ public class SpecieHandler {
         // run command line call to get XML file from
         // ncbi with information about the ncbiID of our species
         Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec("curl http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy&id=" + id);
+        Process proc = rt.exec("curl https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy&amp;id=" + id);
 
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
         BufferedWriter xmlOutput = new BufferedWriter(new FileWriter("ncbiID.xml"));

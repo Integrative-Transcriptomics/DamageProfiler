@@ -1,5 +1,5 @@
 group 'com.uni-tuebingen.de.it.eager.damageprofiler'
-version '0.3'
+version '0.3.3'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -84,7 +84,7 @@ bintray {
         repo = 'EAGER'
         name = 'DamageProfiler'
         licenses = ['GPL-3.0']
-        vcsUrl = "https://lambda.informatik.uni-tuebingen.de/gitlab/neukamm/DamageProfiler"
+        vcsUrl = "https://github.com/apeltzer/DamageProfiler"
         version {
             name = project.version
             desc = 'Damage calculations for mapped reads.'
