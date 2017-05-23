@@ -46,6 +46,7 @@ dependencies {
     compile group: 'org.jfree', name: 'jcommon', version: '1.0.23'
     compile 'org.jfree:jfreechart:1.0.19'
     compile group: 'com.github.samtools', name: 'htsjdk', version: '2.9.1'
+    compile group: 'com.intellij', name: 'forms_rt', version: '6.0.5'
 }
 
 

@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: DamageProfiler
-Implementation-Version: 0.2
-main-Class: RunDamageProfiler
-
