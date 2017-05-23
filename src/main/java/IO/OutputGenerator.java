@@ -2,7 +2,6 @@ package IO;
 
 import calculations.DamageProfiler;
 import calculations.Frequencies;
-import charts.LinePlot;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -331,12 +330,12 @@ public class OutputGenerator {
     public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse,
                                     String file) throws  IOException, DocumentException {
 
-        LinePlot.Histogram hist_all = new LinePlot.Histogram();
+        Histogram hist_all = new Histogram();
         hist_all.addData(length_all);
         HistogramDataset dataset_all = hist_all.createDataset(new String[]{"all reads"}, max_length);
         JFreeChart chart_all = hist_all.createChart(dataset_all, "Read length distribution", "Read length", "Occurrences");
 
-        LinePlot.Histogram hist_separated = new LinePlot.Histogram();
+        Histogram hist_separated = new Histogram();
         hist_separated.addData(length_forward);
         hist_separated.addData(length_reverse);
         HistogramDataset dataset_separated = hist_separated.createDataset(new String[]{"+ strand", "- strand"}, max_length);
@@ -357,7 +356,7 @@ public class OutputGenerator {
      * @throws IOException
      */
     public void plotIdentitiyHistogram(ArrayList distances, String title, String file) throws DocumentException, IOException{
-        LinePlot.Histogram hist_all = new LinePlot.Histogram();
+        Histogram hist_all = new Histogram();
         hist_all.addData(distances);
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
         JFreeChart chart_all = hist_all.createChart(dataset,  "Read identity distribution", "Identity", "Occurrences");
