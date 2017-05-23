@@ -1,7 +1,6 @@
 group 'com.uni-tuebingen.de.it.eager.damageprofiler'
 version '0.3.4'
 
-
 buildscript {
     repositories {
         jcenter()
@@ -10,6 +9,7 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1'
     }
 }
+
 
 allprojects {
     repositories {
@@ -26,9 +26,6 @@ allprojects {
 
 sourceCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-}
 
 sourceSets {
     main {
@@ -62,16 +59,6 @@ jar {
 }
 
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-
-artifacts {
-    archives sourcesJar //, javadocJar
-}
-
 
 
 
@@ -81,9 +68,6 @@ publishing {
             from components.java
             groupId 'com.uni-tuebingen.de.it.eager'
             artifactId 'DamageProfiler'
-            artifact sourcesJar {
-                classifier "sources"
-            }
         }
     }
 }
