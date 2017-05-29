@@ -151,7 +151,7 @@ public class LinePlot {
         xAxis.setVerticalTickLabels(true);
 
 
-        yAxis.setRange(0.0, yMax+0.05);
+        yAxis.setRange(0.0, yMax+0.015);
         if(yMax+0.1 > 0.5){
             yAxis.setTickUnit(new NumberTickUnit(0.05));
         } else {
