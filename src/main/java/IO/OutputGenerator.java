@@ -82,26 +82,33 @@ public class OutputGenerator {
         key_list.addAll(map_forward.keySet());
         Collections.sort(key_list);
 
-        min_length = key_list.get(0);
-        max_length = key_list.get(key_list.size()-1);
+        if(key_list.size()>0){
+            min_length = key_list.get(0);
+            max_length = key_list.get(key_list.size()-1);
 
-        for(int key : key_list){
-            lgdist.write("+\t" + key + "\t" + map_forward.get(key) + "\n");
+            for(int key : key_list){
+                lgdist.write("+\t" + key + "\t" + map_forward.get(key) + "\n");
+            }
         }
+
         key_list.clear();
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
 
-        if(key_list.get(0) < min_length){
-            min_length = key_list.get(0);
-        }
-        if(key_list.get(key_list.size()-1) > max_length){
-            max_length = key_list.get(key_list.size()-1);
+        if(key_list.size()>0){
+            if(key_list.get(0) < min_length){
+                min_length = key_list.get(0);
+            }
+            if(key_list.get(key_list.size()-1) > max_length){
+                max_length = key_list.get(key_list.size()-1);
+
+            }
+            for(int key : key_list){
+                lgdist.write("-\t" + key + "\t" + map_reverse.get(key) + "\n");
+            }
 
         }
-        for(int key : key_list){
-            lgdist.write("-\t" + key + "\t" + map_reverse.get(key) + "\n");
-        }
+
 
         lgdist.close();
     }
@@ -336,8 +343,12 @@ public class OutputGenerator {
         JFreeChart chart_all = hist_all.createChart(dataset_all, "Read length distribution", "Read length", "Occurrences");
 
         Histogram hist_separated = new Histogram();
-        hist_separated.addData(length_forward);
-        hist_separated.addData(length_reverse);
+        if(length_forward.size()>0){
+            hist_separated.addData(length_forward);
+        }
+        if(length_reverse.size()>0){
+            hist_separated.addData(length_reverse);
+        }
         HistogramDataset dataset_separated = hist_separated.createDataset(new String[]{"+ strand", "- strand"}, max_length);
         JFreeChart chart_separated = hist_separated.createChart(dataset_separated, "Read length distribution", "Read length", "Occurrences");
 
