@@ -73,6 +73,8 @@ public class StartCalculations {
         outputGenerator.writeFrequenciesReference(damageProfiler.getFrequencies());
         outputGenerator.writeDNAComp(damageProfiler.getFrequencies());
         outputGenerator.writeDNAcomp_genome(damageProfiler.getFrequencies());
+        outputGenerator.writeMisincorporations(damageProfiler.getFrequencies(), threshold);
+
 
         // create DamagePlots of 3' and 5' ends
         outputGenerator.plotMisincorporations(inputfileNameWithOutExtension);

@@ -412,6 +412,146 @@ public class OutputGenerator {
 
 
 
+    public void writeMisincorporations(Frequencies frequencies, int threshold) throws IOException {
+
+        Locale.setDefault(Locale.US);
+
+        BufferedWriter writer5PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/5p_freq_misincorporations.txt"));
+        BufferedWriter writer3PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/3p_freq_misincorporations.txt"));
+
+
+           /*
+
+                        5 prime end
+         */
+
+        // write header
+        writer5PrimeAll.write("Pos\tC>T\tG>A\tA>C\tA>G\tA>T\tC>A\tC>G\tG>C\tG>T\tT>A\tT>C\tT>G\t" +
+                "->ACGT\tACGT>-\n");
+
+        // red
+        double[] C_T_5_norm = frequencies.getCount_C_T_5_norm();
+        // blue
+        double[] G_A_5_norm = frequencies.getCount_G_A_5_norm();
+
+        // purple (insertions)
+        double[] insertions_mean5 = getMean(frequencies.getCount_0_A_5_norm(),frequencies.getCount_0_C_5_norm(),
+                frequencies.getCount_0_G_5_norm(),frequencies.getCount_0_T_5_norm());
+
+        // green (deletions)
+        // plot only mean of deletions
+        double[] deletions_mean5 = getMean(frequencies.getCount_A_0_5_norm(), frequencies.getCount_C_0_5_norm() ,
+                frequencies.getCount_G_0_5_norm(), frequencies.getCount_T_0_5_norm());
+
+        // gray
+        double[] A_C_5_norm = frequencies.getCount_A_C_5_norm();
+        double[] A_G_5_norm = frequencies.getCount_A_G_5_norm();
+        double[] A_T_5_norm = frequencies.getCount_A_T_5_norm();
+        double[] C_A_5_norm = frequencies.getCount_C_A_5_norm();
+        double[] C_G_5_norm = frequencies.getCount_C_G_5_norm();
+        double[] G_C_5_norm = frequencies.getCount_G_C_5_norm();
+        double[] G_T_5_norm = frequencies.getCount_G_T_5_norm();
+        double[] T_A_5_norm = frequencies.getCount_T_A_5_norm();
+        double[] T_C_5_norm = frequencies.getCount_T_C_5_norm();
+        double[] T_G_5_norm = frequencies.getCount_T_G_5_norm();
+
+
+        for(int pos = 0; pos < threshold; pos++){
+            writer5PrimeAll.write(pos + "\t" +
+                    String.format("%.6f", C_T_5_norm[pos]) + "\t" +
+                    String.format("%.6f",G_A_5_norm[pos]) + "\t" +
+                    String.format("%.6f",A_C_5_norm[pos]) + "\t" +
+                    String.format("%.6f",A_G_5_norm[pos]) + "\t" +
+                    String.format("%.6f",A_T_5_norm[pos]) + "\t" +
+                    String.format("%.6f", C_A_5_norm[pos]) + "\t" +
+                    String.format("%.6f",C_G_5_norm[pos]) + "\t" +
+                    String.format("%.6f",G_C_5_norm[pos]) + "\t" +
+                    String.format("%.6f",G_T_5_norm[pos]) + "\t" +
+                    String.format("%.6f",T_A_5_norm[pos]) + "\t" +
+                    String.format("%.6f",T_C_5_norm[pos]) + "\t" +
+                    String.format("%.6f",T_G_5_norm[pos] )+ "\t" +
+                    String.format("%.6f",insertions_mean5[pos]) + "\t" +
+                    String.format("%.6f",deletions_mean5[pos])+ "\n");
+
+        }
+
+
+        /*
+
+                        3 prime end
+         */
+
+
+        double[] three_A_to_C_reverse = getSubArray(frequencies.getCount_A_C_3_norm(),threshold);
+        double[] three_A_to_G_reverse = getSubArray(frequencies.getCount_A_G_3_norm(),threshold);
+        double[] three_A_to_T_reverse = getSubArray(frequencies.getCount_A_T_3_norm(),threshold);
+
+        double[] three_C_to_A_reverse = getSubArray(frequencies.getCount_C_A_3_norm(), threshold);
+        double[] three_C_to_G_reverse = getSubArray(frequencies.getCount_C_G_3_norm(), threshold);
+        double[] three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
+
+        double[] three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(),threshold);
+        double[] three_G_to_C_reverse = getSubArray(frequencies.getCount_G_C_3_norm(),threshold);
+        double[] three_G_to_T_reverse = getSubArray(frequencies.getCount_G_T_3_norm(),threshold);
+
+        double[] three_T_to_A_reverse = getSubArray(frequencies.getCount_T_A_3_norm(),threshold);
+        double[] three_T_to_C_reverse = getSubArray(frequencies.getCount_T_C_3_norm(),threshold);
+        double[] three_T_to_G_reverse = getSubArray(frequencies.getCount_T_G_3_norm(),threshold);
+
+//        three_A_to_C_reverse = reverseArray(three_A_to_C_reverse);
+//        three_A_to_G_reverse = reverseArray(three_A_to_G_reverse);
+//        three_A_to_T_reverse = reverseArray(three_A_to_T_reverse);
+//
+//        three_C_to_A_reverse = reverseArray(three_C_to_A_reverse);
+//        three_C_to_G_reverse = reverseArray(three_C_to_G_reverse);
+//        three_C_to_T_reverse = reverseArray(three_C_to_T_reverse);
+//
+//        three_G_to_A_reverse = reverseArray(three_G_to_A_reverse);
+//        three_G_to_C_reverse = reverseArray(three_G_to_C_reverse);
+//        three_G_to_T_reverse = reverseArray(three_G_to_T_reverse);
+//
+//        three_T_to_A_reverse = reverseArray(three_T_to_A_reverse);
+//        three_T_to_C_reverse = reverseArray(three_T_to_C_reverse);
+//        three_T_to_G_reverse = reverseArray(three_T_to_G_reverse);
+
+
+        double[] insertions_mean_3 = getMean(frequencies.getCount_0_A_3_norm(),frequencies.getCount_0_C_3_norm(),
+                frequencies.getCount_0_G_3_norm(),frequencies.getCount_0_T_3_norm());
+
+        // green (deletions)
+        double[] deletions_mean_3 = getMean(frequencies.getCount_A_0_3_norm(), frequencies.getCount_C_0_3_norm() ,
+                frequencies.getCount_G_0_3_norm(), frequencies.getCount_T_0_3_norm());
+        // write header
+        writer3PrimeAll.write("Pos\tC>T\tG>A\tA>C\tA>G\tA>T\tC>A\tC>G\tG>C\tG>T\tT>A\tT>C\tT>G\t" +
+                "->ACGT\tACGT>-\n");
+
+        for(int pos = threshold-1; pos >=0; pos--){
+
+            writer3PrimeAll.write(pos + "\t" +
+                    String.format("%.6f", three_C_to_T_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_G_to_A_reverse[pos])+ "\t" +
+                    String.format("%.6f", three_A_to_C_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_A_to_G_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_A_to_T_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_C_to_A_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_C_to_G_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_G_to_C_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_G_to_T_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_T_to_A_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_T_to_C_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_T_to_G_reverse[pos]) + "\t" +
+                    String.format("%.6f", insertions_mean_3[pos]) + "\t" +
+                    String.format("%.6f", deletions_mean_3[pos]) + "\n");
+
+        }
+
+        writer3PrimeAll.close();
+        writer5PrimeAll.close();
+
+    }
+
+
+
 
     /**
      * create damage plot
