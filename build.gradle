@@ -42,7 +42,7 @@ dependencies {
     compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.+'
     compile group: 'org.jfree', name: 'jcommon', version: '1.0.+'
     compile group: 'org.jfree', name: 'jfreechart', version: '1.0.+'
-    compile group: 'com.github.samtools', name: 'htsjdk', version: '2.9.+'
+    compile group: 'com.github.samtools', name: 'htsjdk', version: '2.+'
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.+'
 }
 

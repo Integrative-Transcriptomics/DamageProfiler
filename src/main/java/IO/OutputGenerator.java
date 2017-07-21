@@ -2,6 +2,7 @@ package IO;
 
 import calculations.DamageProfiler;
 import calculations.Frequencies;
+import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -10,6 +11,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
+
 
 import java.awt.*;
 import java.io.*;
@@ -22,14 +24,12 @@ import java.awt.geom.Rectangle2D;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
-import com.itextpdf.awt.PdfGraphics2D;
-
 /**
  * Created by neukamm on 7/8/15.
  */
 public class OutputGenerator {
 
+    private final List<String> chrs;
     private String outpath;
     private Frequencies frequencies;
     private DamageProfiler damageProfiler;
@@ -45,6 +45,7 @@ public class OutputGenerator {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
+        this.chrs = damageProfiler.getChrs();
         this.damageProfiler = damageProfiler;
         this.threshold = threshold;
         this.length = length;
@@ -217,7 +218,7 @@ public class OutputGenerator {
     }
 
     public void writeFrequenciesReference(Frequencies frequencies) throws IOException{
-        BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "frequenciesRef_misincorporations.txt"));
+        BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "misincorporation.txt"));
 
         /*
          fill now line per line
@@ -236,14 +237,14 @@ public class OutputGenerator {
           */
 
         // write header
-        freq_file_ref.write("End\tStd\tPos\tA\tC\tG\tT\tTotal\tG>A\tC>T\tA>G\tT>C\tA>C\tA>T\tC>G\tC>A\tT>G\tT>A\tG>C\tG>T\n");
+        freq_file_ref.write("Chr\tEnd\tStd\tPos\tA\tC\tG\tT\tTotal\tG>A\tC>T\tA>G\tT>C\tA>C\tA>T\tC>G\tC>A\tT>G\tT>A\tG>C\tG>T\tA>-\tT>-\tC>-\tG>-\t->A\t->T\t->C\t->G\tS\n");
 
         // fill '3p +'
         for(int i = 0; i < this.length; i++){
             double sum=frequencies.getCountA_ref_forward_3()[i]+frequencies.getCountC_ref_forward_3()[i]+
                     frequencies.getCountG_ref_forward_3()[i]+frequencies.getCountT_ref_forward_3()[i];
 
-            freq_file_ref.write("3p\t+\t"+(i+1)+"\t"
+            freq_file_ref.write(chrs.get(i)+"\t3p\t+\t"+(i+1)+"\t"
                     +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
                     +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
                     +sum+"\t"
@@ -252,7 +253,14 @@ public class OutputGenerator {
                     +frequencies.getCount_forward_A_C_3()[i]+"\t"+frequencies.getCount_forward_A_T_3()[i]+"\t"
                     +frequencies.getCount_forward_C_G_3()[i]+"\t"+frequencies.getCount_forward_C_A_3()[i]+"\t"
                     +frequencies.getCount_forward_T_G_3()[i]+"\t"+frequencies.getCount_forward_T_A_3()[i]+"\t"
-                    +frequencies.getCount_forward_G_C_3()[i]+"\t"+frequencies.getCount_forward_G_T_3()[i]+"\n"
+                    +frequencies.getCount_forward_G_C_3()[i]+"\t"+frequencies.getCount_forward_G_T_3()[i]+"\t"
+
+                    +frequencies.getCount_forward_A_0_3()[i]+"\t"+frequencies.getCount_forward_T_0_3()[i]+"\t"
+                    +frequencies.getCount_forward_C_0_3()[i]+"\t"+frequencies.getCount_forward_G_0_3()[i]+"\t"
+
+                    +frequencies.getCount_forward_0_A_3()[i]+"\t"+frequencies.getCount_forward_0_T_3()[i]+"\t"
+                    +frequencies.getCount_forward_0_C_3()[i]+"\t"+frequencies.getCount_forward_0_G_3()[i]+"\t"
+                    +frequencies.getCountS_forward_3()[i]+"\n"
             );
 
         }
@@ -262,7 +270,7 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_reverse_3()[i]+frequencies.getCountC_ref_reverse_3()[i]+
                     frequencies.getCountG_ref_reverse_3()[i]+frequencies.getCountT_ref_reverse_3()[i];
 
-            freq_file_ref.write("3p\t-\t"+(i+1)+"\t"
+            freq_file_ref.write(chrs.get(i)+"\t3p\t-\t"+(i+1)+"\t"
                     +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
                     +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
                     +sum+"\t"
@@ -271,7 +279,14 @@ public class OutputGenerator {
                     +frequencies.getCount_reverse_A_C_3()[i]+"\t"+frequencies.getCount_reverse_A_T_3()[i]+"\t"
                     +frequencies.getCount_reverse_C_G_3()[i]+"\t"+frequencies.getCount_reverse_C_A_3()[i]+"\t"
                     +frequencies.getCount_reverse_T_G_3()[i]+"\t"+frequencies.getCount_reverse_T_A_3()[i]+"\t"
-                    +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]+"\n"
+                    +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]
+
+                    +frequencies.getCount_reverse_A_0_3()[i]+"\t"+frequencies.getCount_reverse_T_0_3()[i]+"\t"
+                    +frequencies.getCount_reverse_C_0_3()[i]+"\t"+frequencies.getCount_reverse_G_0_3()[i]+"\t"
+
+                    +frequencies.getCount_reverse_0_A_3()[i]+"\t"+frequencies.getCount_reverse_0_T_3()[i]+"\t"
+                    +frequencies.getCount_reverse_0_C_3()[i]+"\t"+frequencies.getCount_reverse_0_G_3()[i]+"\t"
+                    +frequencies.getCountS_reverse_3()[i]+"\n"
             );
 
         }
@@ -282,7 +297,7 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_forward_5()[i]+frequencies.getCountC_ref_forward_5()[i]+
                     frequencies.getCountG_ref_forward_5()[i]+frequencies.getCountT_ref_forward_5()[i];
 
-            freq_file_ref.write("5p\t+\t"+(i+1)+"\t"
+            freq_file_ref.write(chrs.get(i)+"\t5p\t+\t"+(i+1)+"\t"
                     +frequencies.getCountA_ref_forward_5()[i]+"\t"+frequencies.getCountC_ref_forward_5()[i]+"\t"
                     +frequencies.getCountG_ref_forward_5()[i]+"\t"+frequencies.getCountT_ref_forward_5()[i]+"\t"
                     +sum+"\t"
@@ -291,7 +306,15 @@ public class OutputGenerator {
                     +frequencies.getCount_forward_A_C_5()[i]+"\t"+frequencies.getCount_forward_A_T_5()[i]+"\t"
                     +frequencies.getCount_forward_C_G_5()[i]+"\t"+frequencies.getCount_forward_C_A_5()[i]+"\t"
                     +frequencies.getCount_forward_T_G_5()[i]+"\t"+frequencies.getCount_forward_T_A_5()[i]+"\t"
-                    +frequencies.getCount_forward_G_C_5()[i]+"\t"+frequencies.getCount_forward_G_T_5()[i]+"\n"
+                    +frequencies.getCount_forward_G_C_5()[i]+"\t"+frequencies.getCount_forward_G_T_5()[i]+
+
+                    +frequencies.getCount_forward_A_0_5()[i]+"\t"+frequencies.getCount_forward_T_0_5()[i]+"\t"
+                    +frequencies.getCount_forward_C_0_5()[i]+"\t"+frequencies.getCount_forward_G_0_5()[i]+"\t"
+
+                    +frequencies.getCount_forward_0_A_5()[i]+"\t"+frequencies.getCount_forward_0_T_5()[i]+"\t"
+                    +frequencies.getCount_forward_0_C_5()[i]+"\t"+frequencies.getCount_forward_0_G_5()[i]+"\t"
+                    +frequencies.getCountS_forward_5()[i]+"\n"
+
             );
 
         }
@@ -301,7 +324,7 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_reverse_5()[i]+frequencies.getCountC_ref_reverse_5()[i]+
                     frequencies.getCountG_ref_reverse_5()[i]+frequencies.getCountT_ref_reverse_5()[i];
 
-            freq_file_ref.write("5p\t-\t"+(i+1)+"\t"
+            freq_file_ref.write(chrs.get(i)+"\t5p\t-\t"+(i+1)+"\t"
                     +frequencies.getCountA_ref_reverse_5()[i]+"\t"+frequencies.getCountC_ref_reverse_5()[i]+"\t"
                     +frequencies.getCountG_ref_reverse_5()[i]+"\t"+frequencies.getCountT_ref_reverse_5()[i]+"\t"
                     +sum+"\t"
@@ -310,11 +333,16 @@ public class OutputGenerator {
                     +frequencies.getCount_reverse_A_C_5()[i]+"\t"+frequencies.getCount_reverse_A_T_5()[i]+"\t"
                     +frequencies.getCount_reverse_C_G_5()[i]+"\t"+frequencies.getCount_reverse_C_A_5()[i]+"\t"
                     +frequencies.getCount_reverse_T_G_5()[i]+"\t"+frequencies.getCount_reverse_T_A_5()[i]+"\t"
-                    +frequencies.getCount_reverse_G_C_5()[i]+"\t"+frequencies.getCount_reverse_G_T_5()[i]+"\n"
+                    +frequencies.getCount_reverse_G_C_5()[i]+"\t"+frequencies.getCount_reverse_G_T_5()[i]+
+
+                    +frequencies.getCount_reverse_A_0_5()[i]+"\t"+frequencies.getCount_reverse_T_0_5()[i]+"\t"
+                    +frequencies.getCount_reverse_C_0_5()[i]+"\t"+frequencies.getCount_reverse_G_0_5()[i]+"\t"
+
+                    +frequencies.getCount_reverse_0_A_5()[i]+"\t"+frequencies.getCount_reverse_0_T_5()[i]+"\t"
+                    +frequencies.getCount_reverse_0_C_5()[i]+"\t"+frequencies.getCount_reverse_0_G_5()[i]+"\t"
+                    +frequencies.getCountS_reverse_5()[i]+"\n"
+
             );
-
-
-
 
         }
         freq_file_ref.close();
@@ -801,7 +829,7 @@ public class OutputGenerator {
             PdfTemplate plot = cb.createTemplate(width, height);
             Graphics2D g2d = new PdfGraphics2D(plot, width, height);
             Rectangle2D r2d = new Rectangle2D.Double(0, 0, width, height);
-            chart.draw(g2d, r2d);
+            //chart.draw(g2d, r2d);
             g2d.dispose();
             cb.addTemplate(plot, xpos, 20);
             xpos += width;

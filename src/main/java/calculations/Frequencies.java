@@ -15,27 +15,29 @@ public class Frequencies {
     private double[] countC_forward_5;
     private double[] countG_forward_5;
     private double[] countT_forward_5;
+    private double[] countS_forward_5;
+    private double[] count0_forward_5;
 
     private double[] countA_forward_3;
     private double[] countC_forward_3;
     private double[] countG_forward_3;
     private double[] countT_forward_3;
+    private double[] countS_forward_3;
+    private double[] count0_forward_3;
 
     private double[] countA_reverse_5;
     private double[] countC_reverse_5;
     private double[] countG_reverse_5;
     private double[] countT_reverse_5;
+    private double[] countS_reverse_5;
+    private double[] count0_reverse_5;
 
     private double[] countA_reverse_3;
     private double[] countC_reverse_3;
     private double[] countG_reverse_3;
     private double[] countT_reverse_3;
-
-    private double[] count0_forward_3;
+    private double[] countS_reverse_3;
     private double[] count0_reverse_3;
-
-    private double[] count0_forward_5;
-    private double[] count0_reverse_5;
 
     private double[] countA_ref_forward_5;
     private double[] countC_ref_forward_5;
@@ -276,28 +278,31 @@ public class Frequencies {
         countC_forward_5 = new double[this.length];
         countG_forward_5 = new double[this.length];
         countT_forward_5 = new double[this.length];
+        countS_forward_5 = new double[this.length];
 
         countA_forward_3 = new double[this.length]; // base frequency is counted reverse direction
         countC_forward_3 = new double[this.length]; // base frequency is counted reverse direction
         countG_forward_3 = new double[this.length]; // base frequency is counted reverse direction
         countT_forward_3 = new double[this.length]; // base frequency is counted reverse direction
+        countS_forward_3 = new double[this.length];
 
         count0_forward_3 = new double[this.length];
         count0_reverse_3 = new double[this.length];
         count0_forward_5 = new double[this.length];
         count0_reverse_5 = new double[this.length];
+        countS_reverse_5 = new double[this.length];
 
         countA_reverse_5 = new double[this.length];
         countC_reverse_5 = new double[this.length];
         countG_reverse_5 = new double[this.length];
         countT_reverse_5 = new double[this.length];
+        countS_reverse_5 = new double[this.length];
 
         countA_reverse_3 = new double[this.length]; // base frequency is counted reverse direction
         countC_reverse_3 = new double[this.length]; // base frequency is counted reverse direction
         countG_reverse_3 = new double[this.length]; // base frequency is counted reverse direction
         countT_reverse_3 = new double[this.length]; // base frequency is counted reverse direction
-
-
+        countS_reverse_3 = new double[this.length];
 
 
         // deletions
@@ -542,10 +547,10 @@ public class Frequencies {
 
             // count from 5'end
             countBaseFrequency(record_char, this.length, countA_reverse_5, countC_reverse_5,
-                    countG_reverse_5, countT_reverse_5, count0_reverse_5);
+                    countG_reverse_5, countT_reverse_5, count0_reverse_5, countS_reverse_5);
             // count from 3'end
             countBaseFrequency(record_char_reverse, this.length, countA_reverse_3, countC_reverse_3,
-                    countG_reverse_3, countT_reverse_3, count0_forward_3);
+                    countG_reverse_3, countT_reverse_3, count0_reverse_3, countS_reverse_3);
 
 
             // build reverse complement of reference
@@ -555,10 +560,10 @@ public class Frequencies {
 
             // count from 5'end
             countBaseFrequency(ref_char, this.length, countA_ref_reverse_5, countC_ref_reverse_5,
-                    countG_ref_reverse_5, countT_ref_reverse_5, count0_ref_reverse_5);
+                    countG_ref_reverse_5, countT_ref_reverse_5, count0_ref_reverse_5, null);
             // count from 3'end
             countBaseFrequency(ref_char_reverse, this.length, countA_ref_reverse_3, countC_ref_reverse_3,
-                    countG_ref_reverse_3, countT_ref_reverse_3, count0_ref_reverse_3);
+                    countG_ref_reverse_3, countT_ref_reverse_3, count0_ref_reverse_3, null);
 
 
         } else {
@@ -574,19 +579,19 @@ public class Frequencies {
             // read
             // count from 5'end
             countBaseFrequency(record_char, this.length, countA_forward_5, countC_forward_5,
-                    countG_forward_5, countT_forward_5, count0_forward_5);
+                    countG_forward_5, countT_forward_5, count0_forward_5, countS_forward_5);
             // count from 3'end
             countBaseFrequency(record_char_reverse, this.length, countA_forward_3, countC_forward_3,
-                    countG_forward_3, countT_forward_3, count0_forward_3);
+                    countG_forward_3, countT_forward_3, count0_forward_3, countS_forward_3);
 
 
             // reference
             // count from 5'end
             countBaseFrequency(ref_char, this.length, countA_ref_forward_5, countC_ref_forward_5,
-                    countG_ref_forward_5, countT_ref_forward_5, count0_ref_forward_5);
+                    countG_ref_forward_5, countT_ref_forward_5, count0_ref_forward_5, null);
             // count from 3'end
             countBaseFrequency(ref_char_reverse, this.length, countA_ref_forward_3, countC_ref_forward_3,
-                    countG_ref_forward_3, countT_ref_forward_3, count0_ref_forward_3);
+                    countG_ref_forward_3, countT_ref_forward_3, count0_ref_forward_3, null);
 
         }
 
@@ -815,9 +820,10 @@ public class Frequencies {
      * @param countC
      * @param countG
      * @param countT
+     * @param countS
      */
-    private void countBaseFrequency(char[] rec, int length , double[] countA, double [] countC,  double[] countG,
-                                    double[] countT, double[] count0){
+    private void countBaseFrequency(char[] rec, int length, double[] countA, double[] countC, double[] countG,
+                                    double[] countT, double[] count0, double[] countS){
         int position = 0;
         while (position < length &&  position < rec.length){
             switch(rec[position]){
@@ -835,6 +841,10 @@ public class Frequencies {
                     break;
                 case '-':
                     count0[position]++;
+                    break;
+                case 'S':
+                    if(countS!=null)
+                        countS[position]++;
                     break;
             }
             position += 1;
@@ -1751,7 +1761,21 @@ public class Frequencies {
         return count;
     }
 
+    public double[] getCountS_forward_5() {
+        return countS_forward_5;
+    }
 
+    public double[] getCountS_forward_3() {
+        return countS_forward_3;
+    }
+
+    public double[] getCountS_reverse_5() {
+        return countS_reverse_5;
+    }
+
+    public double[] getCountS_reverse_3() {
+        return countS_reverse_3;
+    }
 }
 
 
