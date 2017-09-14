@@ -829,7 +829,7 @@ public class OutputGenerator {
             PdfTemplate plot = cb.createTemplate(width, height);
             Graphics2D g2d = new PdfGraphics2D(plot, width, height);
             Rectangle2D r2d = new Rectangle2D.Double(0, 0, width, height);
-            //chart.draw(g2d, r2d);
+            chart.draw(g2d, r2d);
             g2d.dispose();
             cb.addTemplate(plot, xpos, 20);
             xpos += width;

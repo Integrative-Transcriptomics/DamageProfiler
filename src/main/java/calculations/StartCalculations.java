@@ -40,7 +40,12 @@ public class StartCalculations {
 
         // create new output folder
         File file = new File(input);
-        String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+        String inputfileNameWithOutExtension;
+        if(c.getTitle_plots() == null ){
+            inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+        } else {
+            inputfileNameWithOutExtension = c.getTitle_plots();
+        }
         String output_folder = createOutputFolder(outfolder);
 
         // create variables for tax id and gi ID if specie is set

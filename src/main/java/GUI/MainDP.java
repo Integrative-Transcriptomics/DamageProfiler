@@ -37,6 +37,7 @@ public class MainDP {
 
 
     private Communicator communicator;
+    private PlottingOptions plottingOptions;
 
     public static void main(String[] args) throws Exception {
 
@@ -58,6 +59,8 @@ public class MainDP {
         frame.setVisible(true);
         checkBoxes();
         runButton.setEnabled(false);
+
+        plottingOptions = new PlottingOptions();
 
 
         communicator = c;
@@ -167,7 +170,6 @@ public class MainDP {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
 
-                PlottingOptions plottingOptions = new PlottingOptions();
                 //setWindowPosition(ra);
                 plottingOptions.setSize(600, 400);
                 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
@@ -191,12 +193,20 @@ public class MainDP {
                     communicator.setLength(Integer.parseInt(length.getText()));
                     communicator.setThreshold(Integer.parseInt(threshold.getText()));
                     communicator.setSpecie_name(specie_input.getText());
+                    if(plottingOptions==null) {
+
+                    } else {
+                        String usertitle = plottingOptions.getUserTitle();
+                        if(!usertitle.equals("")){
+                            communicator.setTitle_plots(plottingOptions.getUserTitle());
+                        }
+                    }
 
                     starter.start(communicator);
 
 
                 } catch (Exception ex) {
-                    throw new IllegalArgumentException("Input settings are wrong. Please see help.");// TODO error handling
+                    throw new IllegalArgumentException("Input settings are wrong. Please see help.");
                 }
             }
 
