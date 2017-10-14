@@ -154,8 +154,7 @@ public class  DamageProfiler {
                 record_aligned = record.getReadString();
             }
 
-        }
-        else if(record.getStringAttribute(SAMTag.MD.name()) != null){
+        } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
             // get reference corresponding to the record
             byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
             reference_aligned = new String(ref_seq, "UTF-8");

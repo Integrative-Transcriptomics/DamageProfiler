@@ -30,6 +30,7 @@ import java.io.IOException;
 public class OutputGenerator {
 
     private final List<String> chrs;
+    private final double height;
     private String outpath;
     private Frequencies frequencies;
     private DamageProfiler damageProfiler;
@@ -40,7 +41,8 @@ public class OutputGenerator {
     private int length;
 
 
-    public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold, int length)
+    public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
+                           int length, double height)
             throws IOException{
 
         this.outpath = outputFolder;
@@ -49,6 +51,7 @@ public class OutputGenerator {
         this.damageProfiler = damageProfiler;
         this.threshold = threshold;
         this.length = length;
+        this.height = height;
 
         // set tax id if specified by user
         if(specie != null && !specie.equals("")){
@@ -626,8 +629,8 @@ public class OutputGenerator {
 
 
         // create plots
-        LinePlot damagePlot_three = new LinePlot("3' end", threshold);
-        LinePlot damagePlot_five  = new LinePlot("5' end", threshold);
+        LinePlot damagePlot_three = new LinePlot("3' end", threshold, height);
+        LinePlot damagePlot_five  = new LinePlot("5' end", threshold, height);
 
           /*
                 add data to plots

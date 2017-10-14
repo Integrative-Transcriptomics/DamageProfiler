@@ -30,6 +30,7 @@ public class StartCalculations {
         String specie_name = "";
         int length = c.getLength();
         int threshold = c.getThreshold();
+        double height = c.getyAxis();
         boolean use_only_merged_reads = !c.isUse_merged_and_mapped_reads();
 
         // decompress input file if necessary
@@ -71,7 +72,8 @@ public class StartCalculations {
         damageProfiler.extractSAMRecords(use_only_merged_reads);
 
         // generate output files
-        OutputGenerator outputGenerator = new OutputGenerator(output_folder, damageProfiler, specie_name, threshold, length);
+        OutputGenerator outputGenerator = new OutputGenerator(output_folder, damageProfiler, specie_name, threshold,
+                length, height);
         outputGenerator.writeLengthDistribution(input);
         outputGenerator.writeDamageFiles(damageProfiler.getFrequencies().getCount_G_A_3_norm(),
                 damageProfiler.getFrequencies().getCount_C_T_5_norm());
