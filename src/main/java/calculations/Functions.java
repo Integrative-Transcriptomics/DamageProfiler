@@ -1,11 +1,17 @@
 package calculations;
 
+import org.apache.log4j.Logger;
+
 /**
  * Created by neukamm on 13.03.17.
  */
 public class Functions {
 
-    public Functions(){}
+    private final Logger LOG;
+
+    public Functions(Logger LOG){
+        this.LOG = LOG;
+    }
 
 
     /**

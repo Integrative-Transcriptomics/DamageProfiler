@@ -1,5 +1,6 @@
 package IO;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -21,6 +22,12 @@ import java.io.IOException;
  */
 public class DOMParser {
 
+    private final Logger LOG;
+
+    public DOMParser(Logger LOG){
+        this.LOG = LOG;
+
+    }
     public String parse(String filepathXML) throws ParserConfigurationException, SAXException, IOException {
 
         String species = null;

@@ -4,6 +4,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
 import IO.DOMParser;
+import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 
@@ -12,19 +13,17 @@ import org.xml.sax.SAXException;
  */
 public class SpecieHandler {
 
+    private final Logger LOG;
     private String gi;
     private String rname;
     private String specie_name;
 
-    public SpecieHandler(){
-
-    }
-
-    public void init(String gi, String rname){
+    public SpecieHandler(String gi, String rname, Logger LOG){
+        this.LOG = LOG;
         this.gi = gi;
         this.rname = rname;
-
     }
+
 
     public void getSpecie() throws IOException, SAXException, ParserConfigurationException, InterruptedException {
         if (rname != null) {
@@ -61,11 +60,11 @@ public class SpecieHandler {
      * Then, it writes the output into a xml file and
      * parses this to get the species name of the ncbi ID
      *
-     * @param
+     * @param id
      * @return species name as string
      * @throws IOException
      */
-    private static String getSpeciesByID(int id) throws IOException, SAXException, ParserConfigurationException {
+    private String getSpeciesByID(int id) throws IOException, SAXException, ParserConfigurationException {
         String species;
 
         // run command line call to get XML file from
@@ -83,7 +82,7 @@ public class SpecieHandler {
         }
         xmlOutput.close();
 
-        DOMParser domparser = new DOMParser();
+        DOMParser domparser = new DOMParser(LOG);
         species = domparser.parse("ncbiID.xml");
 
         return species;

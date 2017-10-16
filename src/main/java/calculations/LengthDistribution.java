@@ -1,6 +1,7 @@
 package calculations;
 
 import htsjdk.samtools.SAMRecord;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.List;
  */
 public class LengthDistribution {
 
+    private final Logger LOG;
     private HashMap<Integer, Integer> length_distribution_map_forward;
     private HashMap<Integer, Integer> length_distribution_map_reverse;
     private HashMap<Double, Double> length_distribution_map;
@@ -19,8 +21,8 @@ public class LengthDistribution {
     private List<Double> length_all;
 
 
-    public LengthDistribution(){
-
+    public LengthDistribution(Logger LOG){
+        this.LOG = LOG;
     }
 
     public void init(){

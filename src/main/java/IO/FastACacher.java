@@ -1,6 +1,7 @@
 package IO;
 
 import htsjdk.samtools.reference.*;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,10 +11,12 @@ import java.util.HashMap;
  * Created by peltzer on 25/06/15.
  */
 public class FastACacher {
+    private final Logger LOG;
     private HashMap<String,byte[]> data = new HashMap<>();
 
-    public FastACacher(File f) throws FileNotFoundException {
+    public FastACacher(File f, Logger LOG) throws FileNotFoundException {
         ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(f);
+        this.LOG = LOG;
 
 
         while(true){

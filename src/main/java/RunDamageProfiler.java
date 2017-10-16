@@ -3,6 +3,9 @@ import IO.*;
 import calculations.StartCalculations;
 import javafx.application.Application;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Created by neukamm on 06.10.2016.
  */
@@ -13,7 +16,6 @@ public class RunDamageProfiler {
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) throws Exception {
-        System.out.println("DamageProfiler v" + VERSION);
 
          /*
 
@@ -32,7 +34,7 @@ public class RunDamageProfiler {
 
         } else {
             Communicator c = new Communicator();
-            StartCalculations starter = new StartCalculations();
+            StartCalculations starter = new StartCalculations(VERSION);
             UserOptionsParser userOptions = new UserOptionsParser(args, c);
             starter.start(c);
         }

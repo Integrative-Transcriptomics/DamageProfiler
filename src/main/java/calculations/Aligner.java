@@ -3,6 +3,7 @@ package calculations;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.SAMRecord;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,10 @@ import java.util.List;
  */
 public class Aligner {
 
-    public Aligner(){
+    private final Logger LOG;
+
+    public Aligner(Logger LOG){
+        this.LOG = LOG;
 
     }
 

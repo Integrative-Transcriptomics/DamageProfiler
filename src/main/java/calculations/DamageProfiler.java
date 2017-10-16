@@ -5,6 +5,7 @@ import IO.FastACacher;
 import htsjdk.samtools.*;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +24,8 @@ public class  DamageProfiler {
 
     private final SamReader inputSam;
     private final Functions useful_functions;
+    private final String specie;
+    private final Logger LOG;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
     private int numberOfAllReads;
@@ -39,24 +42,30 @@ public class  DamageProfiler {
      * constructor, set input and output filepaths
      * @param input
      * @param reference
+     * @param LOG
      * @throws FileNotFoundException
      * @throws UnsupportedEncodingException
      */
-    public DamageProfiler(File input, File reference, int threshold, int length) throws FileNotFoundException, UnsupportedEncodingException {
+    public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG)
+            throws FileNotFoundException, UnsupportedEncodingException {
+
         // read bam/sam file
         inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                 validationStringency(ValidationStringency.LENIENT).open(input);
         numberOfUsedReads = 0;
         numberOfAllReads = 0;
+        this.LOG = LOG;
         this.threshold = threshold;
         this.length = length;
-        this.frequencies = new Frequencies(this.length, this.threshold);
+        this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
         this.reference = reference;
-        this.lengthDistribution = new LengthDistribution();
+        this.lengthDistribution = new LengthDistribution(this.LOG);
         this.lengthDistribution.init();
         this.identity = new ArrayList();
         this.chrs = new ArrayList<>();
-        useful_functions = new Functions();
+        this.specie = specie;
+        useful_functions = new Functions(this.LOG);
+
     }
 
 
@@ -76,20 +85,27 @@ public class  DamageProfiler {
 
         for(SAMRecord record : inputSam) {
 
-            String chr = record.getReferenceName();
-            numberOfAllReads++;
-            if (use_only_merged_reads) {
-                // get only mapped and merged reads
-                if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
+            if(record.getReferenceName().equals(this.specie)){
+                String chr = record.getReferenceName();
+                numberOfAllReads++;
+                if (use_only_merged_reads) {
+                    // get only mapped and merged reads
+                    if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
+                        processRecord(record);
+                        seq_name = seq_dict.get(0).getSequenceName();
+
+                    }
+                } else if(!record.getReadUnmappedFlag()){
+                    // get all mapped reads
                     processRecord(record);
                     seq_name = seq_dict.get(0).getSequenceName();
 
                 }
-            } else if(!record.getReadUnmappedFlag()){
-                // get all mapped reads
-                processRecord(record);
-                seq_name = seq_dict.get(0).getSequenceName();
 
+                // print number of processed reads
+                if(numberOfUsedReads % 100 == 0){
+                    LOG.info(numberOfUsedReads + " Reads processed.");
+                }
             }
         }
         frequencies.normalizeValues();
@@ -127,13 +143,13 @@ public class  DamageProfiler {
         // check if record has MD tag and no reference file is specified
         if(record.getStringAttribute(SAMTag.MD.name()) == null && this.reference == null){
 
-            System.err.print("SAM/BAM file has no MD tag. Please specify reference file ");
+            LOG.error("SAM/BAM file has no MD tag. Please specify reference file ");
             System.exit(-1);
 
         } else if (record.getStringAttribute(SAMTag.MD.name()) == null){
 
             readReferenceInCache();
-            Aligner aligner = new Aligner();
+            Aligner aligner = new Aligner(LOG);
             // SAMRecord has 1-based coordinate system -> closed interval [..,..]
             // normal Array 0-based coordinate system -> interval half-cloded-half-open [...,...)
             int start = record.getAlignmentStart() - 1;
@@ -188,7 +204,7 @@ public class  DamageProfiler {
         // read reference file as indexed reference
         fastaSequenceFile = new IndexedFastaSequenceFile(reference);
         // store reference in cache to get faster access
-        cache = new FastACacher(reference);
+        cache = new FastACacher(reference, LOG);
 
     }
 
