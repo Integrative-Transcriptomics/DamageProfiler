@@ -3,9 +3,6 @@ import IO.*;
 import calculations.StartCalculations;
 import javafx.application.Application;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Created by neukamm on 06.10.2016.
  */
