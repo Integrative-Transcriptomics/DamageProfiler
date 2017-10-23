@@ -1,5 +1,7 @@
 package IO;
 
+import org.apache.log4j.Logger;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -11,8 +13,10 @@ import java.util.zip.GZIPInputStream;
  */
 public class Unzip {
 
-    public Unzip(){
+    private final Logger LOG;
 
+    public Unzip(Logger LOG){
+        this.LOG = LOG;
     }
 
 

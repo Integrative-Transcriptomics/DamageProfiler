@@ -91,21 +91,21 @@ public class RescaleAdvanced extends JDialog {
 
     private void setValues(Communicator communicator) {
 
-        this.iterInput.setText(String.valueOf(communicator.getIter()));
-        this.randInput.setText(String.valueOf(communicator.getRand()));
-        this.burnInput.setText(String.valueOf(communicator.getBurn()));
-        this.adjustInput.setText(String.valueOf(communicator.getAdjust()));
-        this.minQualInput.setText(String.valueOf(communicator.getMinQual()));
-        this.seq_lengthInput.setText(String.valueOf(communicator.getSeq_length()));
-        this.iterInput.setText(String.valueOf(communicator.getIter()));
-        this.onlyForwardCheckBox.setSelected(communicator.isForward());
-        this.onlyReverseCheckBox.setSelected(communicator.isReverse());
-        this.singleStrandedCheckBox.setSelected(communicator.isSingle_stranded());
-        this.varDispCheckBox.setSelected(communicator.isVar_disp());
-        this.diffHangsCheckBox.setSelected(communicator.isDiff_hangs());
-        this.jukesCantorCheckBox.setSelected(communicator.isJukes_cantor());
-        this.fixNicksCheckBox.setSelected(communicator.isFix_nicks());
-        this.useRawNickFreqCheckBox.setSelected(communicator.isUse_raw_nick_freq());
+//        this.iterInput.setText(String.valueOf(communicator.getIter()));
+//        this.randInput.setText(String.valueOf(communicator.getRand()));
+//        this.burnInput.setText(String.valueOf(communicator.getBurn()));
+//        this.adjustInput.setText(String.valueOf(communicator.getAdjust()));
+//        this.minQualInput.setText(String.valueOf(communicator.getMinQual()));
+//        this.seq_lengthInput.setText(String.valueOf(communicator.getSeq_length()));
+//        this.iterInput.setText(String.valueOf(communicator.getIter()));
+//        this.onlyForwardCheckBox.setSelected(communicator.isForward());
+//        this.onlyReverseCheckBox.setSelected(communicator.isReverse());
+//        this.singleStrandedCheckBox.setSelected(communicator.isSingle_stranded());
+//        this.varDispCheckBox.setSelected(communicator.isVar_disp());
+//        this.diffHangsCheckBox.setSelected(communicator.isDiff_hangs());
+//        this.jukesCantorCheckBox.setSelected(communicator.isJukes_cantor());
+//        this.fixNicksCheckBox.setSelected(communicator.isFix_nicks());
+//        this.useRawNickFreqCheckBox.setSelected(communicator.isUse_raw_nick_freq());
 
 
     }

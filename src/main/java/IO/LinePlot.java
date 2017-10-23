@@ -1,5 +1,6 @@
 package IO;
 
+import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
  */
 public class LinePlot {
 
+    private final double height;
+    private final Logger LOG;
     private double y_max=0.0;
     private double y_min=0.0;
     private ArrayList<XYSeries> all_data;
@@ -28,11 +31,12 @@ public class LinePlot {
     private int threshold;
 
 
-    public LinePlot(String title, int threshold) {
-
+    public LinePlot(String title, int threshold, double height, Logger LOG) {
+        this.LOG = LOG;
         all_data = new ArrayList<>();
         this.title = title;
         this.threshold = threshold;
+        this.height = height;
 
     }
 
@@ -67,7 +71,12 @@ public class LinePlot {
         for(XYSeries series : all_data){
             dataset.addSeries(series);
             if(series.getMaxY() > y_max){y_max=series.getMaxY();}
-            if(series.getMinY() < y_min){y_min=series.getMinY();}
+            //if(series.getMinY() < y_min){y_min=series.getMinY();}
+        }
+
+        y_min = 0.0;
+        if(height != 0.0){
+            y_max = height;
         }
 
         return dataset;

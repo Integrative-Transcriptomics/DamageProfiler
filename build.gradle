@@ -44,6 +44,7 @@ dependencies {
     compile group: 'jfree', name: 'jfreechart', version: '1.0.13'
     compile group: 'com.github.samtools', name: 'htsjdk', version: '2.+'
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.+'
+    compile group: 'log4j', name: 'log4j', version: '1.+'
 }
 
 
