@@ -7,7 +7,7 @@ import calculations.StartCalculations;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.3.8";
+    private static final String VERSION = "0.3.9";
 
 
     @SuppressWarnings("static-access")
