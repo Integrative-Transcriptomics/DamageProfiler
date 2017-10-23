@@ -1,5 +1,6 @@
 package IO;
 
+import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
@@ -20,9 +21,12 @@ import java.util.List;
 public class Histogram {
 
 
+    private final Logger LOG;
     private List<double[]> data_collected;
 
-    public Histogram(){
+    public Histogram(Logger LOG){
+
+        this.LOG = LOG;
         data_collected = new ArrayList<>();
     }
 

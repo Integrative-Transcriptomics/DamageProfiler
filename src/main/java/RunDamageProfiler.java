@@ -1,6 +1,10 @@
-import GUI.MainDP;
+import GUI.MainGuiFX;
 import IO.*;
 import calculations.StartCalculations;
+import javafx.application.Application;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by neukamm on 06.10.2016.
@@ -12,8 +16,6 @@ public class RunDamageProfiler {
 
     @SuppressWarnings("static-access")
     public static void main(String[] args) throws Exception {
-        System.out.println("DamageProfiler v" + VERSION);
-        Communicator c = new Communicator();
 
          /*
 
@@ -25,10 +27,14 @@ public class RunDamageProfiler {
 
           */
 
-        StartCalculations starter = new StartCalculations();
+
         if(args.length==0){
-            MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
+            //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
+            new Thread(() -> Application.launch(MainGuiFX.class)).start();
+
         } else {
+            Communicator c = new Communicator();
+            StartCalculations starter = new StartCalculations(VERSION);
             UserOptionsParser userOptions = new UserOptionsParser(args, c);
             starter.start(c);
         }

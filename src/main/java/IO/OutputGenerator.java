@@ -8,6 +8,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
@@ -30,6 +31,8 @@ import java.io.IOException;
 public class OutputGenerator {
 
     private final List<String> chrs;
+    private final double height;
+    private final Logger LOG;
     private String outpath;
     private Frequencies frequencies;
     private DamageProfiler damageProfiler;
@@ -40,7 +43,9 @@ public class OutputGenerator {
     private int length;
 
 
-    public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold, int length)
+
+    public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
+                           int length, double height, Logger LOG)
             throws IOException{
 
         this.outpath = outputFolder;
@@ -49,10 +54,16 @@ public class OutputGenerator {
         this.damageProfiler = damageProfiler;
         this.threshold = threshold;
         this.length = length;
+        this.height = height;
+        this.LOG = LOG;
 
         // set tax id if specified by user
         if(specie != null && !specie.equals("")){
             this.specie = specie;
+        }
+
+        if(this.length > this.chrs.size()){
+            this.length = this.chrs.size();
         }
 
 
@@ -244,25 +255,24 @@ public class OutputGenerator {
             double sum=frequencies.getCountA_ref_forward_3()[i]+frequencies.getCountC_ref_forward_3()[i]+
                     frequencies.getCountG_ref_forward_3()[i]+frequencies.getCountT_ref_forward_3()[i];
 
-            freq_file_ref.write(chrs.get(i)+"\t3p\t+\t"+(i+1)+"\t"
-                    +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
-                    +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
-                    +sum+"\t"
-                    +frequencies.getCount_forward_G_A_3()[i]+"\t"+frequencies.getCount_forward_C_T_3()[i]+"\t"
-                    +frequencies.getCount_forward_A_G_3()[i]+"\t"+frequencies.getCount_forward_T_C_3()[i]+"\t"
-                    +frequencies.getCount_forward_A_C_3()[i]+"\t"+frequencies.getCount_forward_A_T_3()[i]+"\t"
-                    +frequencies.getCount_forward_C_G_3()[i]+"\t"+frequencies.getCount_forward_C_A_3()[i]+"\t"
-                    +frequencies.getCount_forward_T_G_3()[i]+"\t"+frequencies.getCount_forward_T_A_3()[i]+"\t"
-                    +frequencies.getCount_forward_G_C_3()[i]+"\t"+frequencies.getCount_forward_G_T_3()[i]+"\t"
-
-                    +frequencies.getCount_forward_A_0_3()[i]+"\t"+frequencies.getCount_forward_T_0_3()[i]+"\t"
-                    +frequencies.getCount_forward_C_0_3()[i]+"\t"+frequencies.getCount_forward_G_0_3()[i]+"\t"
-
-                    +frequencies.getCount_forward_0_A_3()[i]+"\t"+frequencies.getCount_forward_0_T_3()[i]+"\t"
-                    +frequencies.getCount_forward_0_C_3()[i]+"\t"+frequencies.getCount_forward_0_G_3()[i]+"\t"
-                    +frequencies.getCountS_forward_3()[i]+"\n"
-            );
-
+            if(chrs.size()>0){
+                freq_file_ref.write(chrs.get(i)+"\t3p\t+\t"+(i+1)+"\t"
+                        +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
+                        +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
+                        +sum+"\t"
+                        +frequencies.getCount_forward_G_A_3()[i]+"\t"+frequencies.getCount_forward_C_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_A_G_3()[i]+"\t"+frequencies.getCount_forward_T_C_3()[i]+"\t"
+                        +frequencies.getCount_forward_A_C_3()[i]+"\t"+frequencies.getCount_forward_A_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_C_G_3()[i]+"\t"+frequencies.getCount_forward_C_A_3()[i]+"\t"
+                        +frequencies.getCount_forward_T_G_3()[i]+"\t"+frequencies.getCount_forward_T_A_3()[i]+"\t"
+                        +frequencies.getCount_forward_G_C_3()[i]+"\t"+frequencies.getCount_forward_G_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_A_0_3()[i]+"\t"+frequencies.getCount_forward_T_0_3()[i]+"\t"
+                        +frequencies.getCount_forward_C_0_3()[i]+"\t"+frequencies.getCount_forward_G_0_3()[i]+"\t"
+                        +frequencies.getCount_forward_0_A_3()[i]+"\t"+frequencies.getCount_forward_0_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_0_C_3()[i]+"\t"+frequencies.getCount_forward_0_G_3()[i]+"\t"
+                        +frequencies.getCountS_forward_3()[i]+"\n"
+                );
+            }
         }
 
         // fill '3p -'
@@ -270,25 +280,24 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_reverse_3()[i]+frequencies.getCountC_ref_reverse_3()[i]+
                     frequencies.getCountG_ref_reverse_3()[i]+frequencies.getCountT_ref_reverse_3()[i];
 
-            freq_file_ref.write(chrs.get(i)+"\t3p\t-\t"+(i+1)+"\t"
-                    +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
-                    +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
-                    +sum+"\t"
-                    +frequencies.getCount_reverse_G_A_3()[i]+"\t"+frequencies.getCount_reverse_C_T_3()[i]+"\t"
-                    +frequencies.getCount_reverse_A_G_3()[i]+"\t"+frequencies.getCount_reverse_T_C_3()[i]+"\t"
-                    +frequencies.getCount_reverse_A_C_3()[i]+"\t"+frequencies.getCount_reverse_A_T_3()[i]+"\t"
-                    +frequencies.getCount_reverse_C_G_3()[i]+"\t"+frequencies.getCount_reverse_C_A_3()[i]+"\t"
-                    +frequencies.getCount_reverse_T_G_3()[i]+"\t"+frequencies.getCount_reverse_T_A_3()[i]+"\t"
-                    +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]
-
-                    +frequencies.getCount_reverse_A_0_3()[i]+"\t"+frequencies.getCount_reverse_T_0_3()[i]+"\t"
-                    +frequencies.getCount_reverse_C_0_3()[i]+"\t"+frequencies.getCount_reverse_G_0_3()[i]+"\t"
-
-                    +frequencies.getCount_reverse_0_A_3()[i]+"\t"+frequencies.getCount_reverse_0_T_3()[i]+"\t"
-                    +frequencies.getCount_reverse_0_C_3()[i]+"\t"+frequencies.getCount_reverse_0_G_3()[i]+"\t"
-                    +frequencies.getCountS_reverse_3()[i]+"\n"
-            );
-
+            if(chrs.size()>0){
+                freq_file_ref.write(chrs.get(i)+"\t3p\t-\t"+(i+1)+"\t"
+                        +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
+                        +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
+                        +sum+"\t"
+                        +frequencies.getCount_reverse_G_A_3()[i]+"\t"+frequencies.getCount_reverse_C_T_3()[i]+"\t"
+                        +frequencies.getCount_reverse_A_G_3()[i]+"\t"+frequencies.getCount_reverse_T_C_3()[i]+"\t"
+                        +frequencies.getCount_reverse_A_C_3()[i]+"\t"+frequencies.getCount_reverse_A_T_3()[i]+"\t"
+                        +frequencies.getCount_reverse_C_G_3()[i]+"\t"+frequencies.getCount_reverse_C_A_3()[i]+"\t"
+                        +frequencies.getCount_reverse_T_G_3()[i]+"\t"+frequencies.getCount_reverse_T_A_3()[i]+"\t"
+                        +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]
+                        +frequencies.getCount_reverse_A_0_3()[i]+"\t"+frequencies.getCount_reverse_T_0_3()[i]+"\t"
+                        +frequencies.getCount_reverse_C_0_3()[i]+"\t"+frequencies.getCount_reverse_G_0_3()[i]+"\t"
+                        +frequencies.getCount_reverse_0_A_3()[i]+"\t"+frequencies.getCount_reverse_0_T_3()[i]+"\t"
+                        +frequencies.getCount_reverse_0_C_3()[i]+"\t"+frequencies.getCount_reverse_0_G_3()[i]+"\t"
+                        +frequencies.getCountS_reverse_3()[i]+"\n"
+                );
+            }
         }
 
 
@@ -297,26 +306,25 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_forward_5()[i]+frequencies.getCountC_ref_forward_5()[i]+
                     frequencies.getCountG_ref_forward_5()[i]+frequencies.getCountT_ref_forward_5()[i];
 
-            freq_file_ref.write(chrs.get(i)+"\t5p\t+\t"+(i+1)+"\t"
-                    +frequencies.getCountA_ref_forward_5()[i]+"\t"+frequencies.getCountC_ref_forward_5()[i]+"\t"
-                    +frequencies.getCountG_ref_forward_5()[i]+"\t"+frequencies.getCountT_ref_forward_5()[i]+"\t"
-                    +sum+"\t"
-                    +frequencies.getCount_forward_G_A_5()[i]+"\t"+frequencies.getCount_forward_C_T_5()[i]+"\t"
-                    +frequencies.getCount_forward_A_G_5()[i]+"\t"+frequencies.getCount_forward_T_C_5()[i]+"\t"
-                    +frequencies.getCount_forward_A_C_5()[i]+"\t"+frequencies.getCount_forward_A_T_5()[i]+"\t"
-                    +frequencies.getCount_forward_C_G_5()[i]+"\t"+frequencies.getCount_forward_C_A_5()[i]+"\t"
-                    +frequencies.getCount_forward_T_G_5()[i]+"\t"+frequencies.getCount_forward_T_A_5()[i]+"\t"
-                    +frequencies.getCount_forward_G_C_5()[i]+"\t"+frequencies.getCount_forward_G_T_5()[i]+
+            if(chrs.size()>0){
+                freq_file_ref.write(chrs.get(i)+"\t5p\t+\t"+(i+1)+"\t"
+                        +frequencies.getCountA_ref_forward_5()[i]+"\t"+frequencies.getCountC_ref_forward_5()[i]+"\t"
+                        +frequencies.getCountG_ref_forward_5()[i]+"\t"+frequencies.getCountT_ref_forward_5()[i]+"\t"
+                        +sum+"\t"
+                        +frequencies.getCount_forward_G_A_5()[i]+"\t"+frequencies.getCount_forward_C_T_5()[i]+"\t"
+                        +frequencies.getCount_forward_A_G_5()[i]+"\t"+frequencies.getCount_forward_T_C_5()[i]+"\t"
+                        +frequencies.getCount_forward_A_C_5()[i]+"\t"+frequencies.getCount_forward_A_T_5()[i]+"\t"
+                        +frequencies.getCount_forward_C_G_5()[i]+"\t"+frequencies.getCount_forward_C_A_5()[i]+"\t"
+                        +frequencies.getCount_forward_T_G_5()[i]+"\t"+frequencies.getCount_forward_T_A_5()[i]+"\t"
+                        +frequencies.getCount_forward_G_C_5()[i]+"\t"+frequencies.getCount_forward_G_T_5()[i]+
+                        +frequencies.getCount_forward_A_0_5()[i]+"\t"+frequencies.getCount_forward_T_0_5()[i]+"\t"
+                        +frequencies.getCount_forward_C_0_5()[i]+"\t"+frequencies.getCount_forward_G_0_5()[i]+"\t"
+                        +frequencies.getCount_forward_0_A_5()[i]+"\t"+frequencies.getCount_forward_0_T_5()[i]+"\t"
+                        +frequencies.getCount_forward_0_C_5()[i]+"\t"+frequencies.getCount_forward_0_G_5()[i]+"\t"
+                        +frequencies.getCountS_forward_5()[i]+"\n"
 
-                    +frequencies.getCount_forward_A_0_5()[i]+"\t"+frequencies.getCount_forward_T_0_5()[i]+"\t"
-                    +frequencies.getCount_forward_C_0_5()[i]+"\t"+frequencies.getCount_forward_G_0_5()[i]+"\t"
-
-                    +frequencies.getCount_forward_0_A_5()[i]+"\t"+frequencies.getCount_forward_0_T_5()[i]+"\t"
-                    +frequencies.getCount_forward_0_C_5()[i]+"\t"+frequencies.getCount_forward_0_G_5()[i]+"\t"
-                    +frequencies.getCountS_forward_5()[i]+"\n"
-
-            );
-
+                );
+            }
         }
 
         // fill '5p -'
@@ -324,26 +332,25 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_reverse_5()[i]+frequencies.getCountC_ref_reverse_5()[i]+
                     frequencies.getCountG_ref_reverse_5()[i]+frequencies.getCountT_ref_reverse_5()[i];
 
-            freq_file_ref.write(chrs.get(i)+"\t5p\t-\t"+(i+1)+"\t"
-                    +frequencies.getCountA_ref_reverse_5()[i]+"\t"+frequencies.getCountC_ref_reverse_5()[i]+"\t"
-                    +frequencies.getCountG_ref_reverse_5()[i]+"\t"+frequencies.getCountT_ref_reverse_5()[i]+"\t"
-                    +sum+"\t"
-                    +frequencies.getCount_reverse_G_A_5()[i]+"\t"+frequencies.getCount_reverse_C_T_5()[i]+"\t"
-                    +frequencies.getCount_reverse_A_G_5()[i]+"\t"+frequencies.getCount_reverse_T_C_5()[i]+"\t"
-                    +frequencies.getCount_reverse_A_C_5()[i]+"\t"+frequencies.getCount_reverse_A_T_5()[i]+"\t"
-                    +frequencies.getCount_reverse_C_G_5()[i]+"\t"+frequencies.getCount_reverse_C_A_5()[i]+"\t"
-                    +frequencies.getCount_reverse_T_G_5()[i]+"\t"+frequencies.getCount_reverse_T_A_5()[i]+"\t"
-                    +frequencies.getCount_reverse_G_C_5()[i]+"\t"+frequencies.getCount_reverse_G_T_5()[i]+
+            if(chrs.size()>0){
+                freq_file_ref.write(chrs.get(i)+"\t5p\t-\t"+(i+1)+"\t"
+                        +frequencies.getCountA_ref_reverse_5()[i]+"\t"+frequencies.getCountC_ref_reverse_5()[i]+"\t"
+                        +frequencies.getCountG_ref_reverse_5()[i]+"\t"+frequencies.getCountT_ref_reverse_5()[i]+"\t"
+                        +sum+"\t"
+                        +frequencies.getCount_reverse_G_A_5()[i]+"\t"+frequencies.getCount_reverse_C_T_5()[i]+"\t"
+                        +frequencies.getCount_reverse_A_G_5()[i]+"\t"+frequencies.getCount_reverse_T_C_5()[i]+"\t"
+                        +frequencies.getCount_reverse_A_C_5()[i]+"\t"+frequencies.getCount_reverse_A_T_5()[i]+"\t"
+                        +frequencies.getCount_reverse_C_G_5()[i]+"\t"+frequencies.getCount_reverse_C_A_5()[i]+"\t"
+                        +frequencies.getCount_reverse_T_G_5()[i]+"\t"+frequencies.getCount_reverse_T_A_5()[i]+"\t"
+                        +frequencies.getCount_reverse_G_C_5()[i]+"\t"+frequencies.getCount_reverse_G_T_5()[i]+
+                        +frequencies.getCount_reverse_A_0_5()[i]+"\t"+frequencies.getCount_reverse_T_0_5()[i]+"\t"
+                        +frequencies.getCount_reverse_C_0_5()[i]+"\t"+frequencies.getCount_reverse_G_0_5()[i]+"\t"
+                        +frequencies.getCount_reverse_0_A_5()[i]+"\t"+frequencies.getCount_reverse_0_T_5()[i]+"\t"
+                        +frequencies.getCount_reverse_0_C_5()[i]+"\t"+frequencies.getCount_reverse_0_G_5()[i]+"\t"
+                        +frequencies.getCountS_reverse_5()[i]+"\n"
 
-                    +frequencies.getCount_reverse_A_0_5()[i]+"\t"+frequencies.getCount_reverse_T_0_5()[i]+"\t"
-                    +frequencies.getCount_reverse_C_0_5()[i]+"\t"+frequencies.getCount_reverse_G_0_5()[i]+"\t"
-
-                    +frequencies.getCount_reverse_0_A_5()[i]+"\t"+frequencies.getCount_reverse_0_T_5()[i]+"\t"
-                    +frequencies.getCount_reverse_0_C_5()[i]+"\t"+frequencies.getCount_reverse_0_G_5()[i]+"\t"
-                    +frequencies.getCountS_reverse_5()[i]+"\n"
-
-            );
-
+                );
+            }
         }
         freq_file_ref.close();
 
@@ -365,12 +372,12 @@ public class OutputGenerator {
     public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse,
                                     String file) throws  IOException, DocumentException {
 
-        Histogram hist_all = new Histogram();
+        Histogram hist_all = new Histogram(LOG);
         hist_all.addData(length_all);
         HistogramDataset dataset_all = hist_all.createDataset(new String[]{"all reads"}, max_length);
         JFreeChart chart_all = hist_all.createChart(dataset_all, "Read length distribution", "Read length", "Occurrences");
 
-        Histogram hist_separated = new Histogram();
+        Histogram hist_separated = new Histogram(LOG);
         if(length_forward.size()>0){
             hist_separated.addData(length_forward);
         }
@@ -395,7 +402,7 @@ public class OutputGenerator {
      * @throws IOException
      */
     public void plotIdentitiyHistogram(ArrayList distances, String title, String file) throws DocumentException, IOException{
-        Histogram hist_all = new Histogram();
+        Histogram hist_all = new Histogram(LOG);
         hist_all.addData(distances);
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
         JFreeChart chart_all = hist_all.createChart(dataset,  "Read identity distribution", "Identity", "Occurrences");
@@ -626,8 +633,8 @@ public class OutputGenerator {
 
 
         // create plots
-        LinePlot damagePlot_three = new LinePlot("3' end", threshold);
-        LinePlot damagePlot_five  = new LinePlot("5' end", threshold);
+        LinePlot damagePlot_three = new LinePlot("3' end", threshold, height, LOG);
+        LinePlot damagePlot_five  = new LinePlot("5' end", threshold, height, LOG);
 
           /*
                 add data to plots

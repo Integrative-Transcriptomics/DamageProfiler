@@ -1,6 +1,7 @@
 package calculations;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.util.SequenceUtil;
+import org.apache.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.stream.IntStream;
  */
 public class Frequencies {
 
+    private final Logger LOG;
     private double[] countA_forward_5;
     private double[] countC_forward_5;
     private double[] countG_forward_5;
@@ -259,15 +261,15 @@ public class Frequencies {
     private double countG_ref;
     private double countT_ref;
 
-    private SAMRecord SAMrecord;
 
     private int length;
     private int threshold;
 
 
-    public Frequencies(int length, int threshold){
+    public Frequencies(int length, int threshold, Logger LOG){
         this.length = length;
         this.threshold = threshold;
+        this.LOG = LOG;
         init();
 
     }
@@ -528,7 +530,6 @@ public class Frequencies {
      * @param record_aligned
      */
     public void count(SAMRecord record, String record_aligned, String ref_aligned){
-        this.SAMrecord = record;
         // get sequence as char from 5' end
         record_char = record_aligned.toCharArray();
         ref_char = ref_aligned.toCharArray();
@@ -605,7 +606,6 @@ public class Frequencies {
 
     public void calculateMisincorporations(SAMRecord record, String record_aligned, String reference_aligned) throws Exception{
 
-        this.SAMrecord = record;
         // count from 3' end
         record_char_reverse = new StringBuilder(record_aligned).reverse().toString().toCharArray();
 
