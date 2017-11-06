@@ -14,10 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
-import java.util.logging.Level;
-
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+import org.apache.log4j.Logger;
 
 
 public class MainGuiFX extends Application {
@@ -36,6 +33,7 @@ public class MainGuiFX extends Application {
     private TextField textfield_y_axis_height;
     private Communicator communicator = new Communicator();
     private StartCalculations starter = new StartCalculations(null);
+    private Logger logger;
 
     @Override
     public void start(Stage primaryStage) {
@@ -118,7 +116,7 @@ public class MainGuiFX extends Application {
                 try {
                     communicator.setyAxis(Double.parseDouble(textfield_y_axis_height.getText()));
                 } catch (Exception ex){
-                    LOGGER.log(Level.INFO, "Height value not valid.");
+                    logger.info("Height value not valid.");
 
                 }
             }

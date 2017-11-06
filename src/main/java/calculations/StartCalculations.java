@@ -148,7 +148,6 @@ public class StartCalculations {
             LOG.warn("No reads processed. Can't create any output");
         }
 
-
     }
 
 
