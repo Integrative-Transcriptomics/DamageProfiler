@@ -82,8 +82,8 @@ jacocoTestReport {
 
 
 bintray {
-    user = bintrayUser
-    key = bintrayKey
+    user = $BINTRAY_USER
+    key = $BINTRAY_API_KEY
     publications = ['MyPublication']
     publish = true
     override = true
