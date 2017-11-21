@@ -17,3 +17,4 @@ It creates
 A more detailed description and tutorial of DamageProfiler is coming soon. 
 
 
+[![DOI](https://zenodo.org/badge/84447018.svg)](https://zenodo.org/badge/latestdoi/84447018)
