@@ -1,20 +1,24 @@
 # DamageProfiler
-This tool calculates damage profiles of mapped reads. 
+[![Documentation Status](https://readthedocs.org/projects/damageprofiler/badge/?version=latest)](http://damageprofiler.readthedocs.io/en/latest/?badge=latest)
+[![DOI](https://zenodo.org/badge/84447018.svg)](https://zenodo.org/badge/latestdoi/84447018)
 
-Author: Judith Neukamm <judith.neukamm@uni-tuebingen.de>
+This method can be used to calculate damage profiles of mapped ancient DNA reads. 
+
+Main author: Judith Neukamm <judith.neukamm@uni-tuebingen.de>
+Contributor: Alexander Peltzer <alexander.peltzer@uni-tuebingen.de>
 
 ###### Method
 DamageProfiler calculates damage profiles of mapped reads and provides a 
 graphical as well as texted based representation. 
 
 It creates 
-- damage plot
-- fragment length distribution
-- identity distribution 
-- base frequency table of reference 
-- occurrences of different base misincorporations
+- damage plots
+- a fragment length distribution
+- a read identity distribution 
+- a base frequency table of reference 
+- a table of different base misincorporations and their occurencies
 
-A more detailed description and tutorial of DamageProfiler is coming soon. 
+Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
 
 
-[![DOI](https://zenodo.org/badge/84447018.svg)](https://zenodo.org/badge/latestdoi/84447018)
+
