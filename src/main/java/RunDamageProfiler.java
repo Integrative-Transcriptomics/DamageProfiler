@@ -34,7 +34,9 @@ public class RunDamageProfiler {
             StartCalculations starter = new StartCalculations(VERSION);
             UserOptionsParser userOptions = new UserOptionsParser(args, c);
             starter.start(c);
+
         }
+
 
     }
 

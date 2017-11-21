@@ -11,10 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -26,6 +23,9 @@ public class  DamageProfiler {
     private final Functions useful_functions;
     private final String specie;
     private final Logger LOG;
+    private int matchCounter;
+    private int deletionCounter;
+    private boolean containsDeletion;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
     private int numberOfAllReads;
@@ -66,6 +66,10 @@ public class  DamageProfiler {
         this.specie = specie;
         useful_functions = new Functions(this.LOG);
 
+        this.containsDeletion = false;
+        this.deletionCounter = 0;
+        this.matchCounter = 0;
+
     }
 
 
@@ -84,8 +88,7 @@ public class  DamageProfiler {
         String seq_name=null;
 
         for(SAMRecord record : inputSam) {
-
-            if(record.getReferenceName().equals(this.specie)){
+            if (this.specie == null) {
                 String chr = record.getReferenceName();
                 numberOfAllReads++;
                 if (use_only_merged_reads) {
@@ -95,7 +98,7 @@ public class  DamageProfiler {
                         seq_name = seq_dict.get(0).getSequenceName();
 
                     }
-                } else if(!record.getReadUnmappedFlag()){
+                } else if (!record.getReadUnmappedFlag()) {
                     // get all mapped reads
                     processRecord(record);
                     seq_name = seq_dict.get(0).getSequenceName();
@@ -103,12 +106,44 @@ public class  DamageProfiler {
                 }
 
                 // print number of processed reads
-                if(numberOfUsedReads % 100 == 0){
+                if (numberOfUsedReads % 100 == 0) {
                     LOG.info(numberOfUsedReads + " Reads processed.");
+                }
+
+            } else {
+
+                if (record.getReferenceName().equals(this.specie)) {
+                    String chr = record.getReferenceName();
+                    numberOfAllReads++;
+                    if (use_only_merged_reads) {
+                        // get only mapped and merged reads
+                        if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
+                            processRecord(record);
+                            seq_name = seq_dict.get(0).getSequenceName();
+
+                        }
+                    } else if (!record.getReadUnmappedFlag()) {
+                        // get all mapped reads
+                        processRecord(record);
+                        seq_name = seq_dict.get(0).getSequenceName();
+
+                    }
+
+                    // print number of processed reads
+                    if (numberOfUsedReads % 100 == 0) {
+                        LOG.info(numberOfUsedReads + " Reads processed.");
+                    }
                 }
             }
         }
         frequencies.normalizeValues();
+
+        LOG.info("-------------------");
+        LOG.info("# Skipped records (Deletion): " + deletionCounter);
+        LOG.info("# Skipped records (length does not match): " + matchCounter);
+        LOG.info("# reads used for damage calculation: " + (numberOfUsedReads - deletionCounter - matchCounter));
+
+
         return seq_name;
 
     }
@@ -139,6 +174,7 @@ public class  DamageProfiler {
 
         String reference_aligned="";
         String record_aligned="";
+
 
         // check if record has MD tag and no reference file is specified
         if(record.getStringAttribute(SAMTag.MD.name()) == null && this.reference == null){
@@ -172,12 +208,31 @@ public class  DamageProfiler {
 
         } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
             // get reference corresponding to the record
-            byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
-            reference_aligned = new String(ref_seq, "UTF-8");
-            record_aligned = record.getReadString();
+            if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
+//                for(CigarElement cigarelement : record.getCigar().getCigarElements()){
+//                    if(cigarelement.getOperator().toString().equals("D")){
+//                        containsDeletion=true;
+//                    }
+//                }
 
+                //if(!containsDeletion){
+
+                    byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
+                    reference_aligned = new String(ref_seq, "UTF-8");
+                    record_aligned = record.getReadString();
+                //} else {
+                //    LOG.info("Skipped record (Deletion): " + record.getReadName());
+                //    deletionCounter++;
+                //}
+
+
+            } else {
+                LOG.info("Skipped record (length does not match): " + record.getReadName());
+                matchCounter++;
+            }
 
         }
+
 
         // report length distribution
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
@@ -207,7 +262,6 @@ public class  DamageProfiler {
         cache = new FastACacher(reference, LOG);
 
     }
-
 
 
 
