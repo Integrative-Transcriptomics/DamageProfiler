@@ -4,17 +4,23 @@ import IO.Communicator;
 import calculations.StartCalculations;
 import javafx.application.Application;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import org.apache.log4j.Logger;
+import javafx.concurrent.Task;
 
 
 public class MainGuiFX extends Application {
@@ -27,18 +33,21 @@ public class MainGuiFX extends Application {
     private TextField textfield_threshold;
     private TextField textfield_length;
     private TextField textfield_specie;
-    private CheckBox checkbox_use_mapped_reads;
+    private CheckBox checkbox_use_merged_reads;
     private TextField textfield_title;
     private CheckBox checkbox_dynamic_y_axis_height;
     private TextField textfield_y_axis_height;
     private Communicator communicator = new Communicator();
     private StartCalculations starter = new StartCalculations(null);
-    private Logger logger;
+    private Stage primaryStage;
+    private ProgressBar progressBar;
+    private Task startCalculuations;
 
     @Override
     public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
 
-        primaryStage.setTitle("DamageProfiler configuration");
+        this.primaryStage.setTitle("DamageProfiler configuration");
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
@@ -48,9 +57,9 @@ public class MainGuiFX extends Application {
         addComponents(root);
         addListener();
 
-        primaryStage.setScene(new Scene(root, 550, 400));
-        primaryStage.setResizable(true);
-        primaryStage.show();
+        this.primaryStage.setScene(new Scene(root, 550, 400));
+        this.primaryStage.setResizable(true);
+        this.primaryStage.show();
 
 
     }
@@ -116,7 +125,7 @@ public class MainGuiFX extends Application {
                 try {
                     communicator.setyAxis(Double.parseDouble(textfield_y_axis_height.getText()));
                 } catch (Exception ex){
-                    logger.info("Height value not valid.");
+                    System.out.println("Height value not valid.");
 
                 }
             }
@@ -128,7 +137,28 @@ public class MainGuiFX extends Application {
 
 
             try {
-                starter.start(communicator);
+                // add progress indicator
+                progressBar.setProgress(0);
+                //progressIndicator = new ProgressIndicator();
+
+
+                startCalculuations = startCalculuations(communicator);
+                progressBar.progressProperty().unbind();
+                progressBar.progressProperty().bind(startCalculuations.progressProperty());
+
+                startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
+                        new EventHandler<WorkerStateEvent>() {
+
+                            @Override
+                            public void handle(WorkerStateEvent t) {
+                                if(starter.isCalculationsDone()){
+                                    primaryStage.close();
+                                }
+                            }
+                        });
+                new Thread(startCalculuations).start();
+
+                //this.primaryStage.close();
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -136,6 +166,17 @@ public class MainGuiFX extends Application {
         });
 
 
+    }
+
+
+    public Task startCalculuations(Communicator communicator) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                starter.start(communicator);
+                return true;
+            }
+        };
     }
 
     private void addComponents(GridPane root) {
@@ -153,9 +194,11 @@ public class MainGuiFX extends Application {
         Label label_title = new Label("Set title");
         Label label_plot = new Label("Plot");
         label_plot.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
+
         Label label_calculations = new Label("Calculations");
         label_calculations.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
+        progressBar = new ProgressBar(0);
 
         textfield_threshold = new TextField();
         textfield_length = new TextField();
@@ -163,7 +206,7 @@ public class MainGuiFX extends Application {
         textfield_title = new TextField();
         textfield_y_axis_height = new TextField("Enter height");
 
-        checkbox_use_mapped_reads = new CheckBox("Use only mapped reads");
+        checkbox_use_merged_reads = new CheckBox("Use only merged reads");
         checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
 
         btn_run.setDisable(true);
@@ -180,28 +223,21 @@ public class MainGuiFX extends Application {
         root.add(btn_inputfile, 0, row,1,1);
         root.add(btn_reference, 1, row,1,1);
         root.add(btn_output, 2, row,1,1);
-
         root.add(new Separator(), 0, ++row,3,1);
 
         //          PLOT
 
         root.add(label_plot, 0, ++row, 1,1);
-
         root.add(label_title, 0, ++row, 1,1);
         root.add(textfield_title, 1, row, 2,1);
-
         root.add(label_yaxis, 0, ++row, 1,1);
         root.add(checkbox_dynamic_y_axis_height, 1, row, 1,1);
         root.add(textfield_y_axis_height, 2, row, 1,1);
-
         root.add(label_threshold, 0, ++row, 1,1);
         root.add(textfield_threshold, 1, row, 2,1);
-
         root.add(label_specie, 0, ++row, 1,1);
         root.add(textfield_specie, 1, row, 2,1);
-
-        root.add(checkbox_use_mapped_reads, 0, ++row,1,1);
-
+        root.add(checkbox_use_merged_reads, 0, ++row,1,1);
         root.add(new Separator(), 0, ++row,3,1);
 
         //          CALCULATIONS
@@ -209,10 +245,10 @@ public class MainGuiFX extends Application {
         root.add(label_calculations, 0, ++row, 1,1);
         root.add(label_length, 0, ++row, 1,1);
         root.add(textfield_length, 1, row, 2,1);
-
         root.add(new Separator(), 0, ++row,3,1);
+        root.add(btn_run, 0, ++row,1,1);
+        root.add(progressBar, 1, row,1,1);
 
-        root.add(btn_run, 0, ++row,3,1);
 
     }
 

@@ -7,6 +7,8 @@ import IO.Unzip;
 
 import java.io.File;
 import java.io.IOException;
+
+import javafx.stage.Stage;
 import org.apache.log4j.*;
 
 
@@ -18,6 +20,7 @@ public class StartCalculations {
     private final String VERSION;
     private LogClass logClass;
     private long currtime_prior_execution;  // start time to get overall runtime
+    private boolean calculationsDone=true;
     private Logger LOG;
 
     public StartCalculations(String version){
@@ -131,6 +134,8 @@ public class StartCalculations {
                     inputfileNameWithOutExtension
             );
 
+            LOG.info("Output files generated");
+
 
             // print runtime
             long currtime_post_execution = System.currentTimeMillis();
@@ -147,6 +152,11 @@ public class StartCalculations {
         } else {
             LOG.warn("No reads processed. Can't create any output");
         }
+
+        calculationsDone=true;
+
+
+
 
     }
 
@@ -170,5 +180,9 @@ public class StartCalculations {
         }
 
         return path;
+    }
+
+    public boolean isCalculationsDone() {
+        return calculationsDone;
     }
 }

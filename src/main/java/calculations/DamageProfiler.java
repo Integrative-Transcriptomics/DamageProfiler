@@ -37,7 +37,6 @@ public class  DamageProfiler {
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
     private List<String> chrs;
-    private Map<String, byte[]> refMap;
 
     /**
      * constructor, set input and output filepaths
@@ -210,21 +209,21 @@ public class  DamageProfiler {
         } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
             // get reference corresponding to the record
             if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
-                for(CigarElement cigarelement : record.getCigar().getCigarElements()){
-                    if(cigarelement.getOperator().toString().equals("D")){
-                        containsDeletion=true;
-                    }
-                }
+//                for(CigarElement cigarelement : record.getCigar().getCigarElements()){
+//                    if(cigarelement.getOperator().toString().equals("D")){
+//                        containsDeletion=true;
+//                    }
+//                }
 
-                if(!containsDeletion){
+                //if(!containsDeletion){
 
                     byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
                     reference_aligned = new String(ref_seq, "UTF-8");
                     record_aligned = record.getReadString();
-                } else {
-                    LOG.info("Skipped record (Deletion): " + record.getReadName());
-                    deletionCounter++;
-                }
+                //} else {
+                //    LOG.info("Skipped record (Deletion): " + record.getReadName());
+                //    deletionCounter++;
+                //}
 
 
             } else {

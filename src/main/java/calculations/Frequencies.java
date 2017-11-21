@@ -949,7 +949,7 @@ public class Frequencies {
 
         }
 
-        System.out.println("Values normalized ....");
+        LOG.info("Values normalized ....");
     }
 
 
