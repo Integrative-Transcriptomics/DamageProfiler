@@ -21,6 +21,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 
 
 public class MainGuiFX extends Application {
@@ -126,7 +128,6 @@ public class MainGuiFX extends Application {
                     communicator.setyAxis(Double.parseDouble(textfield_y_axis_height.getText()));
                 } catch (Exception ex){
                     System.out.println("Height value not valid.");
-
                 }
             }
 
