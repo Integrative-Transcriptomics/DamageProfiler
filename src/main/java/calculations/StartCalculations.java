@@ -7,6 +7,7 @@ import IO.Unzip;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLOutput;
 
 import javafx.stage.Stage;
 import org.apache.log4j.*;
@@ -46,6 +47,7 @@ public class StartCalculations {
         logClass.updateLog4jConfiguration(outfolder + "/DamageProfiler.log");
         logClass.setUp();
         LOG = logClass.getLogger(this.getClass());
+        System.out.println("DamageProfiler v" + VERSION);
         LOG.info("DamageProfiler v" + VERSION);
 
 
