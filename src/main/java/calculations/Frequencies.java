@@ -244,12 +244,11 @@ public class Frequencies {
     private double[] count_T_G_5_norm;
     private double[] count_T_G_3_norm;
 
-    private char[] record_char;
-    private char[] record_char_reverse;
+    //private char[] record_char;
+    //private char[] record_char_reverse;
 
-    private char[] ref_char;
-    private char[] ref_char_reverse;
-
+    //private char[] ref_char;
+    //private char[] ref_char_reverse;
 
     private double countA_sample;
     private double countC_sample;
@@ -508,7 +507,6 @@ public class Frequencies {
         count_reverse_T_C_3 = new double[this.length];
         count_reverse_T_G_3 = new double[this.length];
 
-
         countA_ref = 0.0;
         countC_ref = 0.0;
         countG_ref = 0.0;
@@ -530,21 +528,27 @@ public class Frequencies {
      * @param record_aligned
      */
     public void count(SAMRecord record, String record_aligned, String ref_aligned){
-        // get sequence as char from 5' end
-        record_char = record_aligned.toCharArray();
-        ref_char = ref_aligned.toCharArray();
-        // count from 3' end
-        record_char_reverse = new StringBuilder(record_aligned).reverse().toString().toCharArray();
-        ref_char_reverse = new StringBuilder(ref_aligned).reverse().toString().toCharArray();
-
 
         // check whether record is plus of minus strand
         if(record.getReadNegativeStrandFlag()){
 
             // build reverse complement of read
-            String record_aligned_rev_comp = SequenceUtil.reverseComplement(record_aligned);
-            record_char = record_aligned_rev_comp.toCharArray();
-            record_char_reverse = new StringBuilder(record_aligned_rev_comp).reverse().toString().toCharArray();
+            char [] record_char =  SequenceUtil.reverseComplement(record_aligned).toCharArray();
+            char [] record_char_reverse = new char[record_char.length];
+            int i = record_char.length -1;
+            while (i >= 0) {
+              record_char_reverse[record_char.length - 1 - i] = record_char[i];
+              i--;
+            }
+
+            // build reverse complement of reference
+            char [] ref_char =  SequenceUtil.reverseComplement(ref_aligned).toCharArray();
+            char [] ref_char_reverse = new char[ref_char.length];
+            i = ref_char.length -1;
+            while (i >= 0) {
+              ref_char_reverse[ref_char.length - 1 - i] = ref_char[i];
+              i--;
+            }
 
             // count from 5'end
             countBaseFrequency(record_char, this.length, countA_reverse_5, countC_reverse_5,
@@ -552,12 +556,6 @@ public class Frequencies {
             // count from 3'end
             countBaseFrequency(record_char_reverse, this.length, countA_reverse_3, countC_reverse_3,
                     countG_reverse_3, countT_reverse_3, count0_reverse_3, countS_reverse_3);
-
-
-            // build reverse complement of reference
-            String ref_aligned_rev_comp = SequenceUtil.reverseComplement(ref_aligned);
-            ref_char = ref_aligned_rev_comp.toCharArray();
-            ref_char_reverse = new StringBuilder(ref_aligned_rev_comp).reverse().toString().toCharArray();
 
             // count from 5'end
             countBaseFrequency(ref_char, this.length, countA_ref_reverse_5, countC_ref_reverse_5,
@@ -569,13 +567,21 @@ public class Frequencies {
 
         } else {
 
-            // get sequence as char from 5' end
-            record_char = record_aligned.toCharArray();
-            ref_char = ref_aligned.toCharArray();
-            // count from 3' end
-            record_char_reverse = new StringBuilder(record_aligned).reverse().toString().toCharArray();
-            ref_char_reverse = new StringBuilder(ref_aligned).reverse().toString().toCharArray();
+            char [] record_char = record_aligned.toCharArray();
+            char [] record_char_reverse = new char[record_char.length];
+            int i = record_char.length -1;
+            while (i >= 0) {
+              record_char_reverse[record_char.length - 1 - i] = record_char[i];
+              i--;
+            }
 
+            char [] ref_char = ref_aligned.toCharArray();
+            char [] ref_char_reverse = new char[ref_char.length];
+            i = ref_char.length -1;
+            while (i >= 0) {
+              ref_char_reverse[ref_char.length - 1 - i] = ref_char[i];
+              i--;
+            }
 
             // read
             // count from 5'end
@@ -607,24 +613,20 @@ public class Frequencies {
     public void calculateMisincorporations(SAMRecord record, String record_aligned, String reference_aligned) throws Exception{
 
         // count from 3' end
-        record_char_reverse = new StringBuilder(record_aligned).reverse().toString().toCharArray();
 
 
         // get 5'end up to set threshold
         char[] rec_char_5_length = record_aligned.toCharArray();
         char[] ref_char_5_length = reference_aligned.toCharArray();
 
+
         // get 3'end up to set threshold
         char[] rec_char_3_length = new StringBuilder(record_aligned).reverse().toString().toCharArray();
         char[] ref_char_3_length = new StringBuilder(reference_aligned).reverse().toString().toCharArray();
 
-        // init pattern dict
-        List<String> mis_positions = new LinkedList<>();
-
-
         if(!record.getReadNegativeStrandFlag()){
             // forward strand
-            comparePos(rec_char_3_length, ref_char_3_length, mis_positions,
+            comparePos(rec_char_3_length, ref_char_3_length,
                     // count misincorporations
                     this.count_forward_A_C_3, this.count_forward_A_G_3, this.count_forward_A_T_3,
                     this.count_forward_C_A_3, this.count_forward_C_G_3, this.count_forward_C_T_3,
@@ -635,7 +637,7 @@ public class Frequencies {
                     this.count_forward_0_A_3, this.count_forward_0_C_3, this.count_forward_0_G_3,
                     this.count_forward_0_T_3);
 
-            comparePos(rec_char_5_length, ref_char_5_length, mis_positions,
+            comparePos(rec_char_5_length, ref_char_5_length,
                     // count misincorporations
                     this.count_forward_A_C_5, this.count_forward_A_G_5, this.count_forward_A_T_5,
                     this.count_forward_C_A_5, this.count_forward_C_G_5, this.count_forward_C_T_5,
@@ -661,7 +663,7 @@ public class Frequencies {
 
 
 
-            comparePos(rec_char_3_length, ref_char_3_length, mis_positions,
+            comparePos(rec_char_3_length, ref_char_3_length,
                     // count misincorporations
                     this.count_reverse_A_C_3, this.count_reverse_A_G_3, this.count_reverse_A_T_3,
                     this.count_reverse_C_A_3, this.count_reverse_C_G_3, this.count_reverse_C_T_3,
@@ -671,7 +673,7 @@ public class Frequencies {
                     this.count_reverse_T_0_3,
                     this.count_reverse_0_A_3, this.count_reverse_0_C_3, this.count_reverse_0_G_3,
                     this.count_reverse_0_T_3);
-            comparePos(rec_char_5_length, ref_char_5_length, mis_positions,
+            comparePos(rec_char_5_length, ref_char_5_length,
                     // count misincorporations
                     this.count_reverse_A_C_5, this.count_reverse_A_G_5, this.count_reverse_A_T_5,
                     this.count_reverse_C_A_5, this.count_reverse_C_G_5, this.count_reverse_C_T_5,
@@ -681,6 +683,7 @@ public class Frequencies {
                     this.count_reverse_T_0_5,
                     this.count_reverse_0_A_5, this.count_reverse_0_C_5, this.count_reverse_0_G_5,
                     this.count_reverse_0_T_5);
+
 
         }
 
@@ -704,7 +707,7 @@ public class Frequencies {
      * @param t_c
      * @param t_g
      */
-    private void comparePos(char[] seq, char[] ref, List<String> mis_positions, double[] a_c, double[] a_g, double[] a_t,
+    private void comparePos(char[] seq, char[] ref, double[] a_c, double[] a_g, double[] a_t,
                             double[] c_a, double[] c_g, double[] c_t, double[] g_a, double[] g_c, double[] g_t,
                             double[] t_a, double[] t_c, double[] t_g, double[] a_o, double[] c_o, double[] g_o,
                             double[] t_o, double[] o_a, double[] o_c, double[] o_g, double[] o_t){
@@ -746,7 +749,6 @@ public class Frequencies {
                             break;
                         case 'T' :
                             c_t[i]++;
-                            mis_positions.add(i+"");
                             break;
                         case '-' :
                             c_o[i]++;
@@ -759,7 +761,6 @@ public class Frequencies {
                     switch(current_record){
                         case 'A' :
                             g_a[i]++;
-                            mis_positions.add(i+"");
                             break;
                         case 'C' :
                             g_c[i]++;
@@ -810,7 +811,6 @@ public class Frequencies {
         }
         this.length = 100;
     }
-
 
     /**
      * count base frequency of sequence
@@ -1777,5 +1777,3 @@ public class Frequencies {
         return countS_reverse_3;
     }
 }
-
-
