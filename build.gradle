@@ -1,5 +1,5 @@
 group 'com.uni-tuebingen.de.it.eager.damageprofiler'
-version '0.3.10'
+version '0.3.11'
 
 buildscript {
     repositories {

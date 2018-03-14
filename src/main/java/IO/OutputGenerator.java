@@ -30,7 +30,8 @@ import java.io.IOException;
  */
 public class OutputGenerator {
 
-    private final List<String> chrs;
+    //private final List<String> chrs;
+    private int numberOfUsedReads;
     private final double height;
     private final Logger LOG;
     private String outpath;
@@ -50,7 +51,8 @@ public class OutputGenerator {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
-        this.chrs = damageProfiler.getChrs();
+        //this.chrs = damageProfiler.getChrs();
+        this.numberOfUsedReads = damageProfiler.getNumberOfUsedReads();
         this.damageProfiler = damageProfiler;
         this.threshold = threshold;
         this.length = length;
@@ -62,9 +64,10 @@ public class OutputGenerator {
             this.specie = specie;
         }
 
-        if(this.length > this.chrs.size()){
-            this.length = this.chrs.size();
-        }
+        // What was this for ??
+        //if(this.length > this.chrs.size(){
+        //    this.length = this.chrs.size();
+        //}
 
 
     }
@@ -255,8 +258,8 @@ public class OutputGenerator {
             double sum=frequencies.getCountA_ref_forward_3()[i]+frequencies.getCountC_ref_forward_3()[i]+
                     frequencies.getCountG_ref_forward_3()[i]+frequencies.getCountT_ref_forward_3()[i];
 
-            if(chrs.size()>0){
-                freq_file_ref.write(chrs.get(i)+"\t3p\t+\t"+(i+1)+"\t"
+            if(this.numberOfUsedReads>0){
+                freq_file_ref.write("fwd\t3p\t+\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
                         +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
                         +sum+"\t"
@@ -280,8 +283,8 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_reverse_3()[i]+frequencies.getCountC_ref_reverse_3()[i]+
                     frequencies.getCountG_ref_reverse_3()[i]+frequencies.getCountT_ref_reverse_3()[i];
 
-            if(chrs.size()>0){
-                freq_file_ref.write(chrs.get(i)+"\t3p\t-\t"+(i+1)+"\t"
+            if(this.numberOfUsedReads>0){
+                freq_file_ref.write("rev\t3p\t-\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
                         +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
                         +sum+"\t"
@@ -306,8 +309,8 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_forward_5()[i]+frequencies.getCountC_ref_forward_5()[i]+
                     frequencies.getCountG_ref_forward_5()[i]+frequencies.getCountT_ref_forward_5()[i];
 
-            if(chrs.size()>0){
-                freq_file_ref.write(chrs.get(i)+"\t5p\t+\t"+(i+1)+"\t"
+            if(this.numberOfUsedReads>0){
+                freq_file_ref.write("fwd\t5p\t+\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_forward_5()[i]+"\t"+frequencies.getCountC_ref_forward_5()[i]+"\t"
                         +frequencies.getCountG_ref_forward_5()[i]+"\t"+frequencies.getCountT_ref_forward_5()[i]+"\t"
                         +sum+"\t"
@@ -332,8 +335,8 @@ public class OutputGenerator {
             double sum = frequencies.getCountA_ref_reverse_5()[i]+frequencies.getCountC_ref_reverse_5()[i]+
                     frequencies.getCountG_ref_reverse_5()[i]+frequencies.getCountT_ref_reverse_5()[i];
 
-            if(chrs.size()>0){
-                freq_file_ref.write(chrs.get(i)+"\t5p\t-\t"+(i+1)+"\t"
+            if(this.numberOfUsedReads>0){
+                freq_file_ref.write("rev\t5p\t-\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_reverse_5()[i]+"\t"+frequencies.getCountC_ref_reverse_5()[i]+"\t"
                         +frequencies.getCountG_ref_reverse_5()[i]+"\t"+frequencies.getCountT_ref_reverse_5()[i]+"\t"
                         +sum+"\t"

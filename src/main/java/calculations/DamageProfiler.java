@@ -36,7 +36,7 @@ public class  DamageProfiler {
     private FastACacher cache;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
-    private List<String> chrs;
+    //private List<String> chrs;
 
     /**
      * constructor, set input and output filepaths
@@ -62,7 +62,7 @@ public class  DamageProfiler {
         this.lengthDistribution = new LengthDistribution(this.LOG);
         this.lengthDistribution.init();
         this.identity = new ArrayList();
-        this.chrs = new ArrayList<>();
+        //this.chrs = new ArrayList<>();
         this.specie = specie;
         useful_functions = new Functions(this.LOG);
 
@@ -164,7 +164,7 @@ public class  DamageProfiler {
 
     private void processRecord(SAMRecord record) throws Exception{
         numberOfUsedReads++;
-        chrs.add(record.getReferenceName());
+        //chrs.add(record.getReferenceName());
 
         /*
             If MD value is set, use it to reconstruct reference
@@ -289,5 +289,5 @@ public class  DamageProfiler {
         return numberOfAllReads;
     }
     public ArrayList<Double> getIdentity() { return identity; }
-    public List<String> getChrs() { return chrs; }
+    //public List<String> getChrs() { return chrs; }
 }
