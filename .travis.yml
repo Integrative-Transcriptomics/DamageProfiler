@@ -1,0 +1,15 @@
+language: java
+sudo: false
+jdk:
+- oraclejdk8
+script: gradle build
+env:
+- version=0.3.11
+deploy:
+  provider: releases
+  api_key:
+    secure: uw5/0KF8F/Hve8WgCy45AsKxjUl9rYMJzjMLk6SI4BRvJcxFfJqOtE/NRzdn1AJhKlYfJF72fLenf1VI0DCAsJom1o9q68xKtxNXPVvHgjKhfQjX5VLwO2lIK/L5EwFRirtp+Ey1Fi/O3Tqxxg7MR4NSHKoYlZZ4g5L0d5cKObPOup4T8UU7enTBVA+RhlpHPD2T/TwjSzA2eHc7sU+C53WVJyW9aAKY6fIJS0dk6/WdpFNMns1fKBM/rvVXz5XGCmTy8TS9U2vR4de3gbrCrLhvXWVvg4kA2GDa6xEnPBnVqnVf1UHnZHt6vqv4r0MzIVaIgynd+NkqpLszH8/+tY50nHV9dC5Z6O4KC2eVqi0nthBYJxhRti9R9fwCV9/TyPE6ThBGa53CiIAaDTrAHIsIWL7EUXIU+EiOAZiYEgc2CWBBvVqIrUuuLXCU1XTZLpt3klamelsx7pUlCpj6QlUl1QeF1c4KZBteUGi5Y7xlssdBMZ0uQjYqYLwsQ0aySMw0TQl8nPcxR/95NKcGQt1uadskbLhpGb+8519UmrGOEuVIToN+XvLkosmajSzbTnlKiPVTE9K/j5tLy1/Q68VYkVcJjccVUmNPKyF+8sI5F9F6oRUY1LXPd6sm4h69T8RPKS43MyECa9lOQixOl+9XXhDpOmXFm1VNBm4akWA=
+  file: DamageProfiler-0.3.10.jar
+  skip_cleanup: true
+  on:
+    repo: Integrative-Transcriptomics/DamageProfiler
