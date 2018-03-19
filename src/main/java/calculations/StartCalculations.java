@@ -106,9 +106,10 @@ public class StartCalculations {
                     threshold,
                     length,
                     height,
+                    input,
                     LOG
             );
-            outputGenerator.writeLengthDistribution(input);
+            outputGenerator.writeLengthDistribution();
             outputGenerator.writeDamageFiles(
                     damageProfiler.getFrequencies().getCount_G_A_3_norm(),
                     damageProfiler.getFrequencies().getCount_C_T_5_norm()

@@ -42,11 +42,11 @@ public class OutputGenerator {
     private String specie;
     private int threshold;
     private int length;
-
+    private String input;
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
-                           int length, double height, Logger LOG)
+                           int length, double height, String input, Logger LOG)
             throws IOException{
 
         this.outpath = outputFolder;
@@ -57,6 +57,7 @@ public class OutputGenerator {
         this.threshold = threshold;
         this.length = length;
         this.height = height;
+        this.input = input;
         this.LOG = LOG;
 
         // set tax id if specified by user
@@ -76,10 +77,10 @@ public class OutputGenerator {
     /**
      * create tab-separated txt file with all read length, sorted according strand direction
      *
-     * @param input
      * @throws IOException
      */
-    public void writeLengthDistribution(String input) throws IOException{
+    public void writeLengthDistribution() throws IOException{
+
 
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
 
@@ -88,6 +89,7 @@ public class OutputGenerator {
 
         lgdist.write("# table produced by calculations.DamageProfiler\n");
         lgdist.write("# using mapped file " + input + "\n");
+        lgdist.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
         lgdist.write("# Std: strand of reads\n");
         lgdist.write("Std\tLength\tOccurrences\n");
 
@@ -132,6 +134,10 @@ public class OutputGenerator {
     public void writeDNAcomp_genome(Frequencies frequencies) throws IOException{
 
         BufferedWriter file_dna_comp = new BufferedWriter(new FileWriter(outpath + File.separator + "DNA_comp_genome.txt"));
+
+        file_dna_comp.write("# table produced by calculations.DamageProfiler\n");
+        file_dna_comp.write("# using mapped file " + input + "\n");
+        file_dna_comp.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
         file_dna_comp.write("DNA base frequencies Sample\n");
         file_dna_comp.write("A\tC\tG\tT\n");
         double totalSample = frequencies.getCountAllBasesSample();
@@ -176,6 +182,10 @@ public class OutputGenerator {
                ....
 
           */
+
+        freq_file_sample.write("# table produced by calculations.DamageProfiler\n");
+        freq_file_sample.write("# using mapped file " + input + "\n");
+        freq_file_sample.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
         // write header
         freq_file_sample.write("End\tStd\tPos\tA\tC\tG\tT\tTotal\n");
@@ -233,6 +243,11 @@ public class OutputGenerator {
 
     public void writeFrequenciesReference(Frequencies frequencies) throws IOException{
         BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "misincorporation.txt"));
+
+
+        freq_file_ref.write("# table produced by calculations.DamageProfiler\n");
+        freq_file_ref.write("# using mapped file " + input + "\n");
+        freq_file_ref.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
         /*
          fill now line per line
@@ -422,8 +437,19 @@ public class OutputGenerator {
      */
     public void writeDamageFiles(double[] gToA_reverse, double[] cToT) throws IOException{
 
+
         BufferedWriter writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
         BufferedWriter writer5Prime = new BufferedWriter(new FileWriter(this.outpath + "/5pCtoT_freq.txt"));
+
+
+        writer3Prime.write("# table produced by calculations.DamageProfiler\n");
+        writer3Prime.write("# using mapped file " + input + "\n");
+        writer3Prime.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
+
+
+        writer5Prime.write("# table produced by calculations.DamageProfiler\n");
+        writer5Prime.write("# using mapped file " + input + "\n");
+        writer5Prime.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
         writeDamagePattern("pos\t5pC>T\n", getSubArray(cToT, this.threshold), writer5Prime);
         writeDamagePattern("pos\t3pG>A\n", getSubArray(gToA_reverse, this.threshold), writer3Prime);
@@ -456,6 +482,14 @@ public class OutputGenerator {
 
         BufferedWriter writer5PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/5p_freq_misincorporations.txt"));
         BufferedWriter writer3PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/3p_freq_misincorporations.txt"));
+
+        writer5PrimeAll.write("# table produced by calculations.DamageProfiler\n");
+        writer5PrimeAll.write("# using mapped file " + input + "\n");
+        writer5PrimeAll.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
+
+        writer3PrimeAll.write("# table produced by calculations.DamageProfiler\n");
+        writer3PrimeAll.write("# using mapped file " + input + "\n");
+        writer3PrimeAll.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
 
            /*
