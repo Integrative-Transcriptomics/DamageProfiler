@@ -12,4 +12,5 @@ deploy:
   file: build/libs/DamageProfiler-0.3.11.jar
   skip_cleanup: true
   on:
+    all_branches: true
     repo: Integrative-Transcriptomics/DamageProfiler
