@@ -42,9 +42,21 @@ public class StartCalculations {
         double height = c.getyAxis();
         boolean use_only_merged_reads = !c.isUse_merged_and_mapped_reads();
 
+        String inputfileNameWithOutExtension;
+        if(c.getTitle_plots() == null ){
+            inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+        } else {
+            inputfileNameWithOutExtension = c.getTitle_plots();
+        }
+
+        String output_folder = createOutputFolder(
+                outfolder,
+                inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length-1]);
+
+
         // init Logger
         logClass = new LogClass();
-        logClass.updateLog4jConfiguration(outfolder + "/DamageProfiler.log");
+        logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
         logClass.setUp();
         LOG = logClass.getLogger(this.getClass());
         System.out.println("DamageProfiler v" + VERSION);
@@ -60,22 +72,16 @@ public class StartCalculations {
         // create new output folder
         File file = new File(input);
         // log settings
-        LOG.info("Analysis of file :" + file + "\n"
-                + "Output folder :" + outfolder + "\n"
-                + "Reference (optional) :" + reference + "\n"
-                + "Reference (optional) :" + reference + "\n"
-                + "Specie (optional):" + rname + "\n"
-                + "Length: " + length + "\n"
-                + "Threshold: " + threshold + "\n"
-                + "Height yaxis: " + height);
+        LOG.info("Analysis of file (-i):" + file + "\n"
+                + "Output folder (-o):" + outfolder + "\n"
+                + "Reference (-r, optional) :" + reference + "\n"
+                + "Specie (-s, optional):" + rname + "\n"
+                + "Length (-l): " + length + "\n"
+                + "Threshold (-t): " + threshold + "\n"
+                + "Height yaxis (-yaxis): " + height);
 
-        String inputfileNameWithOutExtension;
-        if(c.getTitle_plots() == null ){
-            inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-        } else {
-            inputfileNameWithOutExtension = c.getTitle_plots();
-        }
-        String output_folder = createOutputFolder(outfolder);
+
+
 
         // create variables for tax id and gi ID if specie is set
         if(rname != null){
@@ -83,7 +89,9 @@ public class StartCalculations {
             SpecieHandler specieHandler = new SpecieHandler(gi, rname, LOG);
             specieHandler.getSpecie();
             specie_name = specieHandler.getSpecie_name();
-            output_folder = createOutputFolder(output_folder);
+            output_folder = createOutputFolder(
+                    output_folder,
+                    specie_name);
         }
 
         // start DamageProfiler
@@ -133,7 +141,7 @@ public class StartCalculations {
             );
             outputGenerator.plotIdentitiyHistogram(
                     damageProfiler.getIdentity(),
-                    "Identitiy distribution",
+                    "Identity distribution",
                     inputfileNameWithOutExtension
             );
 
@@ -172,18 +180,19 @@ public class StartCalculations {
      * @param path
      * @throws IOException
      */
-    private static String createOutputFolder(String path) throws IOException {
+    private static String createOutputFolder(String path, String inputfileNameWithOutExtension) {
 
         // use Pattern.quote(File.separator) to split file path
-        File f = new File(path);
+        File f = new File(path + File.separator + inputfileNameWithOutExtension);
 
         // create new output directory
         if (!f.isDirectory()) {
             f.mkdirs();
         }
 
-        return path;
+        return f.getAbsolutePath();
     }
+
 
     public boolean isCalculationsDone() {
         return calculationsDone;

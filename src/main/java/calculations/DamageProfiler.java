@@ -6,6 +6,7 @@ import htsjdk.samtools.*;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
+import picard.sam.ViewSam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +37,6 @@ public class  DamageProfiler {
     private FastACacher cache;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
-    //private List<String> chrs;
 
     /**
      * constructor, set input and output filepaths
@@ -46,10 +46,10 @@ public class  DamageProfiler {
      * @throws FileNotFoundException
      * @throws UnsupportedEncodingException
      */
-    public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG)
-            throws FileNotFoundException, UnsupportedEncodingException {
+    public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG) {
 
         // read bam/sam file
+
         inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                 validationStringency(ValidationStringency.LENIENT).open(input);
         numberOfUsedReads = 0;
@@ -62,7 +62,6 @@ public class  DamageProfiler {
         this.lengthDistribution = new LengthDistribution(this.LOG);
         this.lengthDistribution.init();
         this.identity = new ArrayList();
-        //this.chrs = new ArrayList<>();
         this.specie = specie;
         useful_functions = new Functions(this.LOG);
 

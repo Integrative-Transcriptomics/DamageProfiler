@@ -838,7 +838,8 @@ public class OutputGenerator {
         double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / (double) damageProfiler.getNumberOfAllReads();
 
         // draw text
-        String title = file;
+        String[] splitted = file.split("/");
+        String title = splitted[splitted.length-1];
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         DecimalFormat df = (DecimalFormat)nf;
         String read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +

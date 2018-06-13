@@ -85,6 +85,7 @@ public class SpecieHandler {
         DOMParser domparser = new DOMParser(LOG);
         species = domparser.parse("ncbiID.xml");
 
+
         return species;
     }
 
