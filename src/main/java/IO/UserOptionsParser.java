@@ -52,9 +52,14 @@ public class UserOptionsParser {
                 .withDescription("RNAME flag SAM record (Reference sequence name)")
                 .hasArg()
                 .create("s"));
+        options.addOption(OptionBuilder.withLongOpt("specieslist file")
+                .withArgName("SPECIES LIST")
+                .withDescription("List with species for which damage profile has to be calculated.")
+                .hasArg()
+                .create("sf"));
         options.addOption(OptionBuilder.withLongOpt("length")
                 .withArgName("LENGTH")
-                .withDescription("Number of bases which are considered for frequency computations")
+                .withDescription("Number of bases which are considered for frequency computations.")
                 .hasArg()
                 .create("l"));
 
@@ -182,6 +187,9 @@ public class UserOptionsParser {
 
             if (cmd.hasOption('s')) {
                 communicator.setRname(cmd.getOptionValue('s'));
+            }
+            if (cmd.hasOption("sf")) {
+                communicator.setSpeciesListFile(cmd.getOptionValue("sf"));
             }
             if (cmd.hasOption('l')) {
                 communicator.setLength(Integer.parseInt(cmd.getOptionValue('l')));

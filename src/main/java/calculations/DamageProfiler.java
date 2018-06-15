@@ -6,7 +6,6 @@ import htsjdk.samtools.*;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
-import picard.sam.ViewSam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,13 +19,10 @@ import java.util.*;
  */
 public class  DamageProfiler {
 
-    private final SamReader inputSam;
-    private final Functions useful_functions;
-    private final String specie;
-    private final Logger LOG;
-    private int matchCounter;
-    private int deletionCounter;
-    private boolean containsDeletion;
+    private SamReader inputSam=null;
+    private Functions useful_functions=null;
+    private String specie=null;
+    private Logger LOG=null;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
     private int numberOfAllReads;
@@ -49,25 +45,29 @@ public class  DamageProfiler {
     public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG) {
 
         // read bam/sam file
+        try{
 
-        inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                validationStringency(ValidationStringency.LENIENT).open(input);
-        numberOfUsedReads = 0;
-        numberOfAllReads = 0;
-        this.LOG = LOG;
-        this.threshold = threshold;
-        this.length = length;
-        this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
-        this.reference = reference;
-        this.lengthDistribution = new LengthDistribution(this.LOG);
-        this.lengthDistribution.init();
-        this.identity = new ArrayList();
-        this.specie = specie;
-        useful_functions = new Functions(this.LOG);
+            inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                    validationStringency(ValidationStringency.LENIENT).open(input);
+            numberOfUsedReads = 0;
+            numberOfAllReads = 0;
+            this.LOG = LOG;
+            this.threshold = threshold;
+            this.length = length;
+            this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
+            this.reference = reference;
+            this.lengthDistribution = new LengthDistribution(this.LOG);
+            this.lengthDistribution.init();
+            this.identity = new ArrayList();
+            this.specie = specie;
+            useful_functions = new Functions(this.LOG);
 
-        this.containsDeletion = false;
-        this.deletionCounter = 0;
-        this.matchCounter = 0;
+        } catch (Exception e){
+            System.err.println("Invalid SAM/BAM file or file not found. Please check your file.");
+            System.exit(0);
+        }
+
+
 
     }
 
@@ -138,9 +138,7 @@ public class  DamageProfiler {
         frequencies.normalizeValues();
 
         LOG.info("-------------------");
-        LOG.info("# Skipped records (Deletion): " + deletionCounter);
-        LOG.info("# Skipped records (length does not match): " + matchCounter);
-        LOG.info("# reads used for damage calculation: " + (numberOfUsedReads - deletionCounter - matchCounter));
+        LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
 
 
         return seq_name;
@@ -163,7 +161,6 @@ public class  DamageProfiler {
 
     private void processRecord(SAMRecord record) throws Exception{
         numberOfUsedReads++;
-        //chrs.add(record.getReferenceName());
 
         /*
             If MD value is set, use it to reconstruct reference
@@ -208,26 +205,13 @@ public class  DamageProfiler {
         } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
             // get reference corresponding to the record
             if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
-//                for(CigarElement cigarelement : record.getCigar().getCigarElements()){
-//                    if(cigarelement.getOperator().toString().equals("D")){
-//                        containsDeletion=true;
-//                    }
-//                }
-
-                //if(!containsDeletion){
 
                     byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
                     reference_aligned = new String(ref_seq, "UTF-8");
                     record_aligned = record.getReadString();
-                //} else {
-                //    LOG.info("Skipped record (Deletion): " + record.getReadName());
-                //    deletionCounter++;
-                //}
-
 
             } else {
                 LOG.info("Skipped record (length does not match): " + record.getReadName());
-                matchCounter++;
             }
 
         }
@@ -288,5 +272,4 @@ public class  DamageProfiler {
         return numberOfAllReads;
     }
     public ArrayList<Double> getIdentity() { return identity; }
-    //public List<String> getChrs() { return chrs; }
 }

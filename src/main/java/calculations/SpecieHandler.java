@@ -46,8 +46,6 @@ public class SpecieHandler {
             specie_name = getSpeciesByID(Integer.parseInt(tax));
             specie_name = specie_name.replaceAll(" ", "_");
 
-
-
         }
     }
 
