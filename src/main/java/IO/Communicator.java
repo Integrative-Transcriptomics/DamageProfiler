@@ -9,6 +9,7 @@ public class Communicator {
     private String input;
     private String reference="";
     private String outfolder;
+    private String speciesListFile = null;
 
     // damage calculation
     private int threshold = 25;
@@ -18,7 +19,6 @@ public class Communicator {
 
     // specie filtering
     private String rname = null;
-    private String specie_name;
 
     // plot settings
     private String title_plots;
@@ -97,14 +97,6 @@ public class Communicator {
         this.rname = rname;
     }
 
-    public String getSpecie_name() {
-        return specie_name;
-    }
-
-    public void setSpecie_name(String specie_name) {
-        this.specie_name = specie_name;
-    }
-
     public boolean isUse_merged_and_mapped_reads() {
         return use_merged_and_mapped_reads;
     }
@@ -129,7 +121,16 @@ public class Communicator {
         this.title_plots = title_plots;
     }
 
-    //    public boolean isPerform_rescaling() {
+    public String getSpeciesListFile() {
+        return speciesListFile;
+    }
+
+    public void setSpeciesListFile(String speciesListFile) {
+        this.speciesListFile = speciesListFile;
+    }
+
+
+//    public boolean isPerform_rescaling() {
 //        return perform_rescaling;
 //    }
 //

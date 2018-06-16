@@ -2,6 +2,7 @@ import GUI.MainGuiFX;
 import IO.*;
 import calculations.StartCalculations;
 import javafx.application.Application;
+import org.apache.log4j.Logger;
 
 /**
  * Created by neukamm on 06.10.2016.
@@ -9,6 +10,9 @@ import javafx.application.Application;
 public class RunDamageProfiler {
 
     private static final String VERSION = "0.3.12";
+    private static LogClass logClass;
+    private static Logger LOG;
+
 
 
     @SuppressWarnings("static-access")
@@ -33,6 +37,7 @@ public class RunDamageProfiler {
             Communicator c = new Communicator();
             StartCalculations starter = new StartCalculations(VERSION);
             UserOptionsParser userOptions = new UserOptionsParser(args, c);
+
             starter.start(c);
 
         }

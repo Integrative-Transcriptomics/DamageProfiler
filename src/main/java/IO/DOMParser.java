@@ -5,13 +5,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by neukamm on 06.10.2016.
@@ -28,7 +25,7 @@ public class DOMParser {
         this.LOG = LOG;
 
     }
-    public String parse(String filepathXML) throws ParserConfigurationException, SAXException, IOException {
+    public String parse(String filepathXML) {
 
         String species = null;
         try {
