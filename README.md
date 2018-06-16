@@ -50,7 +50,7 @@ The output folder\
 **-r,--reference <REFERENCE>**\
 The reference file\
 \
-**-s,--specie <SPECIE>**
+**-s,--specie <SPECIE>**\
 RNAME flag SAM record (Reference sequence name). This is a functionality for MALT output files and allows to create damage profiles 
 without prefiltering the sam file. Please make sure that you run MALT without *--sparseSAM* option. This will create a sam file with is not readable. 
 The *-s* parameter needs to be the same as the record reference. You can get this information via MEGAN - Alignment viewer. \
