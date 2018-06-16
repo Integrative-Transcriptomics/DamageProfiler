@@ -5,7 +5,6 @@ import IO.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.*;
@@ -42,8 +41,8 @@ public class StartCalculations {
 
 
         SpeciesListParser speciesListParser = new SpeciesListParser(
-                c.getRname(),
-                c.getSpeciesListFile()
+                c.getSpeciesListFile(),
+                LOG
         );
 
         List<String> species_name_list = new ArrayList<>();
@@ -68,8 +67,6 @@ public class StartCalculations {
                 String specie_input_string = rnameList.get(i);
                 String specie_name = species_name_list.get(i);
 
-                System.out.println("damage profile for species " + specie_name);
-
                 String inputfileNameWithOutExtension;
                 if (c.getTitle_plots() == null) {
                     inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
@@ -87,9 +84,12 @@ public class StartCalculations {
                 logClass = new LogClass();
                 logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler_" + ref + "_" + specie_name +".log");
                 logClass.setUp();
+
                 LOG = logClass.getLogger(this.getClass());
                 System.out.println("DamageProfiler v" + VERSION);
                 LOG.info("DamageProfiler v" + VERSION);
+                LOG.info("Calculate damage profile for species " + specie_name);
+
 
 
                 // decompress input file if necessary
@@ -105,6 +105,7 @@ public class StartCalculations {
                         + "Output folder (-o):" + output_folder + "\n"
                         + "Reference (-r, optional) :" + reference + "\n"
                         + "Specie (-s, optional):" + specie_input_string + "\n"
+                        + "Species list (-sf, optional):" + c.getSpeciesListFile() + "\n"
                         + "Length (-l): " + length + "\n"
                         + "Threshold (-t): " + threshold + "\n"
                         + "Height yaxis (-yaxis): " + height);
@@ -204,6 +205,7 @@ public class StartCalculations {
                         + "Output folder (-o):" + output_folder + "\n"
                         + "Reference (-r, optional) :" + reference + "\n"
                         + "Specie (-s, optional):" + rnameList + "\n"
+                        + "Species list (-sf, optional):" + c.getSpeciesListFile() + "\n"
                         + "Length (-l): " + length + "\n"
                         + "Threshold (-t): " + threshold + "\n"
                         + "Height yaxis (-yaxis): " + height);
@@ -218,14 +220,21 @@ public class StartCalculations {
                         null,
                         LOG
                 );
+
                 damageProfiler.extractSAMRecords(use_only_merged_reads);
+
+                speciesListParser.setLOG(LOG);
 
                 if (damageProfiler.getNumberOfUsedReads() != 0) {
                     // generate output files if more that 0 reads were processed
+                    String spe = null;
+                    if(damageProfiler.getSpecie_ref_for_output().size() == 1){
+                        spe = speciesListParser.getSingleSpecie(damageProfiler.getSpecie_ref_for_output().iterator().next());
+                    }
                     OutputGenerator outputGenerator = new OutputGenerator(
                             output_folder,
                             damageProfiler,
-                            null,
+                            spe,
                             threshold,
                             length,
                             height,

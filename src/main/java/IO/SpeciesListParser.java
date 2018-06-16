@@ -1,9 +1,8 @@
 package IO;
 
 import calculations.SpecieHandler;
-import org.xml.sax.SAXException;
+import org.apache.log4j.Logger;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,19 +13,20 @@ import java.util.List;
 public class SpeciesListParser {
 
 
+    private Logger LOG;
     private String speciesFile;
+    private SpecieHandler specieHandler;
 
-    public SpeciesListParser(String specie_name, String speciesListFile) {
+    public SpeciesListParser(String speciesListFile, Logger LOG) {
         this.speciesFile = speciesListFile;
+        this.LOG = LOG;
+        specieHandler = new SpecieHandler();
     }
 
 
-    public String getSingleSpecie(String rname) throws InterruptedException, SAXException, ParserConfigurationException, IOException {
+    public String getSingleSpecie(String rname) throws IOException {
 
-        String gi = "";
-        SpecieHandler specieHandler = new SpecieHandler(gi, rname, null);
-        specieHandler.getSpecie();
-
+        specieHandler.getSpecie(rname);
         return specieHandler.getSpecie_name();
     }
 
@@ -59,4 +59,10 @@ public class SpeciesListParser {
         return null;
 
     }
+
+    public void setLOG(Logger LOG) {
+        this.LOG = LOG;
+        specieHandler.setLOG(LOG);
+    }
 }
+

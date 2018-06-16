@@ -33,6 +33,7 @@ public class  DamageProfiler {
     private FastACacher cache;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
+    private Set<String> specie_ref_for_output_list;
 
     /**
      * constructor, set input and output filepaths
@@ -45,30 +46,34 @@ public class  DamageProfiler {
     public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG) {
 
         // read bam/sam file
-        try{
-
-            inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                    validationStringency(ValidationStringency.LENIENT).open(input);
-            numberOfUsedReads = 0;
-            numberOfAllReads = 0;
-            this.LOG = LOG;
-            this.threshold = threshold;
-            this.length = length;
-            this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
-            this.reference = reference;
-            this.lengthDistribution = new LengthDistribution(this.LOG);
-            this.lengthDistribution.init();
-            this.identity = new ArrayList();
-            this.specie = specie;
-            useful_functions = new Functions(this.LOG);
-
-        } catch (Exception e){
-            System.err.println("Invalid SAM/BAM file or file not found. Please check your file.");
+        if (!input.exists()){
+            System.err.println("Invalid SAM/BAM file not found. Please check your file path.\nInput: " +
+                    input.getAbsolutePath());
             System.exit(0);
+        } else {
+            try{
+                specie_ref_for_output_list = new HashSet<>();
+
+                inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                        validationStringency(ValidationStringency.LENIENT).open(input);
+                numberOfUsedReads = 0;
+                numberOfAllReads = 0;
+                this.LOG = LOG;
+                this.threshold = threshold;
+                this.length = length;
+                this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
+                this.reference = reference;
+                this.lengthDistribution = new LengthDistribution(this.LOG);
+                this.lengthDistribution.init();
+                this.identity = new ArrayList();
+                this.specie = specie;
+                useful_functions = new Functions(this.LOG);
+
+            } catch (Exception e){
+                System.err.println("Invalid SAM/BAM file. Please check your file.");
+                System.exit(0);
+            }
         }
-
-
-
     }
 
 
@@ -88,7 +93,7 @@ public class  DamageProfiler {
 
         for(SAMRecord record : inputSam) {
             if (this.specie == null) {
-                String chr = record.getReferenceName();
+                specie_ref_for_output_list.add(record.getReferenceName());
                 numberOfAllReads++;
                 if (use_only_merged_reads) {
                     // get only mapped and merged reads
@@ -176,7 +181,7 @@ public class  DamageProfiler {
         if(record.getStringAttribute(SAMTag.MD.name()) == null && this.reference == null){
 
             LOG.error("SAM/BAM file has no MD tag. Please specify reference file ");
-            System.exit(-1);
+            System.exit(0);
 
         } else if (record.getStringAttribute(SAMTag.MD.name()) == null){
 
@@ -272,4 +277,9 @@ public class  DamageProfiler {
         return numberOfAllReads;
     }
     public ArrayList<Double> getIdentity() { return identity; }
+
+    public Set<String> getSpecie_ref_for_output() {
+        return specie_ref_for_output_list;
+    }
+
 }

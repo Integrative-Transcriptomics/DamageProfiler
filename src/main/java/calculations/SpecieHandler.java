@@ -1,11 +1,9 @@
 package calculations;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
 import IO.DOMParser;
 import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -13,19 +11,15 @@ import org.xml.sax.SAXException;
  */
 public class SpecieHandler {
 
-    private final Logger LOG;
+    private Logger LOG;
     private String gi;
-    private String rname;
     private String specie_name;
 
-    public SpecieHandler(String gi, String rname, Logger LOG){
-        this.LOG = LOG;
-        this.gi = gi;
-        this.rname = rname;
+    public SpecieHandler(){
     }
 
 
-    public void getSpecie() throws IOException, SAXException, ParserConfigurationException, InterruptedException {
+    public void getSpecie(String rname) throws IOException{
         if (rname != null) {
             String tax = "";
 
@@ -43,9 +37,15 @@ public class SpecieHandler {
                 }
             }
             // map tax ID to name
-            specie_name = getSpeciesByID(Integer.parseInt(tax));
-            specie_name = specie_name.replaceAll(" ", "_");
-
+            if(tax.equals("") && gi != null){
+                LOG.info("\nRecord reference contains only gi ID. This is not supported by DamageProfiler.\n" +
+                        "The species name will be set to NULL.\n" +
+                        "Please make sure that the SAM/BAM file reference tag contains the tax ID");
+            }
+            if(!tax.equals("")){
+                specie_name = getSpeciesByID(Integer.parseInt(tax));
+                specie_name = specie_name.replaceAll(" ", "_");
+            }
         }
     }
 
@@ -62,7 +62,7 @@ public class SpecieHandler {
      * @return species name as string
      * @throws IOException
      */
-    private String getSpeciesByID(int id) throws IOException, SAXException, ParserConfigurationException {
+    private String getSpeciesByID(int id) throws IOException {
         String species;
 
         // run command line call to get XML file from
@@ -82,6 +82,8 @@ public class SpecieHandler {
 
         DOMParser domparser = new DOMParser(LOG);
         species = domparser.parse("ncbiID.xml");
+        File f = new File("ncbiID.xml");
+        f.delete();
 
 
         return species;
@@ -92,7 +94,7 @@ public class SpecieHandler {
         return specie_name;
     }
 
-    public String getGi() {
-        return gi;
+    public void setLOG(Logger LOG) {
+        this.LOG = LOG;
     }
 }
