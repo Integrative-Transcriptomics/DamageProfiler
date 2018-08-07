@@ -6,10 +6,21 @@
 Welcome to DamageProfiler's documentation!
 ==========================================
 
+This is the main DamageProfiler documentation, where you can find information about the prerequisites, the installation and the usage of this tool.
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   
+    
+   contents/prerequisites
 
+   contents/installation
+
+   contents/generalUsage
+
+   contents/configuration
 
 
 Indices and tables

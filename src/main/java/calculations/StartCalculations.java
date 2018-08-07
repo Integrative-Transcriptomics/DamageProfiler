@@ -127,7 +127,8 @@ public class StartCalculations {
                     OutputGenerator outputGenerator = new OutputGenerator(
                             output_folder,
                             damageProfiler,
-                            specie_name,
+                            //specie_name,
+                            specie_input_string,
                             threshold,
                             length,
                             height,

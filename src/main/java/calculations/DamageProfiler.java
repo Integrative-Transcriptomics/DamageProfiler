@@ -116,7 +116,7 @@ public class  DamageProfiler {
 
             } else {
 
-                if (record.getReferenceName().equals(this.specie)) {
+                if (record.getReferenceName().contains(this.specie)) {
                     String chr = record.getReferenceName();
                     numberOfAllReads++;
                     if (use_only_merged_reads) {

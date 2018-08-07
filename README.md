@@ -51,14 +51,16 @@ The output folder\
 The reference file\
 \
 **-s,--specie <SPECIE>**\
-RNAME flag SAM record (Reference sequence name). This is a functionality for MALT output files and allows to create damage profiles 
-without prefiltering the sam file. Please make sure that you run MALT without *--sparseSAM* option. This will create a sam file with is not readable. 
-The *-s* parameter needs to be the same as the record reference. You can get this information via MEGAN - Alignment viewer. \
-Example: NC_022116.1|tax|1221524|
+Reference identifier. This is made for SAM/BAM files containing multiple references and allows to run DamageProfiler on single references
+without pre-filtering the sam file.\
+Example: NC_022116.1
+\
+If you use MALT, please make sure that you run MALT without *--sparseSAM* option. This will create a sam file with is not readable.
 \
 \
 **-sf,--specieslist file <SPECIES LIST>**\
-List with species for which damage profile has to be calculated. One species per line. Species has to hve the same format as for *-s* parameter.\
+List with species for which damage profile has to be calculated. Given as txt file, one species (reference identifier) per line. 
+Species has to have the same format as *-s* parameter.\
 \
 **-t,--threshold <THRESHOLD>**\
 Number of bases which are considered for plotting nucleotide misincorporations.\
@@ -67,7 +69,7 @@ Number of bases which are considered for plotting nucleotide misincorporations.\
 Title used for all plots. Default: input file name\
 \
 **-yaxis,--yaxis <YAXIS>**\
-Maximal value on y axis.\
+Max value on y axis shown in all plots.\
 
 
 
