@@ -14,63 +14,30 @@ It creates
     * a table of different base misincorporations and their occurrences
 
 
-The arguments of the tool are
+How to run
+----------
 
 .. code-block:: bash
 
--h, --help        Show this help page
--i, --input <INPUT>              The input sam/bam file
--l, --length <LENGTH>            Number of bases which are considered for frequency computations
--mapped, --all\_mapped\_reads      Use all mapped reads to calculate damage plots. Default: false
--o, --output <OUTPUT>            The output folder
--r, --reference <REFERENCE>      The reference file
--s, --species <SPECIE>            RefSeq id if the reference
--t, --threshold <THRESHOLD>      Number of bases which are considered for plotting nucleotide misincorporations
--title, --title <TITLE>          Title used for all plots. (Default: file name of input SAM/BAM file)
--yaxis, --yaxis <YAXIS>          Maximal value on y axis (Default: flexible, adapts to the calculated damage).
+java -jar DamageProfiler-VERSION.jar <arguments> [options]
 
 
 Arguments:
 
-**-h,--help**\
-Shows this help page.\
-\
-**-i,--input <INPUT>**\
-The input sam/bam file.\
-\
-**-o,--output <OUTPUT>**\
-The output folder\
-\
+    * **-h,--help** : Shows this help page.
+    * **-i,--input <INPUT>** : The input sam/bam file.
+    * **-o,--output <OUTPUT>** : The output folder
 
 Options:
 
-**-l,--length <LENGTH>**\
-Number of bases which are computations.\
-\
-**-mapped,--all_mapped_reads**\
-Use all mapped reads to calculate damage plots. Default: false.\
-\
-**-r,--reference <REFERENCE>**\
-The reference file\
-\
-**-s,--specie <SPECIE>**\
-RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. \
-Example: -s NC_022116.1
-\
-\
-**-sf,--specieslist file <SPECIES LIST>**\
-List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.\
-\
-**-t,--threshold <THRESHOLD>**\
-Number of bases which are considered for plotting nucleotide misincorporations.\
-\
-**-title,--title <TITLE>**\
-Title used for all plots (Default: file name of input SAM/BAM file).\
-\
-**-yaxis,--yaxis <YAXIS>**\
- Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
-
+    * **-l,--length <LENGTH>** : Number of bases which are computations.
+    * **-mapped,--all_mapped_reads** : Use all mapped reads to calculate damage plots. Default: false.
+    * **-r,--reference <REFERENCE>** : The reference file.
+    * **-s,--specie <SPECIE>** : RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. Example: -s NC_022116.1
+    * **-sf,--specieslist file <SPECIES LIST>** : List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.
+    * **-t,--threshold <THRESHOLD>** : Number of bases which are considered for plotting nucleotide misincorporations.
+    * **-title,--title <TITLE>** : Title used for all plots (Default: file name of input SAM/BAM file).
+    * **-yaxis,--yaxis <YAXIS>** : Maximal value on y axis (Default: flexible, adapts to the calculated damage).
 
 
 DamageProfiler can be used in offline mode.
