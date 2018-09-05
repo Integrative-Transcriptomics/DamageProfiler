@@ -71,4 +71,4 @@ Title used for all plots (Default: file name of input SAM/BAM file).\
 
 Running the jar file without any parameter starts a GUI to configure the run.
 
-Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
+A more detailed description, manual and tutorial of DamageProfiler is available on https://damageprofiler.readthedocs.io
