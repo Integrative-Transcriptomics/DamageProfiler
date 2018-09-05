@@ -30,7 +30,6 @@ import java.io.IOException;
  */
 public class OutputGenerator {
 
-    //private final List<String> chrs;
     private int numberOfUsedReads;
     private final double height;
     private final Logger LOG;
@@ -46,12 +45,10 @@ public class OutputGenerator {
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
-                           int length, double height, String input, Logger LOG)
-            throws IOException{
+                           int length, double height, String input, Logger LOG) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
-        //this.chrs = damageProfiler.getChrs();
         this.numberOfUsedReads = damageProfiler.getNumberOfUsedReads();
         this.damageProfiler = damageProfiler;
         this.threshold = threshold;
@@ -64,13 +61,6 @@ public class OutputGenerator {
         if(specie != null && !specie.equals("")){
             this.specie = specie;
         }
-
-        // What was this for ??
-        //if(this.length > this.chrs.size(){
-        //    this.length = this.chrs.size();
-        //}
-
-
     }
 
 
@@ -862,14 +852,9 @@ public class OutputGenerator {
         float height = PageSize.A4.getWidth() * (float)0.8;
         float width = PageSize.A4.getHeight() / 2;
 
-        // create plots, both three prime and five prime and add them
-        // to one PDF
+        // create plots, both three prime and five prime and add them to one PDF
 
         float xpos = 0;
-//        // place histogram in the center if only one plot
-//        if(charts.length==1){
-//            xpos=width*(float)0.5;
-//        }
         for(JFreeChart chart : charts){
             PdfTemplate plot = cb.createTemplate(width, height);
             Graphics2D g2d = new PdfGraphics2D(plot, width, height);

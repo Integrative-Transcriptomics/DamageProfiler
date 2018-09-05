@@ -11,14 +11,14 @@ Contributor: Alexander Peltzer <alexander.peltzer@uni-tuebingen.de>
 
 ###### Method
 DamageProfiler calculates damage profiles of mapped reads and provides a 
-graphical as well as texted based representation. 
+graphical as well as text based representation. 
 
 It creates 
 - damage plots
 - a fragment length distribution
 - a read identity distribution 
 - a base frequency table of reference 
-- a table of different base misincorporations and their occurencies
+- a table of different base misincorporations and their occurrences
 
 
 ###### How to run

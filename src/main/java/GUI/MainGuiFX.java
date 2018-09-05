@@ -4,25 +4,19 @@ import IO.Communicator;
 import calculations.StartCalculations;
 import javafx.application.Application;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 
 public class MainGuiFX extends Application {
@@ -65,6 +59,17 @@ public class MainGuiFX extends Application {
         this.primaryStage.show();
 
 
+    }
+
+
+    public Task startCalculuations(Communicator communicator) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                starter.start(communicator);
+                return true;
+            }
+        };
     }
 
 
@@ -135,7 +140,7 @@ public class MainGuiFX extends Application {
             // set all user options
             communicator.setLength(Integer.parseInt(textfield_length.getText()));
             communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
-            communicator.setRname(textfield_specie.getText());
+            communicator.setSpecies_ref_identifier(textfield_specie.getText());
             if(!checkbox_dynamic_y_axis_height.isSelected()){
                 try {
                     communicator.setyAxis(Double.parseDouble(textfield_y_axis_height.getText()));
@@ -153,20 +158,14 @@ public class MainGuiFX extends Application {
             try {
                 // add progress indicator
                 progressBar.setProgress(0);
-                //progressIndicator = new ProgressIndicator();
-
                 startCalculuations = startCalculuations(communicator);
                 progressBar.progressProperty().unbind();
                 progressBar.progressProperty().bind(startCalculuations.progressProperty());
 
                 startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
-                        new EventHandler<WorkerStateEvent>() {
-
-                            @Override
-                            public void handle(WorkerStateEvent t) {
-                                if(starter.isCalculationsDone()){
-                                    primaryStage.close();
-                                }
+                        (EventHandler<WorkerStateEvent>) t -> {
+                            if(starter.isCalculationsDone()){
+                                primaryStage.close();
                             }
                         });
                 new Thread(startCalculuations).start();
@@ -182,17 +181,6 @@ public class MainGuiFX extends Application {
     }
 
 
-    public Task startCalculuations(Communicator communicator) {
-        return new Task() {
-            @Override
-            protected Object call() throws Exception {
-
-                // todo: parse species list, start calculations for each specie
-                starter.start(communicator);
-                return true;
-            }
-        };
-    }
 
     private void addComponents(GridPane root) {
 

@@ -14,7 +14,7 @@ public class SpeciesListFileChooser {
 
         File f = fileChooser.showOpenDialog(new Stage());
         if(f != null){
-            c.setSpeciesListFile(f.getAbsolutePath());
+            c.setSpecieslist_filepath(f.getAbsolutePath());
         }
 
     }
