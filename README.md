@@ -39,8 +39,8 @@ Shows this help page.\
 The input sam/bam file.\
 \
 **-o,--output <OUTPUT>**\
-The output folder\
-\
+The output folder
+
  
 Options
 **-l,--length <LENGTH>**\
@@ -67,8 +67,7 @@ Number of bases which are considered for plotting nucleotide misincorporations.\
 Title used for all plots (Default: file name of input SAM/BAM file).\
 \
 **-yaxis,--yaxis <YAXIS>**\
- Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
+ Maximal value on y axis (Default: flexible, adapts to the calculated damage).
 
 Running the jar file without any parameter starts a GUI to configure the run.
 
