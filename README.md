@@ -24,54 +24,52 @@ It creates
 ###### How to run
 
 ```
-java -jar DamageProfiler-VERSION.jar
+java -jar DamageProfiler-VERSION.jar <arguments> [options]
 ```
 
-Running the jar file without any parameter starts a GUI to configure the run. 
 
 
-Parameters:
+
+Arguments:
 
 **-h,--help**\
-Shows this help page\
+Shows this help page.\
 \
 **-i,--input <INPUT>**\
-The input sam/bam file\
-\
-**-l,--length <LENGTH>**\
-Number of bases which are computations\
-\
-**-mapped,--all_mapped_reads**\
-Use all mapped reads to calculate damage plots. Default: false\
+The input sam/bam file.\
 \
 **-o,--output <OUTPUT>**\
 The output folder\
+\
+ 
+Options
+**-l,--length <LENGTH>**\
+Number of bases which are computations.\
+\
+**-mapped,--all_mapped_reads**\
+Use all mapped reads to calculate damage plots. Default: false.\
 \
 **-r,--reference <REFERENCE>**\
 The reference file\
 \
 **-s,--specie <SPECIE>**\
-RNAME flag SAM record (Reference sequence name). This is a functionality for MALT output files and allows to create damage profiles 
-without prefiltering the sam file. Please make sure that you run MALT without *--sparseSAM* option. This will create a sam file with is not readable. 
-The *-s* parameter needs to be the same as the record reference. You can get this information via MEGAN - Alignment viewer. \
-Example: NC_022116.1|tax|1221524|
+RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. \
+Example: -s NC_022116.1
 \
 \
 **-sf,--specieslist file <SPECIES LIST>**\
-List with species for which damage profile has to be calculated. One species per line. Species has to hve the same format as for *-s* parameter.\
+List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.\
 \
 **-t,--threshold <THRESHOLD>**\
 Number of bases which are considered for plotting nucleotide misincorporations.\
 \
 **-title,--title <TITLE>**\
-Title used for all plots. Default: input file name\
+Title used for all plots (Default: file name of input SAM/BAM file).\
 \
 **-yaxis,--yaxis <YAXIS>**\
-Maximal value on y axis.\
+ Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
+\
 
-
+Running the jar file without any parameter starts a GUI to configure the run.
 
 Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
-
-
-
