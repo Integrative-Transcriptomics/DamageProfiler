@@ -186,10 +186,10 @@ public class UserOptionsParser {
             // damage calculation
 
             if (cmd.hasOption('s')) {
-                communicator.setRname(cmd.getOptionValue('s'));
+                communicator.setSpecies_ref_identifier(cmd.getOptionValue('s'));
             }
             if (cmd.hasOption("sf")) {
-                communicator.setSpeciesListFile(cmd.getOptionValue("sf"));
+                communicator.setSpecieslist_filepath(cmd.getOptionValue("sf"));
             }
             if (cmd.hasOption('l')) {
                 communicator.setLength(Integer.parseInt(cmd.getOptionValue('l')));

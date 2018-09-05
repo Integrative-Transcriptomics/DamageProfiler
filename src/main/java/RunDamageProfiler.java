@@ -9,10 +9,7 @@ import org.apache.log4j.Logger;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.3.12";
-    private static LogClass logClass;
-    private static Logger LOG;
-
+    private static final String VERSION = "0.3.14";
 
 
     @SuppressWarnings("static-access")
@@ -30,7 +27,6 @@ public class RunDamageProfiler {
 
 
         if(args.length==0){
-            //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
             new Thread(() -> Application.launch(MainGuiFX.class)).start();
 
         } else {

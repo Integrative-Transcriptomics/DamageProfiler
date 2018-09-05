@@ -43,7 +43,7 @@ public class SpecieHandler {
                         "Please make sure that the SAM/BAM file reference tag contains the tax ID");
             }
             if(!tax.equals("")){
-               // specie_name = getSpeciesByID(Integer.parseInt(tax));
+               specie_name = getSpeciesByID(Integer.parseInt(tax));
                // specie_name = specie_name.replaceAll(" ", "_");
             }
         }

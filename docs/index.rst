@@ -20,8 +20,6 @@ This is the main DamageProfiler documentation, where you can find information ab
 
    contents/generalUsage
 
-   contents/configuration
-
 
 Indices and tables
 ==================

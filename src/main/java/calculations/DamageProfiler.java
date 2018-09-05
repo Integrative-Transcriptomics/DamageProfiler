@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
@@ -33,26 +32,34 @@ public class  DamageProfiler {
     private FastACacher cache;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
-    private Set<String> specie_ref_for_output_list;
+    private SpecieHandler specieHandler;
 
     /**
-     * constructor, set input and output filepaths
+     * constructor
+     * @param specieHandler
+     */
+    public DamageProfiler(SpecieHandler specieHandler) {
+        this.specieHandler = specieHandler;
+
+    }
+
+    /**
+     *
      * @param input
      * @param reference
+     * @param threshold
+     * @param length
+     * @param specie
      * @param LOG
-     * @throws FileNotFoundException
-     * @throws UnsupportedEncodingException
      */
-    public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG) {
-
+    public void init(File input, File reference, int threshold, int length, String specie, Logger LOG){
         // read bam/sam file
         if (!input.exists()){
-            System.err.println("Invalid SAM/BAM file not found. Please check your file path.\nInput: " +
+            System.err.println("SAM/BAM file not found. Please check your file path.\nInput: " +
                     input.getAbsolutePath());
             System.exit(0);
         } else {
             try{
-                specie_ref_for_output_list = new HashSet<>();
 
                 inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                         validationStringency(ValidationStringency.LENIENT).open(input);
@@ -69,13 +76,14 @@ public class  DamageProfiler {
                 this.specie = specie;
                 useful_functions = new Functions(this.LOG);
 
+
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
+                LOG.error("Invalid SAM/BAM file. Please check your file.");
                 System.exit(0);
             }
         }
     }
-
 
     /**
      * get all sam records of input sam/bam file,
@@ -86,28 +94,14 @@ public class  DamageProfiler {
      * @param use_only_merged_reads
      * @throws Exception
      */
-    public String extractSAMRecords(boolean use_only_merged_reads) throws Exception{
+    public void extractSAMRecords(boolean use_only_merged_reads) throws Exception{
 
-        List<SAMSequenceRecord> seq_dict = inputSam.getFileHeader().getSequenceDictionary().getSequences();
-        String seq_name=null;
 
         for(SAMRecord record : inputSam) {
-            if (this.specie == null) {
-                specie_ref_for_output_list.add(record.getReferenceName());
+        if (this.specie == null) {
+
                 numberOfAllReads++;
-                if (use_only_merged_reads) {
-                    // get only mapped and merged reads
-                    if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
-                        processRecord(record);
-                        seq_name = seq_dict.get(0).getSequenceName();
-
-                    }
-                } else if (!record.getReadUnmappedFlag()) {
-                    // get all mapped reads
-                    processRecord(record);
-                    seq_name = seq_dict.get(0).getSequenceName();
-
-                }
+                handleRecord(use_only_merged_reads, record);
 
                 // print number of processed reads
                 if (numberOfUsedReads % 100 == 0) {
@@ -117,21 +111,8 @@ public class  DamageProfiler {
             } else {
 
                 if (record.getReferenceName().contains(this.specie)) {
-                    String chr = record.getReferenceName();
                     numberOfAllReads++;
-                    if (use_only_merged_reads) {
-                        // get only mapped and merged reads
-                        if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
-                            processRecord(record);
-                            seq_name = seq_dict.get(0).getSequenceName();
-
-                        }
-                    } else if (!record.getReadUnmappedFlag()) {
-                        // get all mapped reads
-                        processRecord(record);
-                        seq_name = seq_dict.get(0).getSequenceName();
-
-                    }
+                    handleRecord(use_only_merged_reads, record);
 
                     // print number of processed reads
                     if (numberOfUsedReads % 100 == 0) {
@@ -145,11 +126,21 @@ public class  DamageProfiler {
         LOG.info("-------------------");
         LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
 
-
-        return seq_name;
-
     }
 
+
+    private void handleRecord(boolean use_only_merged_reads, SAMRecord record) throws Exception {
+        if (use_only_merged_reads) {
+            // get only mapped and merged reads
+            if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
+                processRecord(record);
+            }
+        } else if (!record.getReadUnmappedFlag()) {
+            // get all mapped reads
+            processRecord(record);
+        }
+
+    }
 
 
 
@@ -278,8 +269,20 @@ public class  DamageProfiler {
     }
     public ArrayList<Double> getIdentity() { return identity; }
 
-    public Set<String> getSpecie_ref_for_output() {
-        return specie_ref_for_output_list;
+    public String getSpeciesname(File file, String ref) throws IOException {
+
+        SamReader input = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                validationStringency(ValidationStringency.LENIENT).open(file);
+
+        for(SAMRecord record : input) {
+            if(record.getReferenceName().contains(ref)){
+                specieHandler.getSpecie(record.getReferenceName());
+                String spe = specieHandler.getSpecie_name();
+                return spe.replace(" ", "_").trim();
+            }
+        }
+        return null;
     }
+
 
 }
