@@ -74,12 +74,7 @@ public class StartCalculations {
                 String specie_input_string = specieslist.get(i);
                 //String specie_name = species_real_name_list.get(i);
 
-                String inputfileNameWithOutExtension;
-                if (c.getTitle_plots() == null) {
-                    inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-                } else {
-                    inputfileNameWithOutExtension = c.getTitle_plots();
-                }
+
 
                 // start DamageProfiler
                 File file = new File(input);
@@ -88,9 +83,20 @@ public class StartCalculations {
 
                 String ref = specie_input_string.split("\\|")[0].trim();
                 String speciesname = damageProfiler.getSpeciesname(file, ref);
+
+                String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
                 String output_folder = createOutputFolder(
                         outfolder,
                         inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] + File.separator + ref + "_" + speciesname);
+
+
+
+                if (c.getTitle_plots() == null) {
+                    inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+                } else {
+                    inputfileNameWithOutExtension = c.getTitle_plots();
+                }
+
 
 
                 // init Logger
@@ -146,16 +152,20 @@ public class StartCalculations {
             specieslist.add(species_ref_identifier);
             //species_real_name_list.add(speciesListParser.getSingleSpecie(species_ref_identifier));
 
-            String inputfileNameWithOutExtension;
-            if (c.getTitle_plots() == null) {
-                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-            } else {
-                inputfileNameWithOutExtension = c.getTitle_plots();
-            }
+            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
             String output_folder = createOutputFolder(
                     outfolder,
                     inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+
+
+            if (c.getTitle_plots() == null) {
+                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+            }
+            else {
+                inputfileNameWithOutExtension = c.getTitle_plots();
+            }
+
 
 
             // init Logger
@@ -207,16 +217,18 @@ public class StartCalculations {
             /*
                     No species specified --> use all (mapping) reads
              */
-            String inputfileNameWithOutExtension;
+            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+
+            String output_folder = createOutputFolder(
+                    outfolder,
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+
             if (c.getTitle_plots() == null) {
                 inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
             } else {
                 inputfileNameWithOutExtension = c.getTitle_plots();
             }
 
-            String output_folder = createOutputFolder(
-                    outfolder,
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
             // init Logger
             logClass = new LogClass();
             logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
