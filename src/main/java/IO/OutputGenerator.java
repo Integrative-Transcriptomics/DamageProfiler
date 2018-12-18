@@ -456,11 +456,15 @@ public class OutputGenerator {
         FileWriter writ3P = new FileWriter(this.outpath + "/3pGtoA_freq.yaml");
         FileWriter writ5p = new FileWriter(this.outpath + "/5pCtoT_freq.yaml");
 
+        String sampleid= input.split("/")[input.split("/").length-1];
+
         Yaml yml3p = new Yaml();
         Yaml yml5p = new Yaml();
+
         Map<String, double[]> yml3p_map = new HashMap<String,double[]>();
-        String sampleid= input.split("/")[input.split("/").length-1];
         yml3p_map.put(sampleid,getSubArray(cToT, this.threshold));
+        yml3p.dump(yml3p_map,writ3P);
+
 
         Map<String, double[]> yml5p_map = new HashMap<String,double[]>();
         yml5p_map.put(sampleid,getSubArray(gToA_reverse,this.threshold));
