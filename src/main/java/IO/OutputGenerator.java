@@ -94,6 +94,8 @@ public class OutputGenerator {
         key_list.addAll(map_forward.keySet());
         Collections.sort(key_list);
 
+        HashMap<String,HashMap> dump_fw_hm = new HashMap<>();
+        String sampleid= input.split("/")[input.split("/").length-1];
         HashMap<Integer,Integer> yaml_dump_fw = new HashMap<>();
 
         if(key_list.size()>0){
@@ -105,13 +107,17 @@ public class OutputGenerator {
                 yaml_dump_fw.put(key, map_forward.get(key));
             }
         }
-        lgdistyaml_fw.dump(yaml_dump_fw,writer_fw);
+        dump_fw_hm.put(sampleid,yaml_dump_fw);
+        lgdistyaml_fw.dump(dump_fw_hm,writer_fw);
 
         key_list.clear();
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
 
         HashMap<Integer,Integer> yaml_dump_rv = new HashMap<>();
+        HashMap<String,HashMap> dump_rv_hm = new HashMap<>();
+
+
         if(key_list.size()>0){
             if(key_list.get(0) < min_length){
                 min_length = key_list.get(0);
@@ -127,7 +133,9 @@ public class OutputGenerator {
 
         }
 
-        lgdistyaml_rv.dump(yaml_dump_rv,writer_rv);
+        dump_rv_hm.put(sampleid,yaml_dump_rv);
+
+        lgdistyaml_rv.dump(dump_rv_hm,writer_rv);
 
 
 
