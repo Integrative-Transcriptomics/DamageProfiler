@@ -127,7 +127,7 @@ public class OutputGenerator {
 
         }
 
-        lgdistyaml_fw.dump(yaml_dump_rv,writer_rv);
+        lgdistyaml_rv.dump(yaml_dump_rv,writer_rv);
 
 
 
@@ -445,6 +445,18 @@ public class OutputGenerator {
         BufferedWriter writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
         BufferedWriter writer5Prime = new BufferedWriter(new FileWriter(this.outpath + "/5pCtoT_freq.txt"));
 
+        FileWriter writ3P = new FileWriter(this.outpath + "/3pGtoA_freq.yaml");
+        FileWriter writ5p = new FileWriter(this.outpath + "/5pCtoT_freq.yaml");
+
+        Yaml yml3p = new Yaml();
+        Yaml yml5p = new Yaml();
+        Map<String, double[]> yml3p_map = new HashMap<String,double[]>();
+        String sampleid= input.split("/")[input.split("/").length-1];
+        yml3p_map.put(sampleid,getSubArray(cToT, this.threshold));
+
+        Map<String, double[]> yml5p_map = new HashMap<String,double[]>();
+        yml5p_map.put(sampleid,getSubArray(gToA_reverse,this.threshold));
+        yml5p.dump(yml5p_map,writ5p);
 
         writer3Prime.write("# table produced by calculations.DamageProfiler\n");
         writer3Prime.write("# using mapped file " + input + "\n");
