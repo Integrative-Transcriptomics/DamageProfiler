@@ -1,5 +1,7 @@
 group 'com.uni-tuebingen.de.it.eager.damageprofiler'
-version '0.3.14'
+version '0.4'
+
+
 
 buildscript {
     repositories {
@@ -9,6 +11,7 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8+'
     }
 }
+
 
 
 allprojects {
@@ -46,6 +49,7 @@ dependencies {
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.+'
     compile group: 'log4j', name: 'log4j', version: '1.+'
     compile group: 'com.github.broadinstitute', name: 'picard', version: '2.+'
+    compile 'org.yaml:snakeyaml:1.2+'
 }
 
 

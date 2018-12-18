@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
+import org.yaml.snakeyaml.Yaml;
 
 
 import java.awt.*;
@@ -44,6 +45,7 @@ public class OutputGenerator {
     private String input;
 
 
+
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
                            int length, double height, String input, Logger LOG) {
 
@@ -73,7 +75,10 @@ public class OutputGenerator {
 
 
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
-
+        Yaml lgdistyaml_fw = new Yaml();
+        Yaml lgdistyaml_rv = new Yaml();
+        FileWriter writer_fw = new FileWriter(this.outpath + "/lgdistribution_fw.yaml");
+        FileWriter writer_rv = new FileWriter(this.outpath + "/lgdistribution_rv.yaml");
         HashMap<Integer, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
         HashMap<Integer, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
 
@@ -89,19 +94,24 @@ public class OutputGenerator {
         key_list.addAll(map_forward.keySet());
         Collections.sort(key_list);
 
+        HashMap<Integer,Integer> yaml_dump_fw = new HashMap<>();
+
         if(key_list.size()>0){
             min_length = key_list.get(0);
             max_length = key_list.get(key_list.size()-1);
 
             for(int key : key_list){
                 lgdist.write("+\t" + key + "\t" + map_forward.get(key) + "\n");
+                yaml_dump_fw.put(key, map_forward.get(key));
             }
         }
+        lgdistyaml_fw.dump(yaml_dump_fw,writer_fw);
 
         key_list.clear();
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
 
+        HashMap<Integer,Integer> yaml_dump_rv = new HashMap<>();
         if(key_list.size()>0){
             if(key_list.get(0) < min_length){
                 min_length = key_list.get(0);
@@ -112,9 +122,13 @@ public class OutputGenerator {
             }
             for(int key : key_list){
                 lgdist.write("-\t" + key + "\t" + map_reverse.get(key) + "\n");
+                yaml_dump_rv.put(key, map_reverse.get(key));
             }
 
         }
+
+        lgdistyaml_fw.dump(yaml_dump_rv,writer_rv);
+
 
 
         lgdist.close();
