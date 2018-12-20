@@ -2,17 +2,18 @@ package IO;
 
 import calculations.DamageProfiler;
 import calculations.Frequencies;
+import com.google.gson.Gson;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
-import org.yaml.snakeyaml.Yaml;
 
 
 import java.awt.*;
@@ -43,6 +44,7 @@ public class OutputGenerator {
     private int threshold;
     private int length;
     private String input;
+    private HashMap<String,Object> json_map = new HashMap<>();
 
 
 
@@ -65,6 +67,37 @@ public class OutputGenerator {
         }
     }
 
+    /**
+     * writes all generated output statistics to YAML output file
+     * YAML has several key,value pairs (HashMaps) that all contain information created in DamageProfiler
+     * sample_name = the name of the sample
+     *
+     *
+     * @throws IOException
+     */
+    public void writeJSON(String version) throws IOException {
+        //Add Sample Name to yaml
+        String sampleName = input.split("/")[input.split("/").length-1];
+
+
+        //Add Metadata to JSON output
+        HashMap<String, Object> meta_map = new HashMap<>();
+        meta_map.put("sample_name", sampleName);
+        meta_map.put("tool_name", "DamageProfiler");
+        meta_map.put("version", version);
+
+        json_map.put("metadata", meta_map);
+
+        Gson gson = new Gson();
+
+        String json = gson.toJson(json_map);
+
+        FileWriter fw = new FileWriter(this.outpath + "/dmgprof.json");
+        fw.write(json);
+        fw.flush();
+        fw.close();
+
+    }
 
     /**
      * create tab-separated txt file with all read length, sorted according strand direction
@@ -73,12 +106,7 @@ public class OutputGenerator {
      */
     public void writeLengthDistribution() throws IOException{
 
-
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
-        Yaml lgdistyaml_fw = new Yaml();
-        Yaml lgdistyaml_rv = new Yaml();
-        FileWriter writer_fw = new FileWriter(this.outpath + "/lgdistribution_fw.yaml");
-        FileWriter writer_rv = new FileWriter(this.outpath + "/lgdistribution_rv.yaml");
         HashMap<Integer, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
         HashMap<Integer, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
 
@@ -94,8 +122,6 @@ public class OutputGenerator {
         key_list.addAll(map_forward.keySet());
         Collections.sort(key_list);
 
-        HashMap<String,HashMap> dump_fw_hm = new HashMap<>();
-        String sampleid= input.split("/")[input.split("/").length-1];
         HashMap<Integer,Integer> yaml_dump_fw = new HashMap<>();
 
         if(key_list.size()>0){
@@ -107,15 +133,13 @@ public class OutputGenerator {
                 yaml_dump_fw.put(key, map_forward.get(key));
             }
         }
-        dump_fw_hm.put(sampleid,yaml_dump_fw);
-        lgdistyaml_fw.dump(dump_fw_hm,writer_fw);
+        json_map.put("lendist_fw",yaml_dump_fw);
 
         key_list.clear();
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
 
         HashMap<Integer,Integer> yaml_dump_rv = new HashMap<>();
-        HashMap<String,HashMap> dump_rv_hm = new HashMap<>();
 
 
         if(key_list.size()>0){
@@ -133,12 +157,7 @@ public class OutputGenerator {
 
         }
 
-        dump_rv_hm.put(sampleid,yaml_dump_rv);
-
-        lgdistyaml_rv.dump(dump_rv_hm,writer_rv);
-
-
-
+        json_map.put("lendist_rv", yaml_dump_rv);
         lgdist.close();
     }
 
@@ -453,22 +472,10 @@ public class OutputGenerator {
         BufferedWriter writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
         BufferedWriter writer5Prime = new BufferedWriter(new FileWriter(this.outpath + "/5pCtoT_freq.txt"));
 
-        FileWriter writ3P = new FileWriter(this.outpath + "/3pGtoA_freq.yaml");
-        FileWriter writ5p = new FileWriter(this.outpath + "/5pCtoT_freq.yaml");
+        //Add stuff to json output file
+        json_map.put("dmg_5p",getSubArray(cToT, this.threshold));
+        json_map.put("dmg_3p",getSubArray(gToA_reverse,this.threshold));
 
-        String sampleid= input.split("/")[input.split("/").length-1];
-
-        Yaml yml3p = new Yaml();
-        Yaml yml5p = new Yaml();
-
-        Map<String, double[]> yml3p_map = new HashMap<String,double[]>();
-        yml3p_map.put(sampleid,getSubArray(cToT, this.threshold));
-        yml3p.dump(yml3p_map,writ3P);
-
-
-        Map<String, double[]> yml5p_map = new HashMap<String,double[]>();
-        yml5p_map.put(sampleid,getSubArray(gToA_reverse,this.threshold));
-        yml5p.dump(yml5p_map,writ5p);
 
         writer3Prime.write("# table produced by calculations.DamageProfiler\n");
         writer3Prime.write("# using mapped file " + input + "\n");
@@ -499,6 +506,41 @@ public class OutputGenerator {
                 writer.write(i+1 + "\t" + bd.toPlainString());
             }
         }
+
+    }
+
+    public void computeSummaryMetrics(){
+        HashMap<Integer,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurences
+        HashMap<Integer, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
+
+        //Create ArrayList<Integer> of read lengths
+        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+
+        for (int key : forwardMap.keySet()){
+            int occurences = forwardMap.get(key);
+            for (int i = 0; i <= occurences; i++) {
+                descriptiveStatistics.addValue(key);
+            }
+        }
+
+        for (int key : reverseMap.keySet()){
+            int occurences = reverseMap.get(key);
+            for (int i = 0; i <= occurences; i++) {
+                descriptiveStatistics.addValue(key);
+            }
+        }
+
+        double mean = descriptiveStatistics.getMean();
+        double std = descriptiveStatistics.getStandardDeviation();
+        double median = descriptiveStatistics.getPercentile(50);
+
+        HashMap<String, Double> summ_stats = new HashMap<>();
+
+        summ_stats.put("mean_readlength", mean);
+        summ_stats.put("std", std);
+        summ_stats.put("median", std);
+
+        json_map.put("summary_stats", summ_stats);
 
     }
 
