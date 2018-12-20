@@ -76,7 +76,6 @@ public class OutputGenerator {
      * @throws IOException
      */
     public void writeJSON(String version) throws IOException {
-        //TODO write output from json_map
         //Add Sample Name to yaml
         String sampleName = input.split("/")[input.split("/").length-1];
 
