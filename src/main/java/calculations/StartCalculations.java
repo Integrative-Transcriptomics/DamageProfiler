@@ -35,6 +35,7 @@ public class StartCalculations {
     private String input;
     private SpecieHandler specieHandler;
 
+
     public StartCalculations(String version){
         VERSION = version;
     }
@@ -280,7 +281,6 @@ public class StartCalculations {
 
     }
 
-
     private void generateOutput(DamageProfiler damageProfiler, String output_folder, String inputfileNameWithOutExtension, String spe)
             throws IOException, DocumentException {
 
@@ -296,6 +296,7 @@ public class StartCalculations {
                     input,
                     LOG
             );
+
             outputGenerator.writeLengthDistribution();
             outputGenerator.writeDamageFiles(
                     damageProfiler.getFrequencies().getCount_G_A_3_norm(),
@@ -308,6 +309,8 @@ public class StartCalculations {
                     damageProfiler.getFrequencies(),
                     threshold
             );
+            outputGenerator.computeSummaryMetrics();
+            outputGenerator.writeJSON(VERSION);
 
 
             // create DamagePlots of 3' and 5' ends
