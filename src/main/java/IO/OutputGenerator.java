@@ -3,6 +3,7 @@ package IO;
 import calculations.DamageProfiler;
 import calculations.Frequencies;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
@@ -88,7 +89,7 @@ public class OutputGenerator {
 
         json_map.put("metadata", meta_map);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String json = gson.toJson(json_map);
 
@@ -538,7 +539,7 @@ public class OutputGenerator {
 
         summ_stats.put("mean_readlength", mean);
         summ_stats.put("std", std);
-        summ_stats.put("median", std);
+        summ_stats.put("median", median);
 
         json_map.put("summary_stats", summ_stats);
 

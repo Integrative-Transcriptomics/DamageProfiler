@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.4.3";
+    private static final String VERSION = "0.4.4";
 
 
     @SuppressWarnings("static-access")
