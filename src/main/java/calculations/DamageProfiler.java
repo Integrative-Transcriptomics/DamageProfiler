@@ -80,6 +80,7 @@ public class  DamageProfiler {
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
                 LOG.error("Invalid SAM/BAM file. Please check your file.");
+                System.out.println(e.toString());
                 System.exit(0);
             }
         }
