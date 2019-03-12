@@ -19,7 +19,7 @@ How to run
 
 .. code-block:: bash
 
-java -jar DamageProfiler-VERSION.jar <arguments> [options]
+   java -jar DamageProfiler-VERSION.jar <arguments> [options]
 
 
 Arguments:
