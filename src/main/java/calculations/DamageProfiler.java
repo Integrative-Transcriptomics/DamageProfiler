@@ -93,54 +93,66 @@ public class  DamageProfiler {
      *
      *
      * @param use_only_merged_reads
+     * @param use_all_reads
      * @throws Exception
      */
-    public void extractSAMRecords(boolean use_only_merged_reads) throws Exception{
+    public void extractSAMRecords(boolean use_only_merged_reads, boolean use_all_reads) throws Exception{
 
+        if(use_all_reads && use_only_merged_reads){
+            LOG.info("-------------------");
+            LOG.info("0 reads processed.\nRunning not possible. 'use_only_merged_reads' and 'use_all_reads' was set to 'true'");
+            System.exit(0);
 
-        for(SAMRecord record : inputSam) {
-        if (this.specie == null) {
+        } else {
+            for(SAMRecord record : inputSam) {
+                if (this.specie == null) {
 
-                numberOfAllReads++;
-                handleRecord(use_only_merged_reads, record);
-
-                // print number of processed reads
-                if (numberOfUsedReads % 100 == 0) {
-                    LOG.info(numberOfUsedReads + " Reads processed.");
-                }
-
-            } else {
-
-                if (record.getReferenceName().contains(this.specie)) {
                     numberOfAllReads++;
-                    handleRecord(use_only_merged_reads, record);
+                    handleRecord(use_only_merged_reads, use_all_reads, record);
 
                     // print number of processed reads
                     if (numberOfUsedReads % 100 == 0) {
                         LOG.info(numberOfUsedReads + " Reads processed.");
                     }
+
+                } else {
+
+                    if (record.getReferenceName().contains(this.specie)) {
+                        numberOfAllReads++;
+                        handleRecord(use_only_merged_reads, use_all_reads, record);
+
+                        // print number of processed reads
+                        if (numberOfUsedReads % 100 == 0) {
+                            LOG.info(numberOfUsedReads + " Reads processed.");
+                        }
+                    }
                 }
             }
-        }
-        frequencies.normalizeValues();
+            frequencies.normalizeValues();
 
-        LOG.info("-------------------");
-        LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
+            LOG.info("-------------------");
+            LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
+        }
 
     }
 
 
-    private void handleRecord(boolean use_only_merged_reads, SAMRecord record) throws Exception {
-        if (use_only_merged_reads) {
-            // get only mapped and merged reads
+    private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) throws Exception {
+        if(use_all_reads && !use_only_merged_reads){
+            // process all reads
+            processRecord(record);
+
+        } else if (use_only_merged_reads && !use_all_reads){
+            // process only mapped and merged reads
             if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
                 processRecord(record);
             }
-        } else if (!record.getReadUnmappedFlag()) {
-            // get all mapped reads
-            processRecord(record);
-        }
-
+        } else if(!use_only_merged_reads && !use_all_reads)
+            // process only mapped reads
+            if (!record.getReadUnmappedFlag()) {
+                // get all mapped reads
+                processRecord(record);
+            }
     }
 
 

@@ -34,6 +34,7 @@ public class StartCalculations {
     private String outfolder;
     private String input;
     private SpecieHandler specieHandler;
+    private boolean use_all_reads;
 
     public StartCalculations(String version){
         VERSION = version;
@@ -51,7 +52,8 @@ public class StartCalculations {
         length = c.getLength();
         threshold = c.getThreshold();
         height = c.getyAxis();
-        use_only_merged_reads = !c.isUse_merged_and_mapped_reads();
+        use_only_merged_reads = c.isUse_merged_and_mapped_reads();
+        use_all_reads = c.isUse_all_reads();
         speciesListParser=null;
         species_name_list=null;
         specieHandler = new SpecieHandler();
@@ -136,7 +138,7 @@ public class StartCalculations {
                         specie_input_string,
                         LOG);
 
-                damageProfiler.extractSAMRecords(use_only_merged_reads);
+                damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
                 generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, speciesname);
             }
@@ -208,7 +210,7 @@ public class StartCalculations {
                     null,
                     LOG);
 
-            damageProfiler.extractSAMRecords(use_only_merged_reads);
+            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
             speciesListParser.setLOG(LOG);
             generateOutput(damageProfiler,output_folder, inputfileNameWithOutExtension, null);
@@ -266,7 +268,7 @@ public class StartCalculations {
                     length,
                     null,
                     LOG);
-            damageProfiler.extractSAMRecords(use_only_merged_reads);
+            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
             speciesListParser.setLOG(LOG);
 

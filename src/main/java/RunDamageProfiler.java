@@ -2,14 +2,13 @@ import GUI.MainGuiFX;
 import IO.*;
 import calculations.StartCalculations;
 import javafx.application.Application;
-import org.apache.log4j.Logger;
 
 /**
  * Created by neukamm on 06.10.2016.
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.3.14";
+    private static final String VERSION = "0.4.5";
 
 
     @SuppressWarnings("static-access")
