@@ -34,6 +34,7 @@ public class StartCalculations {
     private String outfolder;
     private String input;
     private SpecieHandler specieHandler;
+    private boolean use_all_reads;
 
 
     public StartCalculations(String version){
@@ -52,7 +53,8 @@ public class StartCalculations {
         length = c.getLength();
         threshold = c.getThreshold();
         height = c.getyAxis();
-        use_only_merged_reads = !c.isUse_merged_and_mapped_reads();
+        use_only_merged_reads = c.isUse_merged_and_mapped_reads();
+        use_all_reads = c.isUse_all_reads();
         speciesListParser=null;
         species_name_list=null;
         specieHandler = new SpecieHandler();
@@ -75,12 +77,7 @@ public class StartCalculations {
                 String specie_input_string = specieslist.get(i);
                 //String specie_name = species_real_name_list.get(i);
 
-                String inputfileNameWithOutExtension;
-                if (c.getTitle_plots() == null) {
-                    inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-                } else {
-                    inputfileNameWithOutExtension = c.getTitle_plots();
-                }
+
 
                 // start DamageProfiler
                 File file = new File(input);
@@ -89,9 +86,20 @@ public class StartCalculations {
 
                 String ref = specie_input_string.split("\\|")[0].trim();
                 String speciesname = damageProfiler.getSpeciesname(file, ref);
+
+                String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
                 String output_folder = createOutputFolder(
                         outfolder,
                         inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] + File.separator + ref + "_" + speciesname);
+
+
+
+                if (c.getTitle_plots() == null) {
+                    inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+                } else {
+                    inputfileNameWithOutExtension = c.getTitle_plots();
+                }
+
 
 
                 // init Logger
@@ -131,7 +139,7 @@ public class StartCalculations {
                         specie_input_string,
                         LOG);
 
-                damageProfiler.extractSAMRecords(use_only_merged_reads);
+                damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
                 generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, speciesname);
             }
@@ -147,16 +155,20 @@ public class StartCalculations {
             specieslist.add(species_ref_identifier);
             //species_real_name_list.add(speciesListParser.getSingleSpecie(species_ref_identifier));
 
-            String inputfileNameWithOutExtension;
-            if (c.getTitle_plots() == null) {
-                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-            } else {
-                inputfileNameWithOutExtension = c.getTitle_plots();
-            }
+            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
             String output_folder = createOutputFolder(
                     outfolder,
                     inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+
+
+            if (c.getTitle_plots() == null) {
+                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+            }
+            else {
+                inputfileNameWithOutExtension = c.getTitle_plots();
+            }
+
 
 
             // init Logger
@@ -199,7 +211,7 @@ public class StartCalculations {
                     null,
                     LOG);
 
-            damageProfiler.extractSAMRecords(use_only_merged_reads);
+            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
             speciesListParser.setLOG(LOG);
             generateOutput(damageProfiler,output_folder, inputfileNameWithOutExtension, null);
@@ -208,16 +220,18 @@ public class StartCalculations {
             /*
                     No species specified --> use all (mapping) reads
              */
-            String inputfileNameWithOutExtension;
+            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+
+            String output_folder = createOutputFolder(
+                    outfolder,
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+
             if (c.getTitle_plots() == null) {
                 inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
             } else {
                 inputfileNameWithOutExtension = c.getTitle_plots();
             }
 
-            String output_folder = createOutputFolder(
-                    outfolder,
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
             // init Logger
             logClass = new LogClass();
             logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
@@ -255,7 +269,7 @@ public class StartCalculations {
                     length,
                     null,
                     LOG);
-            damageProfiler.extractSAMRecords(use_only_merged_reads);
+            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
             speciesListParser.setLOG(LOG);
 
