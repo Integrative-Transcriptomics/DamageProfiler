@@ -77,7 +77,8 @@ public class UserOptionsParser {
 
 
         Option mapped_and_merged = new Option("merged", "all_mapped_and_merged_reads", false,
-                "Use all mapped and merged reads to calculate damage plot instead of using all mapped reads. Default: false ");
+                "Use all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
+                        " it will be skipped. Default: false ");
         options.addOption(mapped_and_merged);
 
         Option use_all_reads = new Option("useall", "use_all_reads", false,
