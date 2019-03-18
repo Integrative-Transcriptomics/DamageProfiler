@@ -18,8 +18,7 @@ How to run
 ----------
 
 .. code-block:: bash
-
-   java -jar DamageProfiler-VERSION.jar <arguments> [options]
+java -jar DamageProfiler-VERSION.jar <arguments> [options]
 
 
 Arguments:
@@ -32,7 +31,7 @@ Options:
 
     * **-l,--length <LENGTH>** : Number of bases which are computations.
     * **-mapped,--all_mapped_reads** : Use all mapped reads to calculate damage plots. Default: false.
-    * **-r,--reference <REFERENCE>** : The reference file.
+    * **-r,--reference <REFERENCE>** : The reference file. The reference is only needed if the mapping file doesn't have MD tags.
     * **-s,--specie <SPECIE>** : RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. Example: -s NC_022116.1
     * **-sf,--specieslist file <SPECIES LIST>** : List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.
     * **-t,--threshold <THRESHOLD>** : Number of bases which are considered for plotting nucleotide misincorporations.
@@ -49,4 +48,3 @@ Log file
 
 DamageProfiler documents the configuration in a separate log file, which helps you to reconstruct your analysis at a later date.
 The file is saved in the specified result folder.
-
