@@ -39,15 +39,14 @@ Shows this help page.\
 The input sam/bam file.\
 \
 **-o,--output <OUTPUT>**\
-The output folder\
+The output folder.\
 \
- 
 Options
 **-l,--length <LENGTH>**\
 Number of bases which are computations.\
 \
-**-mapped,--all_mapped_reads**\
-Use all mapped reads to calculate damage plots. Default: false.\
+**-merged,--all_mapped_and_merged_reads**\
+Use all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false\
 \
 **-r,--reference <REFERENCE>**\
 The reference file\
