@@ -1,18 +1,14 @@
 group 'com.uni-tuebingen.de.it.eager.damageprofiler'
-version '0.4.4'
-
-
+version '0.4.5'
 
 buildscript {
     repositories {
         jcenter()
-        mavenCentral()
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8+'
     }
 }
-
 
 
 allprojects {
@@ -50,7 +46,6 @@ dependencies {
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.+'
     compile group: 'log4j', name: 'log4j', version: '1.+'
     compile group: 'com.github.broadinstitute', name: 'picard', version: '2.+'
-    compile 'com.google.code.gson:gson:2.8.5'
 }
 
 
