@@ -129,6 +129,7 @@ public class StartCalculations {
                     damageProfiler.getFrequencies(),
                     threshold
             );
+            outputGenerator.writeJSON(VERSION);
 
 
             // create DamagePlots of 3' and 5' ends

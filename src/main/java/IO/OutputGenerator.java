@@ -2,12 +2,15 @@ package IO;
 
 import calculations.DamageProfiler;
 import calculations.Frequencies;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
@@ -30,7 +33,6 @@ import java.io.IOException;
  */
 public class OutputGenerator {
 
-    //private final List<String> chrs;
     private int numberOfUsedReads;
     private final double height;
     private final Logger LOG;
@@ -43,15 +45,15 @@ public class OutputGenerator {
     private int threshold;
     private int length;
     private String input;
+    private HashMap<String,Object> json_map = new HashMap<>();
+
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
-                           int length, double height, String input, Logger LOG)
-            throws IOException{
+                           int length, double height, String input, Logger LOG) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
-        //this.chrs = damageProfiler.getChrs();
         this.numberOfUsedReads = damageProfiler.getNumberOfUsedReads();
         this.damageProfiler = damageProfiler;
         this.threshold = threshold;
@@ -64,15 +66,39 @@ public class OutputGenerator {
         if(specie != null && !specie.equals("")){
             this.specie = specie;
         }
-
-        // What was this for ??
-        //if(this.length > this.chrs.size(){
-        //    this.length = this.chrs.size();
-        //}
-
-
     }
 
+    /**
+     * writes all generated output statistics to YAML output file
+     * YAML has several key,value pairs (HashMaps) that all contain information created in DamageProfiler
+     * sample_name = the name of the sample
+     *
+     *
+     * @throws IOException
+     */
+    public void writeJSON(String version) throws IOException {
+        //Add Sample Name to yaml
+        String sampleName = input.split("/")[input.split("/").length-1];
+
+
+        //Add Metadata to JSON output
+        HashMap<String, Object> meta_map = new HashMap<>();
+        meta_map.put("sample_name", sampleName);
+        meta_map.put("tool_name", "DamageProfiler");
+        meta_map.put("version", version);
+
+        json_map.put("metadata", meta_map);
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        String json = gson.toJson(json_map);
+
+        FileWriter fw = new FileWriter(this.outpath + "/dmgprof.json");
+        fw.write(json);
+        fw.flush();
+        fw.close();
+
+    }
 
     /**
      * create tab-separated txt file with all read length, sorted according strand direction
@@ -81,9 +107,7 @@ public class OutputGenerator {
      */
     public void writeLengthDistribution() throws IOException{
 
-
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
-
         HashMap<Integer, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
         HashMap<Integer, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
 
@@ -99,18 +123,25 @@ public class OutputGenerator {
         key_list.addAll(map_forward.keySet());
         Collections.sort(key_list);
 
+        HashMap<Integer,Integer> yaml_dump_fw = new HashMap<>();
+
         if(key_list.size()>0){
             min_length = key_list.get(0);
             max_length = key_list.get(key_list.size()-1);
 
             for(int key : key_list){
                 lgdist.write("+\t" + key + "\t" + map_forward.get(key) + "\n");
+                yaml_dump_fw.put(key, map_forward.get(key));
             }
         }
+        json_map.put("lendist_fw",yaml_dump_fw);
 
         key_list.clear();
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
+
+        HashMap<Integer,Integer> yaml_dump_rv = new HashMap<>();
+
 
         if(key_list.size()>0){
             if(key_list.get(0) < min_length){
@@ -122,11 +153,12 @@ public class OutputGenerator {
             }
             for(int key : key_list){
                 lgdist.write("-\t" + key + "\t" + map_reverse.get(key) + "\n");
+                yaml_dump_rv.put(key, map_reverse.get(key));
             }
 
         }
 
-
+        json_map.put("lendist_rv", yaml_dump_rv);
         lgdist.close();
     }
 
@@ -441,6 +473,10 @@ public class OutputGenerator {
         BufferedWriter writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
         BufferedWriter writer5Prime = new BufferedWriter(new FileWriter(this.outpath + "/5pCtoT_freq.txt"));
 
+        //Add stuff to json output file
+        json_map.put("dmg_5p",getSubArray(cToT, this.threshold));
+        json_map.put("dmg_3p",getSubArray(gToA_reverse,this.threshold));
+
 
         writer3Prime.write("# table produced by calculations.DamageProfiler\n");
         writer3Prime.write("# using mapped file " + input + "\n");
@@ -471,6 +507,41 @@ public class OutputGenerator {
                 writer.write(i+1 + "\t" + bd.toPlainString());
             }
         }
+
+    }
+
+    public void computeSummaryMetrics(){
+        HashMap<Integer,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurences
+        HashMap<Integer, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
+
+        //Create ArrayList<Integer> of read lengths
+        DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
+
+        for (int key : forwardMap.keySet()){
+            int occurences = forwardMap.get(key);
+            for (int i = 0; i <= occurences; i++) {
+                descriptiveStatistics.addValue(key);
+            }
+        }
+
+        for (int key : reverseMap.keySet()){
+            int occurences = reverseMap.get(key);
+            for (int i = 0; i <= occurences; i++) {
+                descriptiveStatistics.addValue(key);
+            }
+        }
+
+        double mean = descriptiveStatistics.getMean();
+        double std = descriptiveStatistics.getStandardDeviation();
+        double median = descriptiveStatistics.getPercentile(50);
+
+        HashMap<String, Double> summ_stats = new HashMap<>();
+
+        summ_stats.put("mean_readlength", mean);
+        summ_stats.put("std", std);
+        summ_stats.put("median", median);
+
+        json_map.put("summary_stats", summ_stats);
 
     }
 
@@ -862,14 +933,9 @@ public class OutputGenerator {
         float height = PageSize.A4.getWidth() * (float)0.8;
         float width = PageSize.A4.getHeight() / 2;
 
-        // create plots, both three prime and five prime and add them
-        // to one PDF
+        // create plots, both three prime and five prime and add them to one PDF
 
         float xpos = 0;
-//        // place histogram in the center if only one plot
-//        if(charts.length==1){
-//            xpos=width*(float)0.5;
-//        }
         for(JFreeChart chart : charts){
             PdfTemplate plot = cb.createTemplate(width, height);
             Graphics2D g2d = new PdfGraphics2D(plot, width, height);
