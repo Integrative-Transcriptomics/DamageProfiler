@@ -4,25 +4,19 @@ import IO.Communicator;
 import calculations.StartCalculations;
 import javafx.application.Application;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 
 public class MainGuiFX extends Application {
@@ -32,6 +26,7 @@ public class MainGuiFX extends Application {
     private Button btn_output;
     private Button btn_plotting_options;
     private Button btn_run;
+    private Button btn_specieList;
     private TextField textfield_threshold;
     private TextField textfield_length;
     private TextField textfield_specie;
@@ -59,11 +54,22 @@ public class MainGuiFX extends Application {
         addComponents(root);
         addListener();
 
-        this.primaryStage.setScene(new Scene(root, 550, 400));
+        this.primaryStage.setScene(new Scene(root, 650, 400));
         this.primaryStage.setResizable(true);
         this.primaryStage.show();
 
 
+    }
+
+
+    public Task startCalculuations(Communicator communicator) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                starter.start(communicator);
+                return true;
+            }
+        };
     }
 
 
@@ -116,13 +122,25 @@ public class MainGuiFX extends Application {
 
         });
 
+        btn_specieList.setOnAction(e -> {
+
+            SpeciesListFileChooser slfc = new SpeciesListFileChooser(communicator);
+            if (checkIfInputWasSelected()) {
+                btn_specieList.setDisable(false);
+            } else {
+                btn_specieList.setDisable(true);
+            }
+
+
+        });
+
 
         btn_run.setOnAction(e -> {
 
             // set all user options
             communicator.setLength(Integer.parseInt(textfield_length.getText()));
             communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
-            communicator.setSpecie_name(textfield_specie.getText());
+            communicator.setSpecies_ref_identifier(textfield_specie.getText());
             if(!checkbox_dynamic_y_axis_height.isSelected()){
                 try {
                     communicator.setyAxis(Double.parseDouble(textfield_y_axis_height.getText()));
@@ -140,21 +158,14 @@ public class MainGuiFX extends Application {
             try {
                 // add progress indicator
                 progressBar.setProgress(0);
-                //progressIndicator = new ProgressIndicator();
-
-
                 startCalculuations = startCalculuations(communicator);
                 progressBar.progressProperty().unbind();
                 progressBar.progressProperty().bind(startCalculuations.progressProperty());
 
                 startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
-                        new EventHandler<WorkerStateEvent>() {
-
-                            @Override
-                            public void handle(WorkerStateEvent t) {
-                                if(starter.isCalculationsDone()){
-                                    primaryStage.close();
-                                }
+                        (EventHandler<WorkerStateEvent>) t -> {
+                            if(starter.isCalculationsDone()){
+                                primaryStage.close();
                             }
                         });
                 new Thread(startCalculuations).start();
@@ -170,15 +181,6 @@ public class MainGuiFX extends Application {
     }
 
 
-    public Task startCalculuations(Communicator communicator) {
-        return new Task() {
-            @Override
-            protected Object call() throws Exception {
-                starter.start(communicator);
-                return true;
-            }
-        };
-    }
 
     private void addComponents(GridPane root) {
 
@@ -186,12 +188,13 @@ public class MainGuiFX extends Application {
         btn_reference = new Button("Select reference");
         btn_output = new Button("Select output");
         btn_plotting_options = new Button("Plotting options");
+        btn_specieList = new Button("Set list");
         btn_run = new Button("Run");
 
         Label label_threshold = new Label("Number of bases (x-axis)");
         Label label_yaxis = new Label("Height y-axis");
         Label label_length = new Label("Set number of bases (calculations)");
-        Label label_specie = new Label("Filter specie");
+        Label label_specie = new Label("Filter for specie");
         Label label_title = new Label("Set title");
         Label label_plot = new Label("Plot");
         label_plot.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
@@ -238,6 +241,7 @@ public class MainGuiFX extends Application {
         root.add(textfield_threshold, 1, row, 2,1);
         root.add(label_specie, 0, ++row, 1,1);
         root.add(textfield_specie, 1, row, 2,1);
+        root.add(btn_specieList, 3, row, 1,1);
         root.add(checkbox_use_merged_reads, 0, ++row,1,1);
         root.add(new Separator(), 0, ++row,3,1);
 

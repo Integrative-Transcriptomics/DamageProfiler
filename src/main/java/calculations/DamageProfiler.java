@@ -6,12 +6,10 @@ import htsjdk.samtools.*;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
-import picard.sam.ViewSam;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
@@ -20,13 +18,10 @@ import java.util.*;
  */
 public class  DamageProfiler {
 
-    private final SamReader inputSam;
-    private final Functions useful_functions;
-    private final String specie;
-    private final Logger LOG;
-    private int matchCounter;
-    private int deletionCounter;
-    private boolean containsDeletion;
+    private SamReader inputSam=null;
+    private Functions useful_functions=null;
+    private String specie=null;
+    private Logger LOG=null;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
     private int numberOfAllReads;
@@ -37,40 +32,59 @@ public class  DamageProfiler {
     private FastACacher cache;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
+    private SpecieHandler specieHandler;
 
     /**
-     * constructor, set input and output filepaths
-     * @param input
-     * @param reference
-     * @param LOG
-     * @throws FileNotFoundException
-     * @throws UnsupportedEncodingException
+     * constructor
+     * @param specieHandler
      */
-    public DamageProfiler(File input, File reference, int threshold, int length, String specie, Logger LOG) {
-
-        // read bam/sam file
-
-        inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                validationStringency(ValidationStringency.LENIENT).open(input);
-        numberOfUsedReads = 0;
-        numberOfAllReads = 0;
-        this.LOG = LOG;
-        this.threshold = threshold;
-        this.length = length;
-        this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
-        this.reference = reference;
-        this.lengthDistribution = new LengthDistribution(this.LOG);
-        this.lengthDistribution.init();
-        this.identity = new ArrayList();
-        this.specie = specie;
-        useful_functions = new Functions(this.LOG);
-
-        this.containsDeletion = false;
-        this.deletionCounter = 0;
-        this.matchCounter = 0;
+    public DamageProfiler(SpecieHandler specieHandler) {
+        this.specieHandler = specieHandler;
 
     }
 
+    /**
+     *
+     * @param input
+     * @param reference
+     * @param threshold
+     * @param length
+     * @param specie
+     * @param LOG
+     */
+    public void init(File input, File reference, int threshold, int length, String specie, Logger LOG){
+        // read bam/sam file
+        if (!input.exists()){
+            System.err.println("SAM/BAM file not found. Please check your file path.\nInput: " +
+                    input.getAbsolutePath());
+            System.exit(0);
+        } else {
+            try{
+
+                inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                        validationStringency(ValidationStringency.LENIENT).open(input);
+                numberOfUsedReads = 0;
+                numberOfAllReads = 0;
+                this.LOG = LOG;
+                this.threshold = threshold;
+                this.length = length;
+                this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
+                this.reference = reference;
+                this.lengthDistribution = new LengthDistribution(this.LOG);
+                this.lengthDistribution.init();
+                this.identity = new ArrayList();
+                this.specie = specie;
+                useful_functions = new Functions(this.LOG);
+
+
+            } catch (Exception e){
+                System.err.println("Invalid SAM/BAM file. Please check your file.");
+                LOG.error("Invalid SAM/BAM file. Please check your file.");
+                System.out.println(e.toString());
+                System.exit(0);
+            }
+        }
+    }
 
     /**
      * get all sam records of input sam/bam file,
@@ -79,74 +93,67 @@ public class  DamageProfiler {
      *
      *
      * @param use_only_merged_reads
+     * @param use_all_reads
      * @throws Exception
      */
-    public String extractSAMRecords(boolean use_only_merged_reads) throws Exception{
+    public void extractSAMRecords(boolean use_only_merged_reads, boolean use_all_reads) throws Exception{
 
-        List<SAMSequenceRecord> seq_dict = inputSam.getFileHeader().getSequenceDictionary().getSequences();
-        String seq_name=null;
+        if(use_all_reads && use_only_merged_reads){
+            LOG.info("-------------------");
+            LOG.info("0 reads processed.\nRunning not possible. 'use_only_merged_reads' and 'use_all_reads' was set to 'true'");
+            System.exit(0);
 
-        for(SAMRecord record : inputSam) {
-            if (this.specie == null) {
-                String chr = record.getReferenceName();
-                numberOfAllReads++;
-                if (use_only_merged_reads) {
-                    // get only mapped and merged reads
-                    if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
-                        processRecord(record);
-                        seq_name = seq_dict.get(0).getSequenceName();
+        } else {
+            for(SAMRecord record : inputSam) {
+                if (this.specie == null) {
 
-                    }
-                } else if (!record.getReadUnmappedFlag()) {
-                    // get all mapped reads
-                    processRecord(record);
-                    seq_name = seq_dict.get(0).getSequenceName();
-
-                }
-
-                // print number of processed reads
-                if (numberOfUsedReads % 100 == 0) {
-                    LOG.info(numberOfUsedReads + " Reads processed.");
-                }
-
-            } else {
-
-                if (record.getReferenceName().equals(this.specie)) {
-                    String chr = record.getReferenceName();
                     numberOfAllReads++;
-                    if (use_only_merged_reads) {
-                        // get only mapped and merged reads
-                        if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
-                            processRecord(record);
-                            seq_name = seq_dict.get(0).getSequenceName();
-
-                        }
-                    } else if (!record.getReadUnmappedFlag()) {
-                        // get all mapped reads
-                        processRecord(record);
-                        seq_name = seq_dict.get(0).getSequenceName();
-
-                    }
+                    handleRecord(use_only_merged_reads, use_all_reads, record);
 
                     // print number of processed reads
                     if (numberOfUsedReads % 100 == 0) {
                         LOG.info(numberOfUsedReads + " Reads processed.");
                     }
+
+                } else {
+
+                    if (record.getReferenceName().contains(this.specie)) {
+                        numberOfAllReads++;
+                        handleRecord(use_only_merged_reads, use_all_reads, record);
+
+                        // print number of processed reads
+                        if (numberOfUsedReads % 100 == 0) {
+                            LOG.info(numberOfUsedReads + " Reads processed.");
+                        }
+                    }
                 }
             }
+            frequencies.normalizeValues();
+
+            LOG.info("-------------------");
+            LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
         }
-        frequencies.normalizeValues();
-
-        LOG.info("-------------------");
-        LOG.info("# Skipped records (Deletion): " + deletionCounter);
-        LOG.info("# Skipped records (length does not match): " + matchCounter);
-        LOG.info("# reads used for damage calculation: " + (numberOfUsedReads - deletionCounter - matchCounter));
-
-
-        return seq_name;
 
     }
 
+
+    private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) throws Exception {
+        if(use_all_reads && !use_only_merged_reads){
+            // process all reads
+            processRecord(record);
+
+        } else if (use_only_merged_reads && !use_all_reads){
+            // process only mapped and merged reads
+            if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
+                processRecord(record);
+            }
+        } else if(!use_only_merged_reads && !use_all_reads)
+            // process only mapped reads
+            if (!record.getReadUnmappedFlag()) {
+                // get all mapped reads
+                processRecord(record);
+            }
+    }
 
 
 
@@ -163,7 +170,6 @@ public class  DamageProfiler {
 
     private void processRecord(SAMRecord record) throws Exception{
         numberOfUsedReads++;
-        //chrs.add(record.getReferenceName());
 
         /*
             If MD value is set, use it to reconstruct reference
@@ -179,7 +185,7 @@ public class  DamageProfiler {
         if(record.getStringAttribute(SAMTag.MD.name()) == null && this.reference == null){
 
             LOG.error("SAM/BAM file has no MD tag. Please specify reference file ");
-            System.exit(-1);
+            System.exit(0);
 
         } else if (record.getStringAttribute(SAMTag.MD.name()) == null){
 
@@ -208,26 +214,13 @@ public class  DamageProfiler {
         } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
             // get reference corresponding to the record
             if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
-//                for(CigarElement cigarelement : record.getCigar().getCigarElements()){
-//                    if(cigarelement.getOperator().toString().equals("D")){
-//                        containsDeletion=true;
-//                    }
-//                }
-
-                //if(!containsDeletion){
 
                     byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
                     reference_aligned = new String(ref_seq, "UTF-8");
                     record_aligned = record.getReadString();
-                //} else {
-                //    LOG.info("Skipped record (Deletion): " + record.getReadName());
-                //    deletionCounter++;
-                //}
-
 
             } else {
                 LOG.info("Skipped record (length does not match): " + record.getReadName());
-                matchCounter++;
             }
 
         }
@@ -288,5 +281,21 @@ public class  DamageProfiler {
         return numberOfAllReads;
     }
     public ArrayList<Double> getIdentity() { return identity; }
-    //public List<String> getChrs() { return chrs; }
+
+    public String getSpeciesname(File file, String ref) throws IOException {
+
+        SamReader input = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                validationStringency(ValidationStringency.LENIENT).open(file);
+
+        for(SAMRecord record : input) {
+            if(record.getReferenceName().contains(ref)){
+                specieHandler.getSpecie(record.getReferenceName());
+                String spe = specieHandler.getSpecie_name();
+                return spe.replace(" ", "_").trim();
+            }
+        }
+        return null;
+    }
+
+
 }

@@ -16,10 +16,10 @@ public class ReferenceFileChooserFX {
                 new FileChooser.ExtensionFilter("Fasta", "*.fa","*.fasta", ".fas")
         );
 
-
         File f = fileChooser.showOpenDialog(new Stage());
-        c.setReference(f.getAbsolutePath());
-        System.out.println(f.getAbsolutePath());
+        if(f != null){
+            c.setReference(f.getAbsolutePath());
+        }
 
     }
 

@@ -12,8 +12,10 @@ public class OutputDirChooserFX {
 
     public OutputDirChooserFX(Communicator c) {
         File f = dirChooser.showDialog(new Stage());
-        c.setOutfolder(f.getAbsolutePath());
-        System.out.println(f.getAbsolutePath());
+        if (f != null){
+            c.setOutfolder(f.getAbsolutePath());
+            System.out.println(f.getAbsolutePath());
+        }
 
     }
 }
