@@ -1,15 +1,13 @@
 package calculations;
 
-import IO.Communicator;
-import IO.LogClass;
-import IO.OutputGenerator;
-import IO.Unzip;
+import IO.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.List;
 
-import javafx.stage.Stage;
+import com.itextpdf.text.DocumentException;
 import org.apache.log4j.*;
 
 
@@ -21,8 +19,23 @@ public class StartCalculations {
     private final String VERSION;
     private LogClass logClass;
     private long currtime_prior_execution;  // start time to get overall runtime
-    private boolean calculationsDone=true;
+    private boolean calculationsDone = true;
     private Logger LOG;
+    private List<String> specieslist = null;
+    private List<String> species_name_list;
+    private SpeciesListParser speciesListParser;
+    private boolean use_only_merged_reads;
+    private double height;
+    private int threshold;
+    private int length;
+    private String specieslist_filepath;
+    private String species_ref_identifier;
+    private String reference;
+    private String outfolder;
+    private String input;
+    private SpecieHandler specieHandler;
+    private boolean use_all_reads;
+
 
     public StartCalculations(String version){
         VERSION = version;
@@ -32,91 +45,272 @@ public class StartCalculations {
 
         currtime_prior_execution = System.currentTimeMillis();
 
-        String input = c.getInput();
-        String outfolder = c.getOutfolder();
-        String reference = c.getReference();
-        String rname = c.getRname();
-        String specie_name = "";
-        int length = c.getLength();
-        int threshold = c.getThreshold();
-        double height = c.getyAxis();
-        boolean use_only_merged_reads = !c.isUse_merged_and_mapped_reads();
-
-        String inputfileNameWithOutExtension;
-        if(c.getTitle_plots() == null ){
-            inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-        } else {
-            inputfileNameWithOutExtension = c.getTitle_plots();
-        }
-
-        String output_folder = createOutputFolder(
-                outfolder,
-                inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length-1]);
+        input = c.getInput();
+        outfolder = c.getOutfolder();
+        reference = c.getReference();
+        species_ref_identifier = c.getSpecies_ref_identifier();
+        specieslist_filepath = c.getSpecieslist_filepath();
+        length = c.getLength();
+        threshold = c.getThreshold();
+        height = c.getyAxis();
+        use_only_merged_reads = c.isUse_merged_and_mapped_reads();
+        use_all_reads = c.isUse_all_reads();
+        speciesListParser=null;
+        species_name_list=null;
+        specieHandler = new SpecieHandler();
 
 
-        // init Logger
-        logClass = new LogClass();
-        logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
-        logClass.setUp();
-        LOG = logClass.getLogger(this.getClass());
-        System.out.println("DamageProfiler v" + VERSION);
-        LOG.info("DamageProfiler v" + VERSION);
-
-
-        // decompress input file if necessary
-        if(input.endsWith(".gz")){
-            Unzip unzip = new Unzip(LOG);
-            input = unzip.decompress(input);
-        }
-
-        // create new output folder
-        File file = new File(input);
-        // log settings
-        LOG.info("Analysis of file (-i):" + file + "\n"
-                + "Output folder (-o):" + outfolder + "\n"
-                + "Reference (-r, optional) :" + reference + "\n"
-                + "Specie (-s, optional):" + rname + "\n"
-                + "Length (-l): " + length + "\n"
-                + "Threshold (-t): " + threshold + "\n"
-                + "Height yaxis (-yaxis): " + height);
-
-
-
-
-        // create variables for tax id and gi ID if specie is set
-        if(rname != null){
-            String gi = "";
-            SpecieHandler specieHandler = new SpecieHandler(gi, rname, LOG);
-            specieHandler.getSpecie();
-            specie_name = specieHandler.getSpecie_name();
-            output_folder = createOutputFolder(
-                    output_folder,
-                    specie_name);
-        }
-
-        // start DamageProfiler
-        DamageProfiler damageProfiler = new DamageProfiler(
-                file,
-                new File(reference),
-                threshold,
-                length,
-                rname,
+        SpeciesListParser speciesListParser = new SpeciesListParser(
+                specieslist_filepath,
                 LOG
         );
-        damageProfiler.extractSAMRecords(use_only_merged_reads);
 
-        if(damageProfiler.getNumberOfUsedReads()!=0){
-            // generate output files if more that 0 reads were processed
+        if(specieslist_filepath != null){
+            /*
+                parse species references (-sf) and run DP for each reference in the file
+             */
+            specieslist = new ArrayList<>();
+            specieslist.addAll(speciesListParser.getList());
+
+
+            for (int i = 0; i < specieslist.size(); i++) {
+                String specie_input_string = specieslist.get(i);
+                //String specie_name = species_real_name_list.get(i);
+
+
+
+                // start DamageProfiler
+                File file = new File(input);
+                DamageProfiler damageProfiler = new DamageProfiler(specieHandler);
+
+
+                String ref = specie_input_string.split("\\|")[0].trim();
+                String speciesname = damageProfiler.getSpeciesname(file, ref);
+
+                String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+                String output_folder = createOutputFolder(
+                        outfolder,
+                        inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] + File.separator + ref + "_" + speciesname);
+
+
+
+                if (c.getTitle_plots() == null) {
+                    inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+                } else {
+                    inputfileNameWithOutExtension = c.getTitle_plots();
+                }
+
+
+
+                // init Logger
+                logClass = new LogClass();
+                logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler_" + ref + "_" + speciesname +".log");
+                logClass.setUp();
+
+                LOG = logClass.getLogger(this.getClass());
+                System.out.println("DamageProfiler v" + VERSION);
+                LOG.info("DamageProfiler v" + VERSION);
+                LOG.info("Calculate damage profile for species " + ref + " (" + speciesname + ")");
+
+
+
+                // decompress input file if necessary
+                if (input.endsWith(".gz")) {
+                    Unzip unzip = new Unzip(LOG);
+                    input = unzip.decompress(input);
+                }
+
+                // create new output folder
+                // log settings
+                LOG.info("Analysis of file (-i):" + file + "\n"
+                        + "Output folder (-o):" + output_folder + "\n"
+                        + "Reference (-r, optional) :" + reference + "\n"
+                        + "Specie (-s, optional):" + specie_input_string + "\n"
+                        + "Species list (-sf, optional):" + c.getSpecieslist_filepath() + "\n"
+                        + "Length (-l): " + length + "\n"
+                        + "Threshold (-t): " + threshold + "\n"
+                        + "Height yaxis (-yaxis): " + height);
+
+
+                damageProfiler.init(file,
+                        new File(reference),
+                        threshold,
+                        length,
+                        specie_input_string,
+                        LOG);
+
+                damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
+
+                generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, speciesname);
+            }
+
+
+        } else if(species_ref_identifier != null){
+
+            /*
+                parse species reference (-s) and run DP
+             */
+
+            this.specieslist = new ArrayList<>();
+            specieslist.add(species_ref_identifier);
+            //species_real_name_list.add(speciesListParser.getSingleSpecie(species_ref_identifier));
+
+            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+
+            String output_folder = createOutputFolder(
+                    outfolder,
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+
+
+            if (c.getTitle_plots() == null) {
+                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+            }
+            else {
+                inputfileNameWithOutExtension = c.getTitle_plots();
+            }
+
+
+
+            // init Logger
+            logClass = new LogClass();
+            logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
+            logClass.setUp();
+            LOG = logClass.getLogger(this.getClass());
+            System.out.println("DamageProfiler v" + VERSION);
+            LOG.info("DamageProfiler v" + VERSION);
+
+
+            // decompress input file if necessary
+            if (input.endsWith(".gz")) {
+                Unzip unzip = new Unzip(LOG);
+                input = unzip.decompress(input);
+            }
+
+            // create new output folder
+            File file = new File(input);
+            // log settings
+            LOG.info("Analysis of file (-i):" + file + "\n"
+                    + "Output folder (-o):" + output_folder + "\n"
+                    + "Reference (-r, optional) :" + reference + "\n"
+                    + "Specie (-s, optional):" + specieslist + "\n"
+                    + "Species list (-sf, optional):" + specieslist_filepath + "\n"
+                    + "Length (-l): " + length + "\n"
+                    + "Threshold (-t): " + threshold + "\n"
+                    + "Height yaxis (-yaxis): " + height);
+
+
+            // start DamageProfiler
+            DamageProfiler damageProfiler = new DamageProfiler(
+
+                    specieHandler);
+
+            damageProfiler.init(file,
+                    new File(reference),
+                    threshold,
+                    length,
+                    null,
+                    LOG);
+
+            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
+
+            speciesListParser.setLOG(LOG);
+            generateOutput(damageProfiler,output_folder, inputfileNameWithOutExtension, null);
+        } else {
+
+            /*
+                    No species specified --> use all (mapping) reads
+             */
+            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+
+            String output_folder = createOutputFolder(
+                    outfolder,
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+
+            if (c.getTitle_plots() == null) {
+                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+            } else {
+                inputfileNameWithOutExtension = c.getTitle_plots();
+            }
+
+            // init Logger
+            logClass = new LogClass();
+            logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
+            logClass.setUp();
+            LOG = logClass.getLogger(this.getClass());
+            System.out.println("DamageProfiler v" + VERSION);
+            LOG.info("DamageProfiler v" + VERSION);
+
+
+            // decompress input file if necessary
+            if (input.endsWith(".gz")) {
+                Unzip unzip = new Unzip(LOG);
+                input = unzip.decompress(input);
+            }
+
+            // create new output folder
+            File file = new File(input);
+            // log settings
+            LOG.info("Analysis of file (-i):" + file + "\n"
+                    + "Output folder (-o):" + output_folder + "\n"
+                    + "Reference (-r, optional) :" + reference + "\n"
+                    + "Specie (-s, optional):" + specieslist + "\n"
+                    + "Species list (-sf, optional):" + c.getSpecieslist_filepath() + "\n"
+                    + "Length (-l): " + length + "\n"
+                    + "Threshold (-t): " + threshold + "\n"
+                    + "Height yaxis (-yaxis): " + height);
+
+
+            // start DamageProfiler
+            DamageProfiler damageProfiler = new DamageProfiler(specieHandler);
+
+            damageProfiler.init(file,
+                    new File(reference),
+                    threshold,
+                    length,
+                    null,
+                    LOG);
+            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
+
+            speciesListParser.setLOG(LOG);
+
+            generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, null);
+
+        }
+
+
+        // print runtime
+        long currtime_post_execution = System.currentTimeMillis();
+        long diff = currtime_post_execution - currtime_prior_execution;
+        long runtime_s = diff / 1000;
+        if(runtime_s > 60) {
+            long minutes = runtime_s / 60;
+            long seconds = runtime_s % 60;
+            LOG.info("Runtime of Module was: " + minutes + " minutes, and " + seconds + " seconds.");
+        } else {
+            LOG.info("Runtime of Module was: " + runtime_s + " seconds.");
+        }
+
+        calculationsDone=true;
+
+
+    }
+
+    private void generateOutput(DamageProfiler damageProfiler, String output_folder, String inputfileNameWithOutExtension, String spe)
+            throws IOException, DocumentException {
+
+        if (damageProfiler.getNumberOfUsedReads() != 0) {
+
             OutputGenerator outputGenerator = new OutputGenerator(
                     output_folder,
                     damageProfiler,
-                    specie_name,
+                    spe,
                     threshold,
                     length,
                     height,
                     input,
                     LOG
             );
+
             outputGenerator.writeLengthDistribution();
             outputGenerator.writeDamageFiles(
                     damageProfiler.getFrequencies().getCount_G_A_3_norm(),
@@ -129,6 +323,9 @@ public class StartCalculations {
                     damageProfiler.getFrequencies(),
                     threshold
             );
+
+            outputGenerator.computeSummaryMetrics();
+
             outputGenerator.writeJSON(VERSION);
 
 
@@ -148,30 +345,10 @@ public class StartCalculations {
 
             LOG.info("Output files generated");
 
-
-            // print runtime
-            long currtime_post_execution = System.currentTimeMillis();
-            long diff = currtime_post_execution - currtime_prior_execution;
-            long runtime_s = diff / 1000;
-            if(runtime_s > 60) {
-                long minutes = runtime_s / 60;
-                long seconds = runtime_s % 60;
-                LOG.info("Runtime of Module was: " + minutes + " minutes, and " + seconds + " seconds.");
-            } else {
-                LOG.info("Runtime of Module was: " + runtime_s + " seconds.");
-            }
-
         } else {
             LOG.warn("No reads processed. Can't create any output");
         }
-
-        calculationsDone=true;
-
-
-
-
     }
-
 
     /**
      * create output folder.
