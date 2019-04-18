@@ -7,7 +7,7 @@
 This method can be used to calculate damage profiles of mapped ancient DNA reads. 
 
 Main author: Judith Neukamm <judith.neukamm@uzh.ch>
-Contributor: Alexander Peltzer <alexander.peltzer@uni-tuebingen.de>
+Contributor: Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de>
 
 ###### Method
 DamageProfiler calculates damage profiles of mapped reads and provides a 
@@ -42,6 +42,7 @@ The input sam/bam file.\
 The output folder.\
 \
 Options
+
 **-l,--length <LENGTH>**\
 Number of bases which are computations.\
 \
@@ -67,7 +68,7 @@ Title used for all plots (Default: file name of input SAM/BAM file).\
 \
 **-yaxis,--yaxis <YAXIS>**\
  Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
+
 
 Running the jar file without any parameter starts a GUI to configure the run.
 
