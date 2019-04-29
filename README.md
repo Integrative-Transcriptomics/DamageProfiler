@@ -6,7 +6,7 @@
 
 This method can be used to calculate damage profiles of mapped ancient DNA reads. 
 
-Main author: Judith Neukamm <judith.neukamm@uzh.ch>
+Main author: Judith Neukamm <judith.neukamm@uzh.ch>\
 Contributor: Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de>
 
 ###### Method
