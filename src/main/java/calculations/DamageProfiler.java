@@ -214,10 +214,17 @@ public class  DamageProfiler {
         } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
             // get reference corresponding to the record
             if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
-
+//                if(record.getCigarString().contains("S")){
+//                    System.out.println("Cigar contains soft clipping");
+//                } else if(record.getCigarString().contains("D")){
+//                    System.out.println("Cigar contains deletion");
+//                } else {
                     byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
                     reference_aligned = new String(ref_seq, "UTF-8");
                     record_aligned = record.getReadString();
+               // }
+
+
 
             } else {
                 LOG.info("Skipped record (length does not match): " + record.getReadName());

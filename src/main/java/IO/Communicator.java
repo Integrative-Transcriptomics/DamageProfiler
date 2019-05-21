@@ -14,7 +14,11 @@ public class Communicator {
     // damage calculation
     private int threshold = 25;
 
-    private double yAxis;
+    private double yAxis_damageplot;
+    private double xaxis_histo_id_min =-1;
+    private double xaxis_histo_id_max =-1;
+    private double xaxis_histo_length_min=-1;
+    private double xaxis_histo_length_max=-1;
     private int length = 100;
     private boolean use_merged_and_mapped_reads = false;
     private boolean use_all_reads = false;
@@ -95,12 +99,12 @@ public class Communicator {
         this.use_all_reads = use_all_reads;
     }
 
-    public void setyAxis(double yAxis) {
-        this.yAxis = yAxis;
+    public void setyAxis_damageplot(double yAxis_damageplot) {
+        this.yAxis_damageplot = yAxis_damageplot;
     }
 
-    public double getyAxis() {
-        return yAxis;
+    public double getyAxis_damageplot() {
+        return yAxis_damageplot;
     }
 
     public String getTitle_plots() {
@@ -120,5 +124,35 @@ public class Communicator {
     }
 
 
+    public double getXaxis_histo_id_min() {
+        return xaxis_histo_id_min;
+    }
 
+    public void setXaxis_histo_id_min(double xaxis_histo_id_min) {
+        this.xaxis_histo_id_min = xaxis_histo_id_min;
+    }
+
+    public double getXaxis_histo_id_max() {
+        return xaxis_histo_id_max;
+    }
+
+    public void setXaxis_histo_id_max(double xaxis_histo_id_max) {
+        this.xaxis_histo_id_max = xaxis_histo_id_max;
+    }
+
+    public double getXaxis_histo_length_min() {
+        return xaxis_histo_length_min;
+    }
+
+    public void setXaxis_histo_length_min(double xaxis_histo_length_min) {
+        this.xaxis_histo_length_min = xaxis_histo_length_min;
+    }
+
+    public double getXaxis_histo_length_max() {
+        return xaxis_histo_length_max;
+    }
+
+    public void setXaxis_histo_length_max(double xaxis_histo_length_max) {
+        this.xaxis_histo_length_max = xaxis_histo_length_max;
+    }
 }
