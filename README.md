@@ -6,8 +6,8 @@
 
 This method can be used to calculate damage profiles of mapped ancient DNA reads. 
 
-Main author: Judith Neukamm <judith.neukamm@uzh.ch>
-Contributor: Alexander Peltzer <alexander.peltzer@uni-tuebingen.de>
+Main author: Judith Neukamm <judith.neukamm@uzh.ch>\
+Contributor: Alexander Peltzer <alexander.peltzer@qbic.uni-tuebingen.de>
 
 ###### Method
 DamageProfiler calculates damage profiles of mapped reads and provides a 
@@ -42,6 +42,7 @@ The input sam/bam file.\
 The output folder.\
 \
 Options
+
 **-l,--length <LENGTH>**\
 Number of bases which are computations.\
 \
@@ -65,9 +66,24 @@ Number of bases which are considered for plotting nucleotide misincorporations.\
 **-title,--title <TITLE>**\
 Title used for all plots (Default: file name of input SAM/BAM file).\
 \
-**-yaxis,--yaxis <YAXIS>**\
- Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
+**-yaxis_damageplot,--yaxis_damageplot <YAXIS_DAMAGEPLOT>**\
+Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
 \
+**-xaxis_histo_id_min,--xaxis_histo_id_min <XAXIS_HISTO_ID_MIN>**\
+Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
+\
+**-xaxis_histo_id_max,--xaxis_histo_id_max <XAXIS_HISTO_ID_MAX>**\
+Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
+\
+**-xaxis_histo_length_min,--xaxis_histo_length_min <XAXIS_HISTO_LENGTH_MIN>**\
+Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
+\
+**-xaxis_histo_length_max,--xaxis_histo_length_max <XAXIS_HISTO_LENGTH_MAX>**\
+Maximal value on y axis (Default: flexible, adapts to the calculated damage).
+
+
+
+
 
 Running the jar file without any parameter starts a GUI to configure the run.
 
