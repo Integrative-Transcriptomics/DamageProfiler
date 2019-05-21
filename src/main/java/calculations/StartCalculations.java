@@ -25,7 +25,7 @@ public class StartCalculations {
     private List<String> species_name_list;
     private SpeciesListParser speciesListParser;
     private boolean use_only_merged_reads;
-    private double height;
+    private double height_damageplot;
     private int threshold;
     private int length;
     private String specieslist_filepath;
@@ -35,6 +35,10 @@ public class StartCalculations {
     private String input;
     private SpecieHandler specieHandler;
     private boolean use_all_reads;
+    private double xaxis_min_id_histogram;
+    private double xaxis_max_id_histogram;
+    private double xaxis_min_length_histogram;
+    private double xaxis_max_length_histogram;
 
 
     public StartCalculations(String version){
@@ -52,20 +56,25 @@ public class StartCalculations {
         specieslist_filepath = c.getSpecieslist_filepath();
         length = c.getLength();
         threshold = c.getThreshold();
-        height = c.getyAxis();
+        height_damageplot = c.getyAxis_damageplot();
+        xaxis_min_id_histogram = c.getXaxis_histo_id_min();
+        xaxis_max_id_histogram = c.getXaxis_histo_id_max();
+        xaxis_min_length_histogram = c.getXaxis_histo_length_min();
+        xaxis_max_length_histogram = c.getXaxis_histo_length_max();
         use_only_merged_reads = c.isUse_merged_and_mapped_reads();
         use_all_reads = c.isUse_all_reads();
         speciesListParser=null;
         species_name_list=null;
         specieHandler = new SpecieHandler();
 
-
         SpeciesListParser speciesListParser = new SpeciesListParser(
                 specieslist_filepath,
                 LOG
         );
 
+
         if(specieslist_filepath != null){
+
             /*
                 parse species references (-sf) and run DP for each reference in the file
              */
@@ -90,7 +99,8 @@ public class StartCalculations {
                 String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
                 String output_folder = createOutputFolder(
                         outfolder,
-                        inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] + File.separator + ref + "_" + speciesname);
+                        inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]
+                                + File.separator + ref + "_" + speciesname);
 
 
 
@@ -129,7 +139,11 @@ public class StartCalculations {
                         + "Species list (-sf, optional):" + c.getSpecieslist_filepath() + "\n"
                         + "Length (-l): " + length + "\n"
                         + "Threshold (-t): " + threshold + "\n"
-                        + "Height yaxis (-yaxis): " + height);
+                        + "Height yaxis (-yaxis): " + height_damageplot + "\n"
+                        + "x-axis min ID histogram (-xaxis_histo_id_min): " + xaxis_min_id_histogram + "\n"
+                        + "x-axis max ID histogram (-xaxis_histo_id_max): " + xaxis_max_id_histogram + "\n"
+                        + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
+                        + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
 
                 damageProfiler.init(file,
@@ -147,19 +161,25 @@ public class StartCalculations {
 
         } else if(species_ref_identifier != null){
 
+            // start DamageProfiler
+            DamageProfiler damageProfiler = new DamageProfiler(
+
+                    specieHandler);
+
             /*
                 parse species reference (-s) and run DP
              */
 
             this.specieslist = new ArrayList<>();
             specieslist.add(species_ref_identifier);
-            //species_real_name_list.add(speciesListParser.getSingleSpecie(species_ref_identifier));
+            String speciesname = damageProfiler.getSpeciesname(new File(input), species_ref_identifier);
 
             String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
             String output_folder = createOutputFolder(
                     outfolder,
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] +
+                             File.separator + species_ref_identifier + "_" + speciesname);
 
 
             if (c.getTitle_plots() == null) {
@@ -196,13 +216,14 @@ public class StartCalculations {
                     + "Species list (-sf, optional):" + specieslist_filepath + "\n"
                     + "Length (-l): " + length + "\n"
                     + "Threshold (-t): " + threshold + "\n"
-                    + "Height yaxis (-yaxis): " + height);
+                    + "Height yaxis (-yaxis): " + height_damageplot  + "\n"
+                    + "x-axis min ID histogram (-xaxis_histo_min): " + xaxis_min_id_histogram + "\n"
+                    + "x-axis max ID histogram (-xaxis_histo_max): " + xaxis_max_id_histogram + "\n"
+                    + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
+                    + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
 
-            // start DamageProfiler
-            DamageProfiler damageProfiler = new DamageProfiler(
 
-                    specieHandler);
 
             damageProfiler.init(file,
                     new File(reference),
@@ -257,7 +278,12 @@ public class StartCalculations {
                     + "Species list (-sf, optional):" + c.getSpecieslist_filepath() + "\n"
                     + "Length (-l): " + length + "\n"
                     + "Threshold (-t): " + threshold + "\n"
-                    + "Height yaxis (-yaxis): " + height);
+                    + "Height yaxis (-yaxis): " + height_damageplot + "\n"
+                    + "x-axis min ID histogram (-xaxis_histo_min): " + xaxis_min_id_histogram + "\n"
+                    + "x-axis max ID histogram (-xaxis_histo_max): " + xaxis_max_id_histogram + "\n"
+                    + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
+                    + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
+
 
 
             // start DamageProfiler
@@ -306,7 +332,11 @@ public class StartCalculations {
                     spe,
                     threshold,
                     length,
-                    height,
+                    height_damageplot,
+                    xaxis_min_id_histogram,
+                    xaxis_max_id_histogram,
+                    xaxis_min_length_histogram,
+                    xaxis_max_length_histogram,
                     input,
                     LOG
             );

@@ -24,7 +24,7 @@ public class SpeciesListParser {
     }
 
 
-    public String getSingleSpecie(String rname) throws IOException {
+    public String getSingleSpecie(String rname) {
 
         specieHandler.getSpecie(rname);
         return specieHandler.getSpecie_name();

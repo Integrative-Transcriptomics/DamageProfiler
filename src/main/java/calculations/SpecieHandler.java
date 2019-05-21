@@ -1,6 +1,7 @@
 package calculations;
 
 import java.io.*;
+import java.util.Random;
 
 import IO.DOMParser;
 import org.apache.log4j.Logger;
@@ -19,7 +20,7 @@ public class SpecieHandler {
     }
 
 
-    public void getSpecie(String rname) throws IOException{
+    public void getSpecie(String rname){
         if (rname != null) {
             String tax = "";
 
@@ -62,28 +63,39 @@ public class SpecieHandler {
      * @return species name as string
      * @throws IOException
      */
-    private String getSpeciesByID(int id) throws IOException {
-        String species;
+    private String getSpeciesByID(int id) {
+        String species="";
+        Random rand = new Random();
+
+        // Obtain a number between [0 - 1000].
+        int n = rand.nextInt(1000);
 
         // run command line call to get XML file from
         // ncbi with information about the ncbiID of our species
-        Runtime rt = Runtime.getRuntime();
-        Process proc = rt.exec("curl https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy&amp;id=" + id);
 
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-        BufferedWriter xmlOutput = new BufferedWriter(new FileWriter("ncbiID.xml"));
+        // try to call 'curl'. If not possible, do not set species name but only ID
+        try {
+            Runtime rt = Runtime.getRuntime();
+            Process proc = rt.exec("curl https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=taxonomy&amp;id=" + id);
 
-        // read the output from the command and write it in xml file
-        String s = null;
-        while ((s = stdInput.readLine()) != null) {
-            xmlOutput.write(s);
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+            BufferedWriter xmlOutput = new BufferedWriter(new FileWriter("ncbiID" + n + ".xml"));
+
+            // read the output from the command and write it in xml file
+            String s = null;
+            while ((s = stdInput.readLine()) != null) {
+                xmlOutput.write(s);
+            }
+            xmlOutput.close();
+
+            DOMParser domparser = new DOMParser(LOG);
+            species = domparser.parse("ncbiID" + n + ".xml");
+            File f = new File("ncbiID" + n + ".xml");
+            f.delete();
+        } catch (Exception e){
+            System.out.println("'Curl' is not installed. If you would like to use this option, please install it.");
         }
-        xmlOutput.close();
 
-        DOMParser domparser = new DOMParser(LOG);
-        species = domparser.parse("ncbiID.xml");
-        File f = new File("ncbiID.xml");
-        f.delete();
 
 
         return species;

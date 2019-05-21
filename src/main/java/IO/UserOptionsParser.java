@@ -69,12 +69,35 @@ public class UserOptionsParser {
                 .hasArg()
                 .create("title"));
 
-        options.addOption(OptionBuilder.withLongOpt("yaxis")
-                .withArgName("YAXIS")
-                .withDescription("Maximal value on y axis.")
+        options.addOption(OptionBuilder.withLongOpt("yaxis_damageplot")
+                .withArgName("YAXIS_DAMAGEPLOT")
+                .withDescription("Maximal value on y axis of damage plot.")
                 .hasArg()
-                .create("yaxis"));
+                .create("yaxis_damageplot"));
 
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_id_min")
+                .withArgName("XAXIS_HISTO_ID_MIN")
+                .withDescription("Minimal value x-axis of identity histogram.")
+                .hasArg()
+                .create("xaxis_histo_id_min"));
+
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_id_max")
+                .withArgName("XAXIS_HISTO_ID_MAX")
+                .withDescription("Maximal value x-axis of identity histogram.")
+                .hasArg()
+                .create("xaxis_histo_id_max"));
+
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_length_min")
+                .withArgName("XAXIS_HISTO_LENGTH_MIN")
+                .withDescription("Minimal value x-axis of length histogram.")
+                .hasArg()
+                .create("xaxis_histo_length_min"));
+
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_length_max")
+                .withArgName("XAXIS_HISTO_LENGTH_MAX")
+                .withDescription("Maximal value x-axis of length histogram.")
+                .hasArg()
+                .create("xaxis_histo_length_max"));
 
         Option mapped_and_merged = new Option("merged", "all_mapped_and_merged_reads", false,
                 "Use all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
@@ -144,9 +167,28 @@ public class UserOptionsParser {
                 communicator.setTitle_plots(cmd.getOptionValue("title"));
             }
 
-            if(cmd.hasOption("yaxis")) {
-                communicator.setyAxis(Double.parseDouble(cmd.getOptionValue("yaxis")));
+            if(cmd.hasOption("yaxis_damageplot")) {
+                communicator.setyAxis_damageplot(Double.parseDouble(cmd.getOptionValue("yaxis_damageplot")));
             }
+
+            if(cmd.hasOption("xaxis_histo_id_min")) {
+                communicator.setXaxis_histo_id_min(Double.parseDouble(cmd.getOptionValue("xaxis_histo_id_min")));
+            }
+
+
+            if(cmd.hasOption("xaxis_histo_id_max")) {
+                communicator.setXaxis_histo_id_max(Double.parseDouble(cmd.getOptionValue("xaxis_histo_id_max")));
+            }
+
+            if(cmd.hasOption("xaxis_histo_length_min")) {
+                communicator.setXaxis_histo_length_min(Double.parseDouble(cmd.getOptionValue("xaxis_histo_length_min")));
+            }
+
+
+            if(cmd.hasOption("xaxis_histo_length_max")) {
+                communicator.setXaxis_histo_length_max(Double.parseDouble(cmd.getOptionValue("xaxis_histo_length_max")));
+            }
+
 
             if (cmd.hasOption('t')) {
                 communicator.setThreshold(Integer.parseInt(cmd.getOptionValue('t')));

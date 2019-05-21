@@ -143,7 +143,7 @@ public class MainGuiFX extends Application {
             communicator.setSpecies_ref_identifier(textfield_specie.getText());
             if(!checkbox_dynamic_y_axis_height.isSelected()){
                 try {
-                    communicator.setyAxis(Double.parseDouble(textfield_y_axis_height.getText()));
+                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
                 } catch (Exception ex){
                     System.out.println("Height value not valid.");
                 }

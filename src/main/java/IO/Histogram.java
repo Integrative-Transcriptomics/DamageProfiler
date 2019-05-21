@@ -3,6 +3,7 @@ package IO;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
@@ -56,7 +57,8 @@ public class Histogram {
     }
 
 
-    public JFreeChart createChart(HistogramDataset dataset, String title, String xlab, String ylab){
+    public JFreeChart createChart(HistogramDataset dataset, String title, String xlab, String ylab,
+                                  double xmin, double xmax){
 
         JFreeChart chart = ChartFactory.createHistogram(
                 title,//"Histogram read length",
@@ -75,6 +77,16 @@ public class Histogram {
         xyplot.setBackgroundPaint(Color.WHITE);
         xyplot.setDomainGridlinePaint(new Color(150,150,150));
         xyplot.setRangeGridlinePaint(new Color(150,150,150));
+
+        if(xmin > -1){
+            ValueAxis axis = xyplot.getDomainAxis();
+            axis.setLowerBound(xmin);
+        }
+
+        if(xmax > -1){
+            ValueAxis axis = xyplot.getDomainAxis();
+            axis.setUpperBound(xmax);
+        }
 
         XYBarRenderer xybarrenderer = (XYBarRenderer)xyplot.getRenderer();
         xybarrenderer.setShadowVisible(false);
