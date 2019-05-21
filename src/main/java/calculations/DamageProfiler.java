@@ -289,7 +289,7 @@ public class  DamageProfiler {
     }
     public ArrayList<Double> getIdentity() { return identity; }
 
-    public String getSpeciesname(File file, String ref) throws IOException {
+    public String getSpeciesname(File file, String ref) {
 
         SamReader input = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                 validationStringency(ValidationStringency.LENIENT).open(file);

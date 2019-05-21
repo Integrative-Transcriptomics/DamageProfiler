@@ -67,13 +67,14 @@ public class StartCalculations {
         species_name_list=null;
         specieHandler = new SpecieHandler();
 
-
         SpeciesListParser speciesListParser = new SpeciesListParser(
                 specieslist_filepath,
                 LOG
         );
 
+
         if(specieslist_filepath != null){
+
             /*
                 parse species references (-sf) and run DP for each reference in the file
              */
@@ -98,7 +99,8 @@ public class StartCalculations {
                 String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
                 String output_folder = createOutputFolder(
                         outfolder,
-                        inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] + File.separator + ref + "_" + speciesname);
+                        inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]
+                                + File.separator + ref + "_" + speciesname);
 
 
 
@@ -159,19 +161,25 @@ public class StartCalculations {
 
         } else if(species_ref_identifier != null){
 
+            // start DamageProfiler
+            DamageProfiler damageProfiler = new DamageProfiler(
+
+                    specieHandler);
+
             /*
                 parse species reference (-s) and run DP
              */
 
             this.specieslist = new ArrayList<>();
             specieslist.add(species_ref_identifier);
-            //species_real_name_list.add(speciesListParser.getSingleSpecie(species_ref_identifier));
+            String speciesname = damageProfiler.getSpeciesname(new File(input), species_ref_identifier);
 
             String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
             String output_folder = createOutputFolder(
                     outfolder,
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] +
+                             File.separator + species_ref_identifier + "_" + speciesname);
 
 
             if (c.getTitle_plots() == null) {
@@ -215,10 +223,7 @@ public class StartCalculations {
                     + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
 
-            // start DamageProfiler
-            DamageProfiler damageProfiler = new DamageProfiler(
 
-                    specieHandler);
 
             damageProfiler.init(file,
                     new File(reference),
