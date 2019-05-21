@@ -75,26 +75,26 @@ public class UserOptionsParser {
                 .hasArg()
                 .create("yaxis_damageplot"));
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis-IDhisto_min")
-                .withArgName("XAXIS-IDHISTO_MIN")
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_id_min")
+                .withArgName("XAXIS_HISTO_ID_MIN")
                 .withDescription("Minimal value x-axis of identity histogram.")
                 .hasArg()
                 .create("xaxis_histo_id_min"));
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis-IDhisto_max")
-                .withArgName("XAXIS-IDHISTO_MA")
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_id_max")
+                .withArgName("XAXIS_HISTO_ID_MAX")
                 .withDescription("Maximal value x-axis of identity histogram.")
                 .hasArg()
                 .create("xaxis_histo_id_max"));
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis-length_histo_min")
-                .withArgName("XAXIS-IDHISTO_MIN")
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_length_min")
+                .withArgName("XAXIS_HISTO_LENGTH_MIN")
                 .withDescription("Minimal value x-axis of length histogram.")
                 .hasArg()
                 .create("xaxis_histo_length_min"));
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis-length_histo_max")
-                .withArgName("XAXIS-IDHISTO_MA")
+        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_length_max")
+                .withArgName("XAXIS_HISTO_LENGTH_MAX")
                 .withDescription("Maximal value x-axis of length histogram.")
                 .hasArg()
                 .create("xaxis_histo_length_max"));
