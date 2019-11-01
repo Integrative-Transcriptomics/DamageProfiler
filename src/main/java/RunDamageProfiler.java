@@ -32,7 +32,7 @@ public class RunDamageProfiler {
         } else {
             Communicator c = new Communicator();
             StartCalculations starter = new StartCalculations(VERSION);
-            UserOptionsParser userOptions = new UserOptionsParser(args, c);
+            UserOptionsParser userOptions = new UserOptionsParser(args, c, VERSION);
             starter.start(c);
 
         }

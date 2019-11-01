@@ -2,33 +2,40 @@ package IO;
 
 import org.apache.commons.cli.*;
 
+
 /**
  * Created by neukamm on 01.08.16.
  */
 public class UserOptionsParser {
 
     private static final String CLASS_NAME = "User option parser";
+    private final String version;
     private String[] args;
     private Communicator communicator;
 
 
-    public UserOptionsParser(String[] args, Communicator c){
+    public UserOptionsParser(String[] args, Communicator c, String version){
         this.args = args;
         this.communicator = c;
+        this.version = version;
         parse();
     }
 
-    private void parse(){
+    private void parse() {
 
         // create command line parameters
         Options helpOptions = new Options();
         helpOptions.addOption("h", "help", false, "show this help page");
         Options options = new Options();
         options.addOption("h", "help", false, "show this help page");
+
+        Option version = new Option("version", "version", false,
+                "Show version of DamageProfiler");
+        options.addOption(version);
+
         options.addOption(OptionBuilder.withLongOpt("input")
                 .withArgName("INPUT")
                 .withDescription("The input sam/bam file")
-                .isRequired()
                 .hasArg()
                 .create("i"));
         options.addOption(OptionBuilder.withLongOpt("reference")
@@ -39,7 +46,6 @@ public class UserOptionsParser {
         options.addOption(OptionBuilder.withLongOpt("output")
                 .withArgName("OUTPUT")
                 .withDescription("The output folder")
-                .isRequired()
                 .hasArg()
                 .create("o"));
         options.addOption(OptionBuilder.withLongOpt("threshold")
@@ -112,11 +118,13 @@ public class UserOptionsParser {
         HelpFormatter helpformatter = new HelpFormatter();
         CommandLineParser parser = new BasicParser();
 
-        if(args.length < 2){
+        if (args[0].equals("-version") || args[0].equals("--version")){
+            System.out.print("DamageProfiler v" + this.version);
+            System.exit(0);
+        } else if (args.length < 2) {
             helpformatter.printHelp(CLASS_NAME, options);
             System.exit(0);
         }
-
         try {
             CommandLine cmd = parser.parse(helpOptions, args);
             if (cmd.hasOption('h')) {
@@ -129,6 +137,11 @@ public class UserOptionsParser {
 
         try {
             CommandLine cmd = parser.parse(options, args);
+
+            if(cmd.hasOption("version")) {
+                System.out.print("DamageProfiler v" + this.version);
+                System.exit(0);
+            }
 
             // input files
 
