@@ -139,7 +139,7 @@ public class UserOptionsParser {
             CommandLine cmd = parser.parse(options, args);
 
             if(cmd.hasOption("version")) {
-                System.out.print("DamageProfiler v" + this.version);
+                System.out.print("DamageProfiler v" + this.version + "\n");
                 System.exit(0);
             }
 
