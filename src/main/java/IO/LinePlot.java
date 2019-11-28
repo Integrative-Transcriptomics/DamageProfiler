@@ -133,6 +133,10 @@ public class LinePlot {
         legendItemsNew.get(3).setLinePaint(Color.GREEN);
         legendItemsNew.get(4).setLinePaint(Color.GRAY);
 
+        renderer.setSeriesStroke(0, new BasicStroke(5.0f));
+        renderer.setSeriesStroke(1, new BasicStroke(5.0f));
+        renderer.setAutoPopulateSeriesStroke(false);
+
         plot.setFixedLegendItems(legendItemsNew);
 
         // set colour of line
@@ -164,8 +168,9 @@ public class LinePlot {
         if(yMax+0.1 > 0.5){
             yAxis.setTickUnit(new NumberTickUnit(0.05));
         } else {
-            yAxis.setTickUnit(new NumberTickUnit(0.01));
+            yAxis.setTickUnit(new NumberTickUnit(0.05));
         }
+
 
         switch (this.title){
             case ("3' end"):
