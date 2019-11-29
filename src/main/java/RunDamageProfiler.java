@@ -8,7 +8,7 @@ import javafx.application.Application;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.4.8";
+    private static final String VERSION = "0.4.9";
 
 
     @SuppressWarnings("static-access")
