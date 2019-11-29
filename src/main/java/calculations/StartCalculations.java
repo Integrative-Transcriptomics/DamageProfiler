@@ -25,7 +25,7 @@ public class StartCalculations {
     private List<String> species_name_list;
     private SpeciesListParser speciesListParser;
     private boolean use_only_merged_reads;
-    private double height_damageplot = 0.4; // set yaxis height to 40% as default
+    private double height_damageplot; //= 0.4; // set yaxis height to 40% as default
     private int threshold;
     private int length;
     private String specieslist_filepath;

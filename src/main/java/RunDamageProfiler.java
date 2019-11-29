@@ -27,6 +27,7 @@ public class RunDamageProfiler {
 
         if(args.length==0){
             //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
+            System.out.println(VERSION);
             new Thread(() -> Application.launch(MainGuiFX.class)).start();
 
         } else {
