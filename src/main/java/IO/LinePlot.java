@@ -133,8 +133,8 @@ public class LinePlot {
         legendItemsNew.get(3).setLinePaint(Color.GREEN);
         legendItemsNew.get(4).setLinePaint(Color.GRAY);
 
-        renderer.setSeriesStroke(0, new BasicStroke(5.0f));
-        renderer.setSeriesStroke(1, new BasicStroke(5.0f));
+        renderer.setSeriesStroke(0, new BasicStroke(3.0f));
+        renderer.setSeriesStroke(1, new BasicStroke(3.0f));
         renderer.setAutoPopulateSeriesStroke(false);
 
         plot.setFixedLegendItems(legendItemsNew);

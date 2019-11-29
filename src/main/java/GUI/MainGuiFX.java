@@ -32,7 +32,7 @@ public class MainGuiFX extends Application {
     private TextField textfield_specie;
     private CheckBox checkbox_use_merged_reads;
     private TextField textfield_title;
-    private CheckBox checkbox_dynamic_y_axis_height;
+    //private CheckBox checkbox_dynamic_y_axis_height;
     private TextField textfield_y_axis_height;
     private Communicator communicator = new Communicator();
     private StartCalculations starter = new StartCalculations(null);
@@ -75,13 +75,13 @@ public class MainGuiFX extends Application {
 
     private void addListener() {
 
-        checkbox_dynamic_y_axis_height.selectedProperty().addListener((ov, old_val, new_val) -> {
-            if(new_val){
-                textfield_y_axis_height.setDisable(true);
-            } else if(!new_val){
-                textfield_y_axis_height.setDisable(false);
-            }
-        });
+//        checkbox_dynamic_y_axis_height.selectedProperty().addListener((ov, old_val, new_val) -> {
+//            if(new_val){
+//                textfield_y_axis_height.setDisable(true);
+//            } else if(!new_val){
+//                textfield_y_axis_height.setDisable(false);
+//            }
+//        });
 
 
 
@@ -141,13 +141,13 @@ public class MainGuiFX extends Application {
             communicator.setLength(Integer.parseInt(textfield_length.getText()));
             communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
             communicator.setSpecies_ref_identifier(textfield_specie.getText());
-            if(!checkbox_dynamic_y_axis_height.isSelected()){
-                try {
-                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
-                } catch (Exception ex){
-                    System.out.println("Height value not valid.");
-                }
-            }
+//            if(!checkbox_dynamic_y_axis_height.isSelected()){
+//                try {
+//                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
+//                } catch (Exception ex){
+//                    System.out.println("Height value not valid.");
+//                }
+//            }
 
 
             if(!textfield_title.getText().equals("")){
@@ -208,16 +208,17 @@ public class MainGuiFX extends Application {
         textfield_length = new TextField();
         textfield_specie = new TextField();
         textfield_title = new TextField();
-        textfield_y_axis_height = new TextField("Enter height");
+        textfield_y_axis_height = new TextField();
 
         checkbox_use_merged_reads = new CheckBox("Use only merged reads");
-        checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
+        //checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
 
         btn_run.setDisable(true);
         textfield_length.setText("100");
         textfield_threshold.setText("25");
-        checkbox_dynamic_y_axis_height.setSelected(true);
-        textfield_y_axis_height.setDisable(true);
+        textfield_y_axis_height.setText("0.4");
+        //checkbox_dynamic_y_axis_height.setSelected(true);
+        //textfield_y_axis_height.setDisable(true);
 
 
         // add components to grid
@@ -235,8 +236,8 @@ public class MainGuiFX extends Application {
         root.add(label_title, 0, ++row, 1,1);
         root.add(textfield_title, 1, row, 2,1);
         root.add(label_yaxis, 0, ++row, 1,1);
-        root.add(checkbox_dynamic_y_axis_height, 1, row, 1,1);
-        root.add(textfield_y_axis_height, 2, row, 1,1);
+        //root.add(checkbox_dynamic_y_axis_height, 1, row, 1,1);
+        root.add(textfield_y_axis_height, 1, row, 2,1);
         root.add(label_threshold, 0, ++row, 1,1);
         root.add(textfield_threshold, 1, row, 2,1);
         root.add(label_specie, 0, ++row, 1,1);

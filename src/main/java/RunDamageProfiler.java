@@ -8,7 +8,7 @@ import javafx.application.Application;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "0.4.7";
+    private static final String VERSION = "0.4.9";
 
 
     @SuppressWarnings("static-access")
@@ -27,6 +27,7 @@ public class RunDamageProfiler {
 
         if(args.length==0){
             //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
+            System.out.println(VERSION);
             new Thread(() -> Application.launch(MainGuiFX.class)).start();
 
         } else {

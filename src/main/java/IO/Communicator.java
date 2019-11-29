@@ -14,7 +14,7 @@ public class Communicator {
     // damage calculation
     private int threshold = 25;
 
-    private double yAxis_damageplot;
+    private double yAxis_damageplot=0.4;
     private double xaxis_histo_id_min =-1;
     private double xaxis_histo_id_max =-1;
     private double xaxis_histo_length_min=-1;
