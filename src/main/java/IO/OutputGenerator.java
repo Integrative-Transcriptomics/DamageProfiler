@@ -2,6 +2,7 @@ package IO;
 
 import calculations.DamageProfiler;
 import calculations.Frequencies;
+import calculations.RuntimeEstimator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.itextpdf.awt.PdfGraphics2D;
@@ -43,6 +44,7 @@ public class OutputGenerator {
     private String outpath;
     private Frequencies frequencies;
     private DamageProfiler damageProfiler;
+    private RuntimeEstimator runtimeEstimator;
     private int max_length;
     private int min_length;
     private String specie;
@@ -55,7 +57,8 @@ public class OutputGenerator {
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
                            int length, double height, double x_axis_min_id_histo, double x_axis_max_id_histo,
-                           double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG) {
+                           double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG,
+                           RuntimeEstimator runtimeEstimator) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
@@ -70,6 +73,7 @@ public class OutputGenerator {
         this.x_axis_max_length_histo = x_axis_max_length_histo;
         this.input = input;
         this.LOG = LOG;
+        this.runtimeEstimator = runtimeEstimator;
 
         // set tax id if specified by user
         if(specie != null && !specie.equals("")){
@@ -918,7 +922,7 @@ public class OutputGenerator {
         document.open();
 
         // compute percentage of used reads
-        double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / (double) damageProfiler.getNumberOfAllReads();
+        double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / (double) runtimeEstimator.getNumberOfRecords();
 
         // draw text
         String[] splitted = file.split("/");

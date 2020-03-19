@@ -1,7 +1,11 @@
 package GUI;
 
+import GUI.Dialogues.AbstractDialogue;
 import IO.Communicator;
+import calculations.RuntimeEstimator;
 import calculations.StartCalculations;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 
 import javafx.concurrent.WorkerStateEvent;
@@ -17,9 +21,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
+import javafx.util.Duration;
+
+import java.lang.reflect.Field;
 
 
-public class MainGuiFX extends Application {
+
+public class MainGui extends Application {
 
     private Button btn_inputfile;
     private Button btn_reference;
@@ -62,11 +70,11 @@ public class MainGuiFX extends Application {
     }
 
 
-    public Task startCalculuations(Communicator communicator) {
+    public Task startCalculations(Communicator communicator, RuntimeEstimator runtimeEstimator) {
         return new Task() {
             @Override
             protected Object call() throws Exception {
-                starter.start(communicator);
+                starter.start(communicator, runtimeEstimator);
                 return true;
             }
         };
@@ -84,23 +92,29 @@ public class MainGuiFX extends Application {
 //        });
 
 
-
         btn_inputfile.setOnAction(e -> {
 
-            BamFileChooserFX fqfc = new BamFileChooserFX(communicator);
-            //Check if some input was truly selected
+            BamFileChooser fqfc = new BamFileChooser(communicator);
+            Tooltip tooltip_input = new Tooltip(communicator.getInput());
+            setTooltipDelay(tooltip_input);
+            btn_inputfile.setTooltip(tooltip_input);
 
             if (checkIfInputWasSelected()) {
                 btn_run.setDisable(false);
+
             } else {
                 btn_run.setDisable(true);
             }
 
         });
 
+
         btn_reference.setOnAction(e -> {
-                ReferenceFileChooserFX rfc = new ReferenceFileChooserFX(communicator);
-                //Check if some input was truly selected
+
+            ReferenceFileChooser rfc = new ReferenceFileChooser(communicator);
+            Tooltip tooltip_ref = new Tooltip(communicator.getReference());
+            setTooltipDelay(tooltip_ref);
+            btn_reference.setTooltip(tooltip_ref);
 
             if (checkIfInputWasSelected()) {
                 btn_run.setDisable(false);
@@ -112,10 +126,14 @@ public class MainGuiFX extends Application {
 
         btn_output.setOnAction(e -> {
 
-            OutputDirChooserFX rfc = new OutputDirChooserFX(communicator);
+            OutputDirChooser rfc = new OutputDirChooser(communicator);
+            Tooltip tooltip_output = new Tooltip(communicator.getOutfolder());
+            setTooltipDelay(tooltip_output);
+            btn_output.setTooltip(tooltip_output);
 
             if (checkIfInputWasSelected()) {
                 btn_run.setDisable(false);
+
             } else {
                 btn_run.setDisable(true);
             }
@@ -137,44 +155,88 @@ public class MainGuiFX extends Application {
 
         btn_run.setOnAction(e -> {
 
-            // set all user options
-            communicator.setLength(Integer.parseInt(textfield_length.getText()));
-            communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
-            communicator.setSpecies_ref_identifier(textfield_specie.getText());
-//            if(!checkbox_dynamic_y_axis_height.isSelected()){
-//                try {
-//                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
-//                } catch (Exception ex){
-//                    System.out.println("Height value not valid.");
-//                }
-//            }
+            RuntimeEstimator runtimeEstimator = new RuntimeEstimator(communicator.getInput());
+            long estimatedRuntimeInSeconds = runtimeEstimator.getEstimatedRuntimeInSeconds();
+            String text_estimatedRuntime;
 
+            if(estimatedRuntimeInSeconds > 60) {
+                long minutes = estimatedRuntimeInSeconds / 60;
+                long seconds = estimatedRuntimeInSeconds % 60;
+                text_estimatedRuntime = "Estimated Runtime: " + minutes + " minutes, and " + seconds + " seconds.";
+            } else {
+                if(estimatedRuntimeInSeconds == 0 ){
+                    text_estimatedRuntime = "Estimated Runtime: Insignificant";
+                } else {
+                    text_estimatedRuntime = "Estimated Runtime: " + estimatedRuntimeInSeconds + " seconds.";
+                }
 
-            if(!textfield_title.getText().equals("")){
-                communicator.setTitle_plots(textfield_title.getText());
             }
 
+            AbstractDialogue runtimeInfoDialogue = new AbstractDialogue("Runtime information", "This gives you an estimate of the runtime. For large files with a long runtime,\nit's recommended to use the command line version of DamageProfiler.");
+            Button btn_start = new Button("Proceed");
+            Button btn_cancel = new Button("Cancel");
 
-            try {
-                // add progress indicator
-                progressBar.setProgress(0);
-                startCalculuations = startCalculuations(communicator);
-                progressBar.progressProperty().unbind();
-                progressBar.progressProperty().bind(startCalculuations.progressProperty());
+            int row = runtimeInfoDialogue.getRow();
+            runtimeInfoDialogue.getGridPane().add(new Label("Number of reads: " + runtimeEstimator.getNumberOfRecords()), 0, ++row, 2,1);
+            runtimeInfoDialogue.getGridPane().add(new Label(text_estimatedRuntime), 0, ++row, 2,1);
+            runtimeInfoDialogue.getGridPane().add(btn_cancel, 0, ++row, 1,1);
+            runtimeInfoDialogue.getGridPane().add(btn_start, 1, row, 1,1);
 
-                startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
-                        (EventHandler<WorkerStateEvent>) t -> {
-                            if(starter.isCalculationsDone()){
-                                primaryStage.close();
-                            }
-                        });
-                new Thread(startCalculuations).start();
+            runtimeInfoDialogue.show();
 
-                //this.primaryStage.close();
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            btn_start.setOnAction(e_start -> {
 
+                runtimeInfoDialogue.close();
+
+                // set all user options
+                communicator.setLength(Integer.parseInt(textfield_length.getText()));
+                communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
+
+                if(textfield_specie.getText().equals(""))
+                    communicator.setSpecies_ref_identifier(null);
+                else
+                    communicator.setSpecies_ref_identifier(textfield_specie.getText());
+
+    //            if(!checkbox_dynamic_y_axis_height.isSelected()){
+    //                try {
+    //                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
+    //                } catch (Exception ex){
+    //                    System.out.println("Height value not valid.");
+    //                }
+    //            }
+
+
+                if(!textfield_title.getText().equals("")){
+                    communicator.setTitle_plots(textfield_title.getText());
+                }
+
+
+                try {
+                    // add progress indicator
+                    progressBar.setProgress(0);
+                    startCalculuations = startCalculations(communicator, runtimeEstimator);
+                    progressBar.progressProperty().unbind();
+                    progressBar.progressProperty().bind(startCalculuations.progressProperty());
+
+                    startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
+                            (EventHandler<WorkerStateEvent>) t -> {
+                                if(starter.isCalculationsDone()){
+                                    primaryStage.close();
+                                }
+                            });
+                    new Thread(startCalculuations).start();
+
+                    //this.primaryStage.close();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            });
+
+            btn_cancel.setOnAction(e_cancel -> {
+
+                runtimeInfoDialogue.close();
+
+            });
         });
 
 
@@ -269,5 +331,22 @@ public class MainGuiFX extends Application {
     }
 
 
+
+    private static void setTooltipDelay(Tooltip tooltip) {
+        try {
+            Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+            fieldBehavior.setAccessible(true);
+            Object objBehavior = fieldBehavior.get(tooltip);
+
+            Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+            fieldTimer.setAccessible(true);
+            Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
+
+            objTimer.getKeyFrames().clear();
+            objTimer.getKeyFrames().add(new KeyFrame(new Duration(0)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

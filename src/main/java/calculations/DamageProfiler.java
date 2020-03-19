@@ -32,10 +32,9 @@ public class  DamageProfiler {
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
     private SpecieHandler specieHandler;
-    private double timePer100000RecordsInSeconds = 1;
     private long actualRuntime=0;
-    private SamReader inputSamMate;
-    private long numberOfRecords;
+
+    private long runtime_ms;
 
     /**
      * constructor
@@ -65,9 +64,6 @@ public class  DamageProfiler {
             try{
 
                 inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                        validationStringency(ValidationStringency.LENIENT).open(input);
-
-                inputSamMate = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                         validationStringency(ValidationStringency.LENIENT).open(input);
 
                 numberOfUsedReads = 0;
@@ -111,20 +107,7 @@ public class  DamageProfiler {
 
         } else {
 
-            // estimate runtime:
-            numberOfRecords = getNumberOfrecords();
-            System.out.println("Number of records to process: " + numberOfRecords);
-            long estimatedRuntimeInSeconds = (long) (numberOfRecords/100000 * timePer100000RecordsInSeconds);
-
-            if(estimatedRuntimeInSeconds > 60) {
-                long minutes = estimatedRuntimeInSeconds / 60;
-                long seconds = estimatedRuntimeInSeconds % 60;
-                System.out.println("Estimated Runtime: " + minutes + " minutes, and " + seconds + " seconds.");
-            } else {
-                System.out.println("Estimated Runtime: " + estimatedRuntimeInSeconds + " seconds.");
-            }
-
-            // measure runtime per 100,000 records to estimate total runtime
+            // measure runtime
             long startTime = System.currentTimeMillis();
 
             for(SAMRecord record : inputSam) {
@@ -156,6 +139,7 @@ public class  DamageProfiler {
                     long currtime_post_execution = System.currentTimeMillis();
                     long diff = currtime_post_execution - startTime;
 
+                    runtime_ms = diff;
                     long runtime_s = diff / 1000;
                     actualRuntime += runtime_s;
                     startTime = System.currentTimeMillis();
@@ -176,20 +160,12 @@ public class  DamageProfiler {
             long seconds = actualRuntime % 60;
             System.out.println("Runtime per record: " + minutes + " minutes, and " + seconds + " seconds.");
         } else {
-            System.out.println("Runtime per record: " + actualRuntime + " seconds.");
+            System.out.println("Runtime per record: " + actualRuntime + " seconds and " + runtime_ms%60 + " milliseconds");
         }
 
     }
 
-    private long getNumberOfrecords() {
-        long count = 0;
-        for(SAMRecord record : inputSamMate){
-            count++;
-        }
 
-        inputSamMate=null;
-        return count;
-    }
 
 
     private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) throws Exception {
@@ -346,9 +322,6 @@ public class  DamageProfiler {
         return numberOfUsedReads;
     }
 
-    public long getNumberOfAllReads() {
-        return numberOfRecords;
-    }
     public ArrayList<Double> getIdentity() { return identity; }
 
     public String getSpeciesname(File file, String ref) {
@@ -366,5 +339,8 @@ public class  DamageProfiler {
         return null;
     }
 
+    public long getActualRuntime() {
+        return actualRuntime;
+    }
 
 }

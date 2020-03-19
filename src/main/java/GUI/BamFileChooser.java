@@ -8,11 +8,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BamFileChooserFX {
+public class BamFileChooser {
 
     private FileChooser fileChooser = new FileChooser();
 
-    public BamFileChooserFX(Communicator c){
+    public BamFileChooser(Communicator c){
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("BAM", "*.bam"),
@@ -31,9 +31,10 @@ public class BamFileChooserFX {
             }
 
             c.setInput(files.get(0));
-            System.out.println(files.get(0));
+            System.out.println("Input file: " + files.get(0));
 
         } catch (Exception e){
+            System.err.println(e);
 
         }
 

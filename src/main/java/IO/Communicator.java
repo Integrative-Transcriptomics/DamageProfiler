@@ -31,10 +31,6 @@ public class Communicator {
 
 
 
-    public Communicator(){
-
-    }
-
     public String getInput() {
         return input;
     }

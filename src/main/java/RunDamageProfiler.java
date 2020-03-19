@@ -1,5 +1,6 @@
-import GUI.MainGuiFX;
+import GUI.MainGui;
 import IO.*;
+import calculations.RuntimeEstimator;
 import calculations.StartCalculations;
 import javafx.application.Application;
 
@@ -30,13 +31,14 @@ public class RunDamageProfiler {
         if(args.length==0){
             //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
             System.out.println(VERSION);
-            new Thread(() -> Application.launch(MainGuiFX.class)).start();
+            new Thread(() -> Application.launch(MainGui.class)).start();
 
         } else {
             Communicator c = new Communicator();
             StartCalculations starter = new StartCalculations(VERSION);
             UserOptionsParser userOptions = new UserOptionsParser(args, c, VERSION);
-            starter.start(c);
+            RuntimeEstimator runtimeEstimator = new RuntimeEstimator(c.getInput());
+            starter.start(c, runtimeEstimator);
 
         }
 

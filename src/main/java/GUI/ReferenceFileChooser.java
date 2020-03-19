@@ -6,11 +6,11 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class ReferenceFileChooserFX {
+public class ReferenceFileChooser {
 
     private FileChooser fileChooser = new FileChooser();
 
-    public ReferenceFileChooserFX(Communicator c){
+    public ReferenceFileChooser(Communicator c){
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Fasta", "*.fa","*.fasta", ".fas")

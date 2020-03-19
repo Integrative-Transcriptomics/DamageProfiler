@@ -39,13 +39,14 @@ public class StartCalculations {
     private double xaxis_max_id_histogram;
     private double xaxis_min_length_histogram;
     private double xaxis_max_length_histogram;
+    private RuntimeEstimator runtimeEstimator;
 
 
     public StartCalculations(String version){
         VERSION = version;
     }
 
-    public void start(Communicator c) throws Exception {
+    public void start(Communicator c, RuntimeEstimator runtimeEstimator) throws Exception {
 
         currtime_prior_execution = System.currentTimeMillis();
 
@@ -66,12 +67,12 @@ public class StartCalculations {
         speciesListParser=null;
         species_name_list=null;
         specieHandler = new SpecieHandler();
+        this.runtimeEstimator = runtimeEstimator;
 
         SpeciesListParser speciesListParser = new SpeciesListParser(
                 specieslist_filepath,
                 LOG
         );
-
 
         if(specieslist_filepath != null){
 
@@ -338,7 +339,8 @@ public class StartCalculations {
                     xaxis_min_length_histogram,
                     xaxis_max_length_histogram,
                     input,
-                    LOG
+                    LOG,
+                    runtimeEstimator
             );
 
             outputGenerator.writeLengthDistribution();

@@ -16,6 +16,5 @@ public class SpeciesListFileChooser {
         if(f != null){
             c.setSpecieslist_filepath(f.getAbsolutePath());
         }
-
     }
 }
