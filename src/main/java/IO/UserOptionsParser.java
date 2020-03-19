@@ -119,7 +119,7 @@ public class UserOptionsParser {
         CommandLineParser parser = new BasicParser();
 
         if (args[0].equals("-version") || args[0].equals("--version")){
-            System.out.print("DamageProfiler v" + this.version);
+            System.out.println("DamageProfiler v" + this.version);
             System.exit(0);
         } else if (args.length < 2) {
             helpformatter.printHelp(CLASS_NAME, options);

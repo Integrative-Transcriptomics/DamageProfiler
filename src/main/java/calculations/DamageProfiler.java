@@ -24,7 +24,6 @@ public class  DamageProfiler {
     private Logger LOG=null;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
-    private int numberOfAllReads;
     private int threshold;
     private int length;
     private Frequencies frequencies;
@@ -33,6 +32,10 @@ public class  DamageProfiler {
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
     private SpecieHandler specieHandler;
+    private double timePer100000RecordsInSeconds = 1;
+    private long actualRuntime=0;
+    private SamReader inputSamMate;
+    private long numberOfRecords;
 
     /**
      * constructor
@@ -63,8 +66,11 @@ public class  DamageProfiler {
 
                 inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                         validationStringency(ValidationStringency.LENIENT).open(input);
+
+                inputSamMate = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                        validationStringency(ValidationStringency.LENIENT).open(input);
+
                 numberOfUsedReads = 0;
-                numberOfAllReads = 0;
                 this.LOG = LOG;
                 this.threshold = threshold;
                 this.length = length;
@@ -104,10 +110,27 @@ public class  DamageProfiler {
             System.exit(0);
 
         } else {
+
+            // estimate runtime:
+            numberOfRecords = getNumberOfrecords();
+            System.out.println("Number of records to process: " + numberOfRecords);
+            long estimatedRuntimeInSeconds = (long) (numberOfRecords/100000 * timePer100000RecordsInSeconds);
+
+            if(estimatedRuntimeInSeconds > 60) {
+                long minutes = estimatedRuntimeInSeconds / 60;
+                long seconds = estimatedRuntimeInSeconds % 60;
+                System.out.println("Estimated Runtime: " + minutes + " minutes, and " + seconds + " seconds.");
+            } else {
+                System.out.println("Estimated Runtime: " + estimatedRuntimeInSeconds + " seconds.");
+            }
+
+            // measure runtime per 100,000 records to estimate total runtime
+            long startTime = System.currentTimeMillis();
+
             for(SAMRecord record : inputSam) {
+
                 if (this.specie == null) {
 
-                    numberOfAllReads++;
                     handleRecord(use_only_merged_reads, use_all_reads, record);
 
                     // print number of processed reads
@@ -118,7 +141,7 @@ public class  DamageProfiler {
                 } else {
 
                     if (record.getReferenceName().contains(this.specie)) {
-                        numberOfAllReads++;
+
                         handleRecord(use_only_merged_reads, use_all_reads, record);
 
                         // print number of processed reads
@@ -127,17 +150,52 @@ public class  DamageProfiler {
                         }
                     }
                 }
+
+                if((numberOfUsedReads % 100000) == 0){
+
+                    long currtime_post_execution = System.currentTimeMillis();
+                    long diff = currtime_post_execution - startTime;
+
+                    long runtime_s = diff / 1000;
+                    actualRuntime += runtime_s;
+                    startTime = System.currentTimeMillis();
+                }
             }
+
+
+
+
             frequencies.normalizeValues();
 
             LOG.info("-------------------");
             LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
         }
 
+        if(actualRuntime > 60) {
+            long minutes = actualRuntime / 60;
+            long seconds = actualRuntime % 60;
+            System.out.println("Runtime per record: " + minutes + " minutes, and " + seconds + " seconds.");
+        } else {
+            System.out.println("Runtime per record: " + actualRuntime + " seconds.");
+        }
+
+    }
+
+    private long getNumberOfrecords() {
+        long count = 0;
+        for(SAMRecord record : inputSamMate){
+            count++;
+        }
+
+        inputSamMate=null;
+        return count;
     }
 
 
     private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) throws Exception {
+
+
+
         if(use_all_reads && !use_only_merged_reads){
             // process all reads
             processRecord(record);
@@ -147,12 +205,14 @@ public class  DamageProfiler {
             if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
                 processRecord(record);
             }
-        } else if(!use_only_merged_reads && !use_all_reads)
+        } else if(!use_only_merged_reads && !use_all_reads) {
             // process only mapped reads
             if (!record.getReadUnmappedFlag()) {
                 // get all mapped reads
                 processRecord(record);
             }
+        }
+
     }
 
 
@@ -170,6 +230,8 @@ public class  DamageProfiler {
 
     private void processRecord(SAMRecord record) throws Exception{
         numberOfUsedReads++;
+
+
 
         /*
             If MD value is set, use it to reconstruct reference
@@ -243,7 +305,6 @@ public class  DamageProfiler {
         frequencies.count(record, record_aligned, reference_aligned);
         frequencies.calculateMisincorporations(record, record_aligned, reference_aligned);
 
-
     }
 
 
@@ -284,8 +345,9 @@ public class  DamageProfiler {
     public int getNumberOfUsedReads() {
         return numberOfUsedReads;
     }
-    public int getNumberOfAllReads() {
-        return numberOfAllReads;
+
+    public long getNumberOfAllReads() {
+        return numberOfRecords;
     }
     public ArrayList<Double> getIdentity() { return identity; }
 

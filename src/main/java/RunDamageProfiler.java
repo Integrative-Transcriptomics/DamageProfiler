@@ -25,6 +25,8 @@ public class RunDamageProfiler {
           */
 
 
+        System.setProperty("java.awt.headless", "true");
+
         if(args.length==0){
             //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
             System.out.println(VERSION);
