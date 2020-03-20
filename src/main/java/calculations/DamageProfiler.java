@@ -158,9 +158,9 @@ public class  DamageProfiler {
         if(actualRuntime > 60) {
             long minutes = actualRuntime / 60;
             long seconds = actualRuntime % 60;
-            System.out.println("Runtime per record: " + minutes + " minutes, and " + seconds + " seconds.");
+            System.out.println("Runtime for processing all records: " + minutes + " minutes, and " + seconds + " seconds.");
         } else {
-            System.out.println("Runtime per record: " + actualRuntime + " seconds and " + runtime_ms%60 + " milliseconds");
+            System.out.println("Runtime for processing all records: " + actualRuntime + " seconds and " + runtime_ms%60 + " milliseconds");
         }
 
     }
@@ -207,8 +207,6 @@ public class  DamageProfiler {
     private void processRecord(SAMRecord record) throws Exception{
         numberOfUsedReads++;
 
-
-
         /*
             If MD value is set, use it to reconstruct reference
             Otherwise reconstruct reference it based on the CIGAR string
@@ -250,6 +248,7 @@ public class  DamageProfiler {
             }
 
         } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
+
             // get reference corresponding to the record
             if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
 //                if(record.getCigarString().contains("S")){

@@ -114,6 +114,10 @@ public class UserOptionsParser {
                 "Use all reads (mapped and unmapped) to calculate damage plot. Default: false ");
         options.addOption(use_all_reads);
 
+        Option ssLib_used = new Option("sslib", "sslib", false,
+                "Single-stranded library protocol was used. Default: false ");
+        options.addOption(ssLib_used);
+
 
         HelpFormatter helpformatter = new HelpFormatter();
         CommandLineParser parser = new BasicParser();
@@ -172,6 +176,10 @@ public class UserOptionsParser {
 
             if(cmd.hasOption("use_all_reads")) {
                 communicator.setUse_all_reads(false);
+            }
+
+            if(cmd.hasOption("sslib")) {
+                communicator.setSsLibsProtocolUsed(true);
             }
 
             // Plotting

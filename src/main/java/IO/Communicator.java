@@ -22,6 +22,7 @@ public class Communicator {
     private int length = 100;
     private boolean use_merged_and_mapped_reads = false;
     private boolean use_all_reads = false;
+    private boolean ssLibsProtocolUsed = false;
 
     // specie filtering
     private String species_ref_identifier = null;
@@ -93,6 +94,14 @@ public class Communicator {
 
     public void setUse_all_reads(boolean use_all_reads) {
         this.use_all_reads = use_all_reads;
+    }
+
+    public boolean isSsLibsProtocolUsed() {
+        return ssLibsProtocolUsed;
+    }
+
+    public void setSsLibsProtocolUsed(boolean ssLibsProtocolUsed) {
+        this.ssLibsProtocolUsed = ssLibsProtocolUsed;
     }
 
     public void setyAxis_damageplot(double yAxis_damageplot) {

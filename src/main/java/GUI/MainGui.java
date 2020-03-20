@@ -39,6 +39,7 @@ public class MainGui extends Application {
     private TextField textfield_length;
     private TextField textfield_specie;
     private CheckBox checkbox_use_merged_reads;
+    private CheckBox checkbos_ssLibs_protocol;
     private TextField textfield_title;
     //private CheckBox checkbox_dynamic_y_axis_height;
     private TextField textfield_y_axis_height;
@@ -62,7 +63,7 @@ public class MainGui extends Application {
         addComponents(root);
         addListener();
 
-        this.primaryStage.setScene(new Scene(root, 650, 400));
+        this.primaryStage.setScene(new Scene(root, 750, 500));
         this.primaryStage.setResizable(true);
         this.primaryStage.show();
 
@@ -191,6 +192,7 @@ public class MainGui extends Application {
                 // set all user options
                 communicator.setLength(Integer.parseInt(textfield_length.getText()));
                 communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
+                communicator.setSsLibsProtocolUsed(checkbos_ssLibs_protocol.isSelected());
 
                 if(textfield_specie.getText().equals(""))
                     communicator.setSpecies_ref_identifier(null);
@@ -260,6 +262,8 @@ public class MainGui extends Application {
         Label label_title = new Label("Set title");
         Label label_plot = new Label("Plot");
         label_plot.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
+        Label label_files = new Label("Files");
+        label_files.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
         Label label_calculations = new Label("Calculations");
         label_calculations.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
@@ -272,7 +276,8 @@ public class MainGui extends Application {
         textfield_title = new TextField();
         textfield_y_axis_height = new TextField();
 
-        checkbox_use_merged_reads = new CheckBox("Use only merged reads");
+        checkbox_use_merged_reads = new CheckBox("Only merged reads");
+        checkbos_ssLibs_protocol = new CheckBox("Single-stranded library protocol");
         //checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
 
         btn_run.setDisable(true);
@@ -287,7 +292,8 @@ public class MainGui extends Application {
 
         int row = 0;
 
-        root.add(btn_inputfile, 0, row,1,1);
+        root.add(label_files, 0, row, 1,1);
+        root.add(btn_inputfile, 0, ++row,1,1);
         root.add(btn_reference, 1, row,1,1);
         root.add(btn_output, 2, row,1,1);
         root.add(new Separator(), 0, ++row,3,1);
@@ -305,12 +311,12 @@ public class MainGui extends Application {
         root.add(label_specie, 0, ++row, 1,1);
         root.add(textfield_specie, 1, row, 2,1);
         root.add(btn_specieList, 3, row, 1,1);
-        root.add(checkbox_use_merged_reads, 0, ++row,1,1);
         root.add(new Separator(), 0, ++row,3,1);
 
         //          CALCULATIONS
-
         root.add(label_calculations, 0, ++row, 1,1);
+        root.add(checkbox_use_merged_reads, 0, ++row,1,1);
+        root.add(checkbos_ssLibs_protocol, 0, ++row, 1,1);
         root.add(label_length, 0, ++row, 1,1);
         root.add(textfield_length, 1, row, 2,1);
         root.add(new Separator(), 0, ++row,3,1);

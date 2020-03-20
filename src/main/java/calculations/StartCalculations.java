@@ -40,6 +40,7 @@ public class StartCalculations {
     private double xaxis_min_length_histogram;
     private double xaxis_max_length_histogram;
     private RuntimeEstimator runtimeEstimator;
+    private boolean ssLibProtocolUsed;
 
 
     public StartCalculations(String version){
@@ -64,6 +65,7 @@ public class StartCalculations {
         xaxis_max_length_histogram = c.getXaxis_histo_length_max();
         use_only_merged_reads = c.isUse_merged_and_mapped_reads();
         use_all_reads = c.isUse_all_reads();
+        ssLibProtocolUsed = c.isSsLibsProtocolUsed();
         speciesListParser=null;
         species_name_list=null;
         specieHandler = new SpecieHandler();
@@ -114,16 +116,8 @@ public class StartCalculations {
 
 
                 // init Logger
-                logClass = new LogClass();
-                logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler_" + ref + "_" + speciesname +".log");
-                logClass.setUp();
-
-                LOG = logClass.getLogger(this.getClass());
-                System.out.println("DamageProfiler v" + VERSION);
-                LOG.info("DamageProfiler v" + VERSION);
-                LOG.info("Calculate damage profile for species " + ref + " (" + speciesname + ")");
-
-
+                initLogger(output_folder + "/DamageProfiler_" + ref + "_" + speciesname +".log",
+                        "Calculate damage profile for species " + ref + " (" + speciesname + ")");
 
                 // decompress input file if necessary
                 if (input.endsWith(".gz")) {
@@ -156,7 +150,7 @@ public class StartCalculations {
 
                 damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
-                generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, speciesname);
+                generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, speciesname, ssLibProtocolUsed);
             }
 
 
@@ -193,13 +187,7 @@ public class StartCalculations {
 
 
             // init Logger
-            logClass = new LogClass();
-            logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
-            logClass.setUp();
-            LOG = logClass.getLogger(this.getClass());
-            System.out.println("DamageProfiler v" + VERSION);
-            LOG.info("DamageProfiler v" + VERSION);
-
+            initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
 
             // decompress input file if necessary
             if (input.endsWith(".gz")) {
@@ -236,7 +224,7 @@ public class StartCalculations {
             damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
             speciesListParser.setLOG(LOG);
-            generateOutput(damageProfiler,output_folder, inputfileNameWithOutExtension, null);
+            generateOutput(damageProfiler,output_folder, inputfileNameWithOutExtension, null, ssLibProtocolUsed);
         } else {
 
             /*
@@ -255,13 +243,7 @@ public class StartCalculations {
             }
 
             // init Logger
-            logClass = new LogClass();
-            logClass.updateLog4jConfiguration(output_folder + "/DamageProfiler.log");
-            logClass.setUp();
-            LOG = logClass.getLogger(this.getClass());
-            System.out.println("DamageProfiler v" + VERSION);
-            LOG.info("DamageProfiler v" + VERSION);
-
+            initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
 
             // decompress input file if necessary
             if (input.endsWith(".gz")) {
@@ -297,10 +279,8 @@ public class StartCalculations {
                     null,
                     LOG);
             damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
-
             speciesListParser.setLOG(LOG);
-
-            generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, null);
+            generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, null, ssLibProtocolUsed);
 
         }
 
@@ -322,8 +302,25 @@ public class StartCalculations {
 
     }
 
-    private void generateOutput(DamageProfiler damageProfiler, String output_folder, String inputfileNameWithOutExtension, String spe)
-            throws IOException, DocumentException {
+    private void initLogger(String outfolder, String log) {
+
+        logClass = new LogClass();
+        logClass.updateLog4jConfiguration(outfolder);
+        logClass.setUp();
+
+        LOG = logClass.getLogger(this.getClass());
+        System.out.println("DamageProfiler v" + VERSION);
+        LOG.info("DamageProfiler v" + VERSION);
+        LOG.info(log);
+
+    }
+
+    private void generateOutput(
+            DamageProfiler damageProfiler,
+            String output_folder,
+            String inputfileNameWithOutExtension,
+            String spe,
+            boolean ssLibProtocolUsed) throws IOException, DocumentException {
 
         if (damageProfiler.getNumberOfUsedReads() != 0) {
 
@@ -340,7 +337,8 @@ public class StartCalculations {
                     xaxis_max_length_histogram,
                     input,
                     LOG,
-                    runtimeEstimator
+                    runtimeEstimator,
+                    ssLibProtocolUsed
             );
 
             outputGenerator.writeLengthDistribution();
