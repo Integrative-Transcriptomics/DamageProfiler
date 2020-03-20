@@ -41,6 +41,7 @@ public class StartCalculations {
     private double xaxis_max_length_histogram;
     private RuntimeEstimator runtimeEstimator;
     private boolean ssLibProtocolUsed;
+    private DamageProfiler damageProfiler;
 
 
     public StartCalculations(String version){
@@ -93,7 +94,7 @@ public class StartCalculations {
 
                 // start DamageProfiler
                 File file = new File(input);
-                DamageProfiler damageProfiler = new DamageProfiler(specieHandler);
+                damageProfiler = new DamageProfiler(specieHandler);
 
 
                 String ref = specie_input_string.split("\\|")[0].trim();
@@ -404,5 +405,9 @@ public class StartCalculations {
 
     public boolean isCalculationsDone() {
         return calculationsDone;
+    }
+
+    public DamageProfiler getDamageProfiler() {
+        return damageProfiler;
     }
 }

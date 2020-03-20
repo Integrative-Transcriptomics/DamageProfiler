@@ -1,4 +1,4 @@
-import GUI.MainGui;
+import GUI.ConfigurationGUI;
 import IO.*;
 import calculations.RuntimeEstimator;
 import calculations.StartCalculations;
@@ -31,7 +31,7 @@ public class RunDamageProfiler {
         if(args.length==0){
             //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
             System.out.println(VERSION);
-            new Thread(() -> Application.launch(MainGui.class)).start();
+            new Thread(() -> Application.launch(ConfigurationGUI.class)).start();
 
         } else {
             Communicator c = new Communicator();

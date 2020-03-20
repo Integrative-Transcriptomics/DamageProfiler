@@ -1,5 +1,6 @@
 package GUI;
 
+import GUI.DPMainGui.DamageProfilerMainGui;
 import GUI.Dialogues.AbstractDialogue;
 import IO.Communicator;
 import calculations.RuntimeEstimator;
@@ -23,11 +24,12 @@ import javafx.stage.Stage;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 
 
-public class MainGui extends Application {
+public class ConfigurationGUI extends Application {
 
     private Button btn_inputfile;
     private Button btn_reference;
@@ -224,11 +226,17 @@ public class MainGui extends Application {
                             (EventHandler<WorkerStateEvent>) t -> {
                                 if(starter.isCalculationsDone()){
                                     primaryStage.close();
+                                    DamageProfilerMainGui damageProfilerMainGui = null;
+                                    try {
+                                        damageProfilerMainGui = new DamageProfilerMainGui();
+                                    } catch (IOException ex) {
+                                        ex.printStackTrace();
+                                    }
                                 }
                             });
+
                     new Thread(startCalculuations).start();
 
-                    //this.primaryStage.close();
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
