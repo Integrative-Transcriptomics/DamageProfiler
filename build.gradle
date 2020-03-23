@@ -50,7 +50,7 @@ dependencies {
     compile group: 'com.intellij', name: 'forms_rt', version: '6.0.+'
     compile group: 'log4j', name: 'log4j', version: '1.+'
     compile group: 'com.github.broadinstitute', name: 'picard', version: '2.+'
-    compile group: 'com.jfoenix', name: 'jfoenix', version: '8.0.7'
+    compile 'org.jfxtras:jmetro:8.6.5'
 
 }
 

@@ -1,7 +1,3 @@
-import GUI.ConfigurationGUI;
-import IO.*;
-import calculations.RuntimeEstimator;
-import calculations.StartCalculations;
 import javafx.application.Application;
 
 /**
@@ -29,16 +25,11 @@ public class RunDamageProfiler {
         System.setProperty("java.awt.headless", "true");
 
         if(args.length==0){
-            //MainDP damageProfilerGUI = new MainDP(c, starter, VERSION);
-            System.out.println(VERSION);
-            new Thread(() -> Application.launch(ConfigurationGUI.class)).start();
+            new Thread(() -> Application.launch(StarterGUI.class)).start();
 
         } else {
-            Communicator c = new Communicator();
-            StartCalculations starter = new StartCalculations(VERSION);
-            UserOptionsParser userOptions = new UserOptionsParser(args, c, VERSION);
-            RuntimeEstimator runtimeEstimator = new RuntimeEstimator(c.getInput());
-            starter.start(c, runtimeEstimator);
+            StarterCLI starterCLI = new StarterCLI(VERSION, args);
+
 
         }
 

@@ -1,36 +1,29 @@
 package GUI;
 
-import GUI.DPMainGui.DamageProfilerMainGui;
 import GUI.Dialogues.AbstractDialogue;
+import GUI.Plots.DamagePlot;
+import GUI.Plots.IdentityHistPlot;
+import GUI.Plots.LengthDistPlot;
 import IO.Communicator;
 import calculations.RuntimeEstimator;
 import calculations.StartCalculations;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Application;
-
+import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
-import javafx.concurrent.Task;
 import javafx.util.Duration;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
+public class DamageProfilerMainController {
 
-
-public class ConfigurationGUI extends Application {
-
+    private final Button btn_leftpane_info;
+    private final Button btn_leftpane_identityDist;
+    private final Button btn_leftpane_damageProfile;
+    private final Button btn_leftpane_lengthDist;
+    private Communicator communicator;
     private Button btn_inputfile;
     private Button btn_reference;
     private Button btn_output;
@@ -45,56 +38,43 @@ public class ConfigurationGUI extends Application {
     private TextField textfield_title;
     //private CheckBox checkbox_dynamic_y_axis_height;
     private TextField textfield_y_axis_height;
-    private Communicator communicator = new Communicator();
     private StartCalculations starter = new StartCalculations(null);
-    private Stage primaryStage;
     private ProgressBar progressBar;
     private Task startCalculuations;
+    private DamageProfilerMainGUI mainGUI;
 
-    @Override
-    public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
 
-        this.primaryStage.setTitle("DamageProfiler configuration");
+    public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI){
+        this.mainGUI = damageProfilerMainGUI;
+        this.communicator = mainGUI.getCommunicator();
+        this.btn_inputfile = mainGUI.getBtn_inputfile();
+        this.btn_reference = mainGUI.getBtn_reference();
+        this.btn_output = mainGUI.getBtn_output();
+        this.btn_plotting_options = mainGUI.getBtn_plotting_options();
+        this.btn_run = mainGUI.getBtn_run();
+        this.btn_specieList = mainGUI.getBtn_specieList();
+        this.textfield_threshold = mainGUI.getTextfield_threshold();
+        this.textfield_length = mainGUI.getTextfield_length();
+        this.textfield_specie = mainGUI.getTextfield_specie();
+        this.checkbox_use_merged_reads = mainGUI.getCheckbox_use_merged_reads();
+        this.checkbos_ssLibs_protocol = mainGUI.getCheckbos_ssLibs_protocol();
+        this.textfield_title = mainGUI.getTextfield_title();
+        //this.checkbox_dynamic_y_axis_height = mainGUI.get??;
+        this.textfield_y_axis_height = mainGUI.getTextfield_y_axis_height();
+        this.progressBar = mainGUI.getProgressBar();
 
-        GridPane root = new GridPane();
-        root.setAlignment(Pos.CENTER);
-        root.setHgap(7);
-        root.setVgap(7);
+        this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
+        this.btn_leftpane_info = mainGUI.getBtn_leftpane_info();
+        this.btn_leftpane_damageProfile = mainGUI.getBtn_leftpane_damageProfile();
+        this.btn_leftpane_lengthDist = mainGUI.getBtn_leftpane_lengthDist();
 
-        addComponents(root);
         addListener();
 
-        this.primaryStage.setScene(new Scene(root, 750, 500));
-        this.primaryStage.setResizable(true);
-        this.primaryStage.show();
 
 
     }
-
-
-    public Task startCalculations(Communicator communicator, RuntimeEstimator runtimeEstimator) {
-        return new Task() {
-            @Override
-            protected Object call() throws Exception {
-                starter.start(communicator, runtimeEstimator);
-                return true;
-            }
-        };
-    }
-
 
     private void addListener() {
-
-//        checkbox_dynamic_y_axis_height.selectedProperty().addListener((ov, old_val, new_val) -> {
-//            if(new_val){
-//                textfield_y_axis_height.setDisable(true);
-//            } else if(!new_val){
-//                textfield_y_axis_height.setDisable(false);
-//            }
-//        });
-
-
         btn_inputfile.setOnAction(e -> {
 
             BamFileChooser fqfc = new BamFileChooser(communicator);
@@ -127,6 +107,8 @@ public class ConfigurationGUI extends Application {
 
         });
 
+
+
         btn_output.setOnAction(e -> {
 
             OutputDirChooser rfc = new OutputDirChooser(communicator);
@@ -143,17 +125,7 @@ public class ConfigurationGUI extends Application {
 
         });
 
-        btn_specieList.setOnAction(e -> {
 
-            SpeciesListFileChooser slfc = new SpeciesListFileChooser(communicator);
-            if (checkIfInputWasSelected()) {
-                btn_specieList.setDisable(false);
-            } else {
-                btn_specieList.setDisable(true);
-            }
-
-
-        });
 
 
         btn_run.setOnAction(e -> {
@@ -201,13 +173,13 @@ public class ConfigurationGUI extends Application {
                 else
                     communicator.setSpecies_ref_identifier(textfield_specie.getText());
 
-    //            if(!checkbox_dynamic_y_axis_height.isSelected()){
-    //                try {
-    //                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
-    //                } catch (Exception ex){
-    //                    System.out.println("Height value not valid.");
-    //                }
-    //            }
+                //            if(!checkbox_dynamic_y_axis_height.isSelected()){
+                //                try {
+                //                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
+                //                } catch (Exception ex){
+                //                    System.out.println("Height value not valid.");
+                //                }
+                //            }
 
 
                 if(!textfield_title.getText().equals("")){
@@ -225,13 +197,11 @@ public class ConfigurationGUI extends Application {
                     startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
                             (EventHandler<WorkerStateEvent>) t -> {
                                 if(starter.isCalculationsDone()){
-                                    primaryStage.close();
-                                    DamageProfilerMainGui damageProfilerMainGui = null;
-                                    try {
-                                        damageProfilerMainGui = new DamageProfilerMainGui();
-                                    } catch (IOException ex) {
-                                        ex.printStackTrace();
-                                    }
+                                    // replace config with result GUI
+                                    btn_leftpane_lengthDist.setDisable(false);
+                                    btn_leftpane_identityDist.setDisable(false);
+                                    btn_leftpane_damageProfile.setDisable(false);
+                                    generateDamageProfile();
                                 }
                             });
 
@@ -250,89 +220,98 @@ public class ConfigurationGUI extends Application {
         });
 
 
-    }
+        btn_specieList.setOnAction(e -> {
+
+            SpeciesListFileChooser slfc = new SpeciesListFileChooser(communicator);
+            if (checkIfInputWasSelected()) {
+                btn_specieList.setDisable(false);
+            } else {
+                btn_specieList.setDisable(true);
+            }
 
 
-
-    private void addComponents(GridPane root) {
-
-        btn_inputfile = new Button("Select input file");
-        btn_reference = new Button("Select reference");
-        btn_output = new Button("Select output");
-        btn_plotting_options = new Button("Plotting options");
-        btn_specieList = new Button("Set list");
-        btn_run = new Button("Run");
-
-        Label label_threshold = new Label("Number of bases (x-axis)");
-        Label label_yaxis = new Label("Height y-axis");
-        Label label_length = new Label("Set number of bases (calculations)");
-        Label label_specie = new Label("Filter for specie");
-        Label label_title = new Label("Set title");
-        Label label_plot = new Label("Plot");
-        label_plot.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-        Label label_files = new Label("Files");
-        label_files.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-
-        Label label_calculations = new Label("Calculations");
-        label_calculations.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
-
-        progressBar = new ProgressBar(0);
-
-        textfield_threshold = new TextField();
-        textfield_length = new TextField();
-        textfield_specie = new TextField();
-        textfield_title = new TextField();
-        textfield_y_axis_height = new TextField();
-
-        checkbox_use_merged_reads = new CheckBox("Only merged reads");
-        checkbos_ssLibs_protocol = new CheckBox("Single-stranded library protocol");
-        //checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
-
-        btn_run.setDisable(true);
-        textfield_length.setText("100");
-        textfield_threshold.setText("25");
-        textfield_y_axis_height.setText("0.4");
-        //checkbox_dynamic_y_axis_height.setSelected(true);
-        //textfield_y_axis_height.setDisable(true);
+        });
 
 
-        // add components to grid
+        btn_leftpane_damageProfile.setOnAction(e -> {
+            if(starter.isCalculationsDone()){
+                if(plotAlreadyGenerated()){
+                    // show plot
+                } else {
+                    // generate plot
+                    generateDamageProfile();
 
-        int row = 0;
+                }
+            } else {
+                mainGUI.getRoot().setCenter(null);
+            }
+        });
 
-        root.add(label_files, 0, row, 1,1);
-        root.add(btn_inputfile, 0, ++row,1,1);
-        root.add(btn_reference, 1, row,1,1);
-        root.add(btn_output, 2, row,1,1);
-        root.add(new Separator(), 0, ++row,3,1);
 
-        //          PLOT
+        btn_leftpane_identityDist.setOnAction(e -> {
+            if(starter.isCalculationsDone()){
+                if(plotAlreadyGenerated()){
+                    // show plot
+                } else {
+                    // generate plot
+                    generateIdentityDist();
 
-        root.add(label_plot, 0, ++row, 1,1);
-        root.add(label_title, 0, ++row, 1,1);
-        root.add(textfield_title, 1, row, 2,1);
-        root.add(label_yaxis, 0, ++row, 1,1);
-        //root.add(checkbox_dynamic_y_axis_height, 1, row, 1,1);
-        root.add(textfield_y_axis_height, 1, row, 2,1);
-        root.add(label_threshold, 0, ++row, 1,1);
-        root.add(textfield_threshold, 1, row, 2,1);
-        root.add(label_specie, 0, ++row, 1,1);
-        root.add(textfield_specie, 1, row, 2,1);
-        root.add(btn_specieList, 3, row, 1,1);
-        root.add(new Separator(), 0, ++row,3,1);
+                }
+            } else {
+                mainGUI.getRoot().setCenter(null);            }
+        });
 
-        //          CALCULATIONS
-        root.add(label_calculations, 0, ++row, 1,1);
-        root.add(checkbox_use_merged_reads, 0, ++row,1,1);
-        root.add(checkbos_ssLibs_protocol, 0, ++row, 1,1);
-        root.add(label_length, 0, ++row, 1,1);
-        root.add(textfield_length, 1, row, 2,1);
-        root.add(new Separator(), 0, ++row,3,1);
-        root.add(btn_run, 0, ++row,1,1);
-        root.add(progressBar, 1, row,1,1);
+        btn_leftpane_lengthDist.setOnAction(e -> {
+            if(starter.isCalculationsDone()){
+                if(plotAlreadyGenerated()){
+                    // show plot
+                } else {
+                    // generate plot
+                    generateLengthDist();
+
+                }
+            } else {
+                mainGUI.getRoot().setCenter(null);
+            }
+        });
 
 
     }
+
+    private void generateLengthDist() {
+        LengthDistPlot lengthDistPlot = new LengthDistPlot();
+        mainGUI.getRoot().setCenter(lengthDistPlot.getBc());
+
+    }
+
+    private void generateIdentityDist() {
+
+        IdentityHistPlot identityHistPlot = new IdentityHistPlot();
+        mainGUI.getRoot().setCenter(identityHistPlot.getRoot());
+
+    }
+
+    private void generateDamageProfile() {
+        DamagePlot damagePlot = new DamagePlot();
+        mainGUI.getRoot().setCenter(damagePlot.getLineChart());
+    }
+
+    // todo
+    private boolean plotAlreadyGenerated() {
+        return false;
+    }
+
+
+    public Task startCalculations(Communicator communicator, RuntimeEstimator runtimeEstimator) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                starter.start(communicator, runtimeEstimator);
+                return true;
+            }
+        };
+    }
+
 
     private boolean checkIfInputWasSelected() {
         boolean tmp = false;
