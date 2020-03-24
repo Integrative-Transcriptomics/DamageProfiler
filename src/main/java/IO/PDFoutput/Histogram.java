@@ -1,4 +1,4 @@
-package IO;
+package IO.PDFoutput;
 
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;

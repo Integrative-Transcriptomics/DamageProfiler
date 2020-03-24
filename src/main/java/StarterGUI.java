@@ -1,5 +1,6 @@
-import GUI.DamageProfilerMainController;
+import controller.DamageProfilerMainController;
 import GUI.DamageProfilerMainGUI;
+import controller.ProgressBarController;
 import javafx.application.Application;
 
 import javafx.stage.Stage;
@@ -14,10 +15,13 @@ public class StarterGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        DamageProfilerMainGUI damageProfilerMainGUI = new DamageProfilerMainGUI(VERSION);
+        ProgressBarController progressBarController = new ProgressBarController();
+        progressBarController.create();
+
+        DamageProfilerMainGUI damageProfilerMainGUI = new DamageProfilerMainGUI(VERSION, progressBarController);
         damageProfilerMainGUI.init(primaryStage);
 
-        DamageProfilerMainController damageProfilerMainController = new DamageProfilerMainController(damageProfilerMainGUI);
+        DamageProfilerMainController damageProfilerMainController = new DamageProfilerMainController(damageProfilerMainGUI, progressBarController);
 
 
 

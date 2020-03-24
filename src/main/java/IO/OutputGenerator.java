@@ -1,5 +1,7 @@
 package IO;
 
+import IO.PDFoutput.Histogram;
+import IO.PDFoutput.LinePlot;
 import calculations.DamageProfiler;
 import calculations.Frequencies;
 import calculations.RuntimeEstimator;

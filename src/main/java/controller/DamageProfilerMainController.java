@@ -1,5 +1,6 @@
-package GUI;
+package controller;
 
+import GUI.*;
 import GUI.Dialogues.AbstractDialogue;
 import GUI.Plots.DamagePlot;
 import GUI.Plots.IdentityHistPlot;
@@ -10,7 +11,7 @@ import calculations.StartCalculations;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.util.Duration;
@@ -19,58 +20,57 @@ import java.lang.reflect.Field;
 
 public class DamageProfilerMainController {
 
-    private final Button btn_leftpane_info;
+    private final Button btn_leftpane_run_config;
     private final Button btn_leftpane_identityDist;
     private final Button btn_leftpane_damageProfile;
     private final Button btn_leftpane_lengthDist;
+    private final ProgressBarController progressBarController;
     private Communicator communicator;
     private Button btn_inputfile;
     private Button btn_reference;
     private Button btn_output;
-    private Button btn_plotting_options;
     private Button btn_run;
     private Button btn_specieList;
     private TextField textfield_threshold;
     private TextField textfield_length;
     private TextField textfield_specie;
     private CheckBox checkbox_use_merged_reads;
-    private CheckBox checkbos_ssLibs_protocol;
+    private CheckBox checkbox_ssLibs_protocol;
     private TextField textfield_title;
-    //private CheckBox checkbox_dynamic_y_axis_height;
     private TextField textfield_y_axis_height;
     private StartCalculations starter = new StartCalculations(null);
-    private ProgressBar progressBar;
-    private Task startCalculuations;
     private DamageProfilerMainGUI mainGUI;
+    private boolean damagePlotGenerated = false;
+    private boolean idPlotsGenerated = false;
+    private boolean lengthPlotsGenerated = false;
 
 
-    public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI){
+    public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI, ProgressBarController progressBarController){
         this.mainGUI = damageProfilerMainGUI;
+        this.progressBarController = progressBarController;
         this.communicator = mainGUI.getCommunicator();
-        this.btn_inputfile = mainGUI.getBtn_inputfile();
-        this.btn_reference = mainGUI.getBtn_reference();
-        this.btn_output = mainGUI.getBtn_output();
-        this.btn_plotting_options = mainGUI.getBtn_plotting_options();
-        this.btn_run = mainGUI.getBtn_run();
-        this.btn_specieList = mainGUI.getBtn_specieList();
-        this.textfield_threshold = mainGUI.getTextfield_threshold();
-        this.textfield_length = mainGUI.getTextfield_length();
-        this.textfield_specie = mainGUI.getTextfield_specie();
-        this.checkbox_use_merged_reads = mainGUI.getCheckbox_use_merged_reads();
-        this.checkbos_ssLibs_protocol = mainGUI.getCheckbos_ssLibs_protocol();
-        this.textfield_title = mainGUI.getTextfield_title();
-        //this.checkbox_dynamic_y_axis_height = mainGUI.get??;
-        this.textfield_y_axis_height = mainGUI.getTextfield_y_axis_height();
-        this.progressBar = mainGUI.getProgressBar();
 
+        this.btn_inputfile = mainGUI.getConfig_dialogue().getBtn_inputfile();
+        this.btn_reference = mainGUI.getConfig_dialogue().getBtn_reference();
+        this.btn_output = mainGUI.getConfig_dialogue().getBtn_output();
+        this.btn_run = mainGUI.getConfig_dialogue().getBtn_run();
+        this.btn_specieList = mainGUI.getConfig_dialogue().getBtn_specieList();
         this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
-        this.btn_leftpane_info = mainGUI.getBtn_leftpane_info();
+        this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
         this.btn_leftpane_damageProfile = mainGUI.getBtn_leftpane_damageProfile();
         this.btn_leftpane_lengthDist = mainGUI.getBtn_leftpane_lengthDist();
 
+        this.textfield_threshold = mainGUI.getConfig_dialogue().getTextfield_threshold();
+        this.textfield_length = mainGUI.getConfig_dialogue().getTextfield_length();
+        this.textfield_specie = mainGUI.getConfig_dialogue().getTextfield_specie();
+        this.textfield_title = mainGUI.getConfig_dialogue().getTextfield_title();
+        this.textfield_y_axis_height = mainGUI.getConfig_dialogue().getTextfield_y_axis_height();
+
+        this.checkbox_use_merged_reads = mainGUI.getConfig_dialogue().getCheckbox_use_merged_reads();
+        this.checkbox_ssLibs_protocol = mainGUI.getConfig_dialogue().getCheckbox_ssLibs_protocol();
+        //this.checkbox_dynamic_y_axis_height = mainGUI.getConfig_dialogue().get??;
+
         addListener();
-
-
 
     }
 
@@ -166,7 +166,9 @@ public class DamageProfilerMainController {
                 // set all user options
                 communicator.setLength(Integer.parseInt(textfield_length.getText()));
                 communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
-                communicator.setSsLibsProtocolUsed(checkbos_ssLibs_protocol.isSelected());
+                communicator.setSsLibsProtocolUsed(checkbox_ssLibs_protocol.isSelected());
+                communicator.setUse_merged_and_mapped_reads(checkbox_use_merged_reads.isSelected());
+                communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
 
                 if(textfield_specie.getText().equals(""))
                     communicator.setSpecies_ref_identifier(null);
@@ -189,23 +191,28 @@ public class DamageProfilerMainController {
 
                 try {
                     // add progress indicator
-                    progressBar.setProgress(0);
-                    startCalculuations = startCalculations(communicator, runtimeEstimator);
-                    progressBar.progressProperty().unbind();
-                    progressBar.progressProperty().bind(startCalculuations.progressProperty());
+                    Task startCalculuations = new Task() {
+                        @Override
+                        protected Object call() throws Exception {
+                            starter.start(communicator, runtimeEstimator);
 
-                    startCalculuations.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, //
-                            (EventHandler<WorkerStateEvent>) t -> {
-                                if(starter.isCalculationsDone()){
-                                    // replace config with result GUI
-                                    btn_leftpane_lengthDist.setDisable(false);
-                                    btn_leftpane_identityDist.setDisable(false);
-                                    btn_leftpane_damageProfile.setDisable(false);
-                                    generateDamageProfile();
-                                }
-                            });
+                            return true;
+                        }
+                    };
+
+                    progressBarController.activate(startCalculuations);
+                    startCalculuations.setOnSucceeded((EventHandler<Event>) event -> {
+                        // replace config with result GUI
+                        btn_leftpane_lengthDist.setDisable(false);
+                        btn_leftpane_identityDist.setDisable(false);
+                        btn_leftpane_damageProfile.setDisable(false);
+                        generateDamageProfile();
+                        progressBarController.stop();
+
+                    });
 
                     new Thread(startCalculuations).start();
+
 
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -235,43 +242,37 @@ public class DamageProfilerMainController {
 
         btn_leftpane_damageProfile.setOnAction(e -> {
             if(starter.isCalculationsDone()){
-                if(plotAlreadyGenerated()){
-                    // show plot
-                } else {
-                    // generate plot
-                    generateDamageProfile();
-
-                }
-            } else {
-                mainGUI.getRoot().setCenter(null);
+                // generate plot
+                generateDamageProfile();
             }
         });
 
 
         btn_leftpane_identityDist.setOnAction(e -> {
-            if(starter.isCalculationsDone()){
-                if(plotAlreadyGenerated()){
-                    // show plot
-                } else {
-                    // generate plot
-                    generateIdentityDist();
 
-                }
-            } else {
-                mainGUI.getRoot().setCenter(null);            }
+            if(starter.isCalculationsDone()){
+                // generate plot
+                generateIdentityDist();
+            }
+
         });
 
         btn_leftpane_lengthDist.setOnAction(e -> {
-            if(starter.isCalculationsDone()){
-                if(plotAlreadyGenerated()){
-                    // show plot
-                } else {
-                    // generate plot
-                    generateLengthDist();
 
-                }
+
+            if(starter.isCalculationsDone()){
+                // generate plot
+                generateLengthDist();
+            }
+
+        });
+
+        btn_leftpane_run_config.setOnAction(e -> {
+            if(plotAlreadyGenerated()){
+                // show info (parameter / input / output / ...)
+                // ask for new configuration
             } else {
-                mainGUI.getRoot().setCenter(null);
+                mainGUI.getRoot().setCenter(mainGUI.getConfig_dialogue().getConfig_gridpane());
             }
         });
 
@@ -302,17 +303,6 @@ public class DamageProfilerMainController {
     }
 
 
-    public Task startCalculations(Communicator communicator, RuntimeEstimator runtimeEstimator) {
-        return new Task() {
-            @Override
-            protected Object call() throws Exception {
-                starter.start(communicator, runtimeEstimator);
-                return true;
-            }
-        };
-    }
-
-
     private boolean checkIfInputWasSelected() {
         boolean tmp = false;
         if (communicator.getInput() != null && communicator.getReference() != null && communicator.getOutfolder() != null) {
@@ -322,7 +312,6 @@ public class DamageProfilerMainController {
         }
         return tmp;
     }
-
 
 
     private static void setTooltipDelay(Tooltip tooltip) {
