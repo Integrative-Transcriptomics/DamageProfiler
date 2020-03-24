@@ -19,11 +19,12 @@ public class RuntimeEstimator {
                 validationStringency(ValidationStringency.LENIENT).open(new File(inputfile));
 
         estimate();
+
     }
 
-    private void estimate() {
+    public void estimate() {
         // estimate runtime:
-        numberOfRecords = getNumberOfrecords();
+        numberOfRecords = getNumberOfRecordsIntern();
         System.out.println("Number of records to process: " + numberOfRecords);
 
         estimatedRuntimeInSeconds = (long) (numberOfRecords/100000 * timePer100000RecordsInSeconds);
@@ -38,24 +39,21 @@ public class RuntimeEstimator {
 
     }
 
-    private long getNumberOfrecords() {
+    private long getNumberOfRecordsIntern() {
         long count = 0;
         for(SAMRecord record : input){
             count++;
         }
 
-        input=null;
-
         return count;
-    }
-
-
-    public long getNumberOfRecords() {
-        return numberOfRecords;
     }
 
 
     public long getEstimatedRuntimeInSeconds() {
         return estimatedRuntimeInSeconds;
+    }
+
+    public int getNumberOfRecords() {
+        return (int)numberOfRecords;
     }
 }

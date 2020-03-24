@@ -47,7 +47,7 @@ public class OutputGenerator {
     private String outpath;
     private Frequencies frequencies;
     private DamageProfiler damageProfiler;
-    private RuntimeEstimator runtimeEstimator;
+    private int numberOfRecords;
     private int max_length;
     private int min_length;
     private String specie;
@@ -55,13 +55,14 @@ public class OutputGenerator {
     private int length;
     private String input;
     private HashMap<String,Object> json_map = new HashMap<>();
-
+    private double[] three_C_to_T_reverse;
+    private double[] three_G_to_A_reverse;
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
                            int length, double height, double x_axis_min_id_histo, double x_axis_max_id_histo,
                            double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG,
-                           RuntimeEstimator runtimeEstimator, boolean ssLibProtocolUsed) {
+                           int numberOfRecords, boolean ssLibProtocolUsed) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
@@ -76,7 +77,7 @@ public class OutputGenerator {
         this.x_axis_max_length_histo = x_axis_max_length_histo;
         this.input = input;
         this.LOG = LOG;
-        this.runtimeEstimator = runtimeEstimator;
+        this.numberOfRecords = numberOfRecords;
         this.ssLibProtocolUsed = ssLibProtocolUsed;
 
         // set tax id if specified by user
@@ -724,9 +725,9 @@ public class OutputGenerator {
 
         double[] three_C_to_A_reverse = getSubArray(frequencies.getCount_C_A_3_norm(), threshold);
         double[] three_C_to_G_reverse = getSubArray(frequencies.getCount_C_G_3_norm(), threshold);
-        double[] three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
+        three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
 
-        double[] three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(),threshold);
+        three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(),threshold);
         double[] three_G_to_C_reverse = getSubArray(frequencies.getCount_G_C_3_norm(),threshold);
         double[] three_G_to_T_reverse = getSubArray(frequencies.getCount_G_T_3_norm(),threshold);
 
@@ -932,7 +933,7 @@ public class OutputGenerator {
         document.open();
 
         // compute percentage of used reads
-        double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / (double) runtimeEstimator.getNumberOfRecords();
+        double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / numberOfRecords;
 
         // draw text
         String[] splitted = file.split("/");
@@ -984,5 +985,19 @@ public class OutputGenerator {
         document.close();
     }
 
+    public int getThreshold() {
+        return threshold;
+    }
 
+    public double[] getThree_C_to_T_reverse() {
+        return three_C_to_T_reverse;
+    }
+
+    public double[] getThree_G_to_A_reverse() {
+        return three_G_to_A_reverse;
+    }
+
+    public double getMaxYdamapePlot() {
+        return height;
+    }
 }

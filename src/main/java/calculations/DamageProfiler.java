@@ -24,6 +24,7 @@ public class  DamageProfiler {
     private Logger LOG=null;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
+    private int numberOfRecords;
     private int threshold;
     private int length;
     private Frequencies frequencies;
@@ -67,6 +68,7 @@ public class  DamageProfiler {
                         validationStringency(ValidationStringency.LENIENT).open(input);
 
                 numberOfUsedReads = 0;
+                numberOfRecords = 0;
                 this.LOG = LOG;
                 this.threshold = threshold;
                 this.length = length;
@@ -111,6 +113,7 @@ public class  DamageProfiler {
             long startTime = System.currentTimeMillis();
 
             for(SAMRecord record : inputSam) {
+                numberOfRecords++;
 
                 if (this.specie == null) {
 
@@ -321,7 +324,8 @@ public class  DamageProfiler {
         return numberOfUsedReads;
     }
 
-    public ArrayList<Double> getIdentity() { return identity; }
+    public ArrayList<Double> getIdentity() {
+        return identity; }
 
     public String getSpeciesname(File file, String ref) {
 
@@ -342,4 +346,7 @@ public class  DamageProfiler {
         return actualRuntime;
     }
 
+    public int getNumberOfRecords() {
+        return numberOfRecords;
+    }
 }

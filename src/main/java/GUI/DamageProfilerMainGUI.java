@@ -110,4 +110,8 @@ public class DamageProfilerMainGUI {
     public ConfigurationDialogue getConfig_dialogue() {
         return config_dialogue;
     }
+
+    public String getVersion() {
+        return version;
+    }
 }

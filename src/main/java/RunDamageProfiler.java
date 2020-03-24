@@ -29,8 +29,6 @@ public class RunDamageProfiler {
 
         } else {
             StarterCLI starterCLI = new StarterCLI(VERSION, args);
-
-
         }
 
 

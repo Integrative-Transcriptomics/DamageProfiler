@@ -1,7 +1,8 @@
 package controller;
 
 import GUI.*;
-import GUI.Dialogues.AbstractDialogue;
+import GUI.Dialogues.RunInfoDialogue;
+import GUI.Dialogues.RuntimeEstimatorDialogue;
 import GUI.Plots.DamagePlot;
 import GUI.Plots.IdentityHistPlot;
 import GUI.Plots.LengthDistPlot;
@@ -14,6 +15,8 @@ import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
 import java.lang.reflect.Field;
@@ -25,6 +28,8 @@ public class DamageProfilerMainController {
     private final Button btn_leftpane_damageProfile;
     private final Button btn_leftpane_lengthDist;
     private final ProgressBarController progressBarController;
+    private final Button btn_estimate_runtime;
+    private RunInfoDialogue runInfoDialogue;
     private Communicator communicator;
     private Button btn_inputfile;
     private Button btn_reference;
@@ -38,22 +43,24 @@ public class DamageProfilerMainController {
     private CheckBox checkbox_ssLibs_protocol;
     private TextField textfield_title;
     private TextField textfield_y_axis_height;
-    private StartCalculations starter = new StartCalculations(null);
+    private StartCalculations starter = new StartCalculations();
     private DamageProfilerMainGUI mainGUI;
-    private boolean damagePlotGenerated = false;
-    private boolean idPlotsGenerated = false;
-    private boolean lengthPlotsGenerated = false;
+    private RuntimeEstimatorDialogue runtimeInfoDialogue;
+    private long numberOfRecords;
 
 
     public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI, ProgressBarController progressBarController){
         this.mainGUI = damageProfilerMainGUI;
         this.progressBarController = progressBarController;
         this.communicator = mainGUI.getCommunicator();
+        runInfoDialogue = new RunInfoDialogue("Run configuration", communicator);
+        starter.setVERSION(damageProfilerMainGUI.getVersion());
 
         this.btn_inputfile = mainGUI.getConfig_dialogue().getBtn_inputfile();
         this.btn_reference = mainGUI.getConfig_dialogue().getBtn_reference();
         this.btn_output = mainGUI.getConfig_dialogue().getBtn_output();
         this.btn_run = mainGUI.getConfig_dialogue().getBtn_run();
+        this.btn_estimate_runtime = mainGUI.getConfig_dialogue().getBtn_estimate_runtime();
         this.btn_specieList = mainGUI.getConfig_dialogue().getBtn_specieList();
         this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
         this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
@@ -70,6 +77,10 @@ public class DamageProfilerMainController {
         this.checkbox_ssLibs_protocol = mainGUI.getConfig_dialogue().getCheckbox_ssLibs_protocol();
         //this.checkbox_dynamic_y_axis_height = mainGUI.getConfig_dialogue().get??;
 
+        runtimeInfoDialogue = new RuntimeEstimatorDialogue("Runtime information",
+                "This gives you an estimate of the runtime. For large files with a long runtime,\n" +
+                        "it's recommended to use the command line version of DamageProfiler.");
+
         addListener();
 
     }
@@ -84,9 +95,11 @@ public class DamageProfilerMainController {
 
             if (checkIfInputWasSelected()) {
                 btn_run.setDisable(false);
+                btn_estimate_runtime.setDisable(false);
 
             } else {
                 btn_run.setDisable(true);
+                btn_estimate_runtime.setDisable(true);
             }
 
         });
@@ -101,8 +114,10 @@ public class DamageProfilerMainController {
 
             if (checkIfInputWasSelected()) {
                 btn_run.setDisable(false);
+                btn_estimate_runtime.setDisable(false);
             } else {
                 btn_run.setDisable(true);
+                btn_estimate_runtime.setDisable(true);
             }
 
         });
@@ -118,21 +133,23 @@ public class DamageProfilerMainController {
 
             if (checkIfInputWasSelected()) {
                 btn_run.setDisable(false);
+                btn_estimate_runtime.setDisable(false);
 
             } else {
                 btn_run.setDisable(true);
+                btn_estimate_runtime.setDisable(true);
             }
 
         });
 
 
 
-
-        btn_run.setOnAction(e -> {
+        btn_estimate_runtime.setOnAction(e -> {
 
             RuntimeEstimator runtimeEstimator = new RuntimeEstimator(communicator.getInput());
             long estimatedRuntimeInSeconds = runtimeEstimator.getEstimatedRuntimeInSeconds();
             String text_estimatedRuntime;
+
 
             if(estimatedRuntimeInSeconds > 60) {
                 long minutes = estimatedRuntimeInSeconds / 60;
@@ -147,85 +164,22 @@ public class DamageProfilerMainController {
 
             }
 
-            AbstractDialogue runtimeInfoDialogue = new AbstractDialogue("Runtime information", "This gives you an estimate of the runtime. For large files with a long runtime,\nit's recommended to use the command line version of DamageProfiler.");
-            Button btn_start = new Button("Proceed");
-            Button btn_cancel = new Button("Cancel");
-
-            int row = runtimeInfoDialogue.getRow();
-            runtimeInfoDialogue.getGridPane().add(new Label("Number of reads: " + runtimeEstimator.getNumberOfRecords()), 0, ++row, 2,1);
-            runtimeInfoDialogue.getGridPane().add(new Label(text_estimatedRuntime), 0, ++row, 2,1);
-            runtimeInfoDialogue.getGridPane().add(btn_cancel, 0, ++row, 1,1);
-            runtimeInfoDialogue.getGridPane().add(btn_start, 1, row, 1,1);
-
+            runtimeInfoDialogue.setNumberOfRecords(runtimeEstimator.getNumberOfRecords());
+            runtimeInfoDialogue.setResultText(text_estimatedRuntime);
+            runtimeInfoDialogue.addComponents();
             runtimeInfoDialogue.show();
-
-            btn_start.setOnAction(e_start -> {
-
-                runtimeInfoDialogue.close();
-
-                // set all user options
-                communicator.setLength(Integer.parseInt(textfield_length.getText()));
-                communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
-                communicator.setSsLibsProtocolUsed(checkbox_ssLibs_protocol.isSelected());
-                communicator.setUse_merged_and_mapped_reads(checkbox_use_merged_reads.isSelected());
-                communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
-
-                if(textfield_specie.getText().equals(""))
-                    communicator.setSpecies_ref_identifier(null);
-                else
-                    communicator.setSpecies_ref_identifier(textfield_specie.getText());
-
-                //            if(!checkbox_dynamic_y_axis_height.isSelected()){
-                //                try {
-                //                    communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
-                //                } catch (Exception ex){
-                //                    System.out.println("Height value not valid.");
-                //                }
-                //            }
-
-
-                if(!textfield_title.getText().equals("")){
-                    communicator.setTitle_plots(textfield_title.getText());
-                }
-
-
-                try {
-                    // add progress indicator
-                    Task startCalculuations = new Task() {
-                        @Override
-                        protected Object call() throws Exception {
-                            starter.start(communicator, runtimeEstimator);
-
-                            return true;
-                        }
-                    };
-
-                    progressBarController.activate(startCalculuations);
-                    startCalculuations.setOnSucceeded((EventHandler<Event>) event -> {
-                        // replace config with result GUI
-                        btn_leftpane_lengthDist.setDisable(false);
-                        btn_leftpane_identityDist.setDisable(false);
-                        btn_leftpane_damageProfile.setDisable(false);
-                        generateDamageProfile();
-                        progressBarController.stop();
-
-                    });
-
-                    new Thread(startCalculuations).start();
-
-
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            });
-
-            btn_cancel.setOnAction(e_cancel -> {
-
-                runtimeInfoDialogue.close();
-
-            });
         });
 
+        runtimeInfoDialogue.getBtn_proceed().setOnAction(e_start -> {
+            runtimeInfoDialogue.close();
+            runDamageProfiler();
+        });
+
+        runtimeInfoDialogue.getBtn_cancel().setOnAction(e_cancel -> runtimeInfoDialogue.close());
+
+        btn_run.setOnAction(e -> {
+            runDamageProfiler();
+        });
 
         btn_specieList.setOnAction(e -> {
 
@@ -268,7 +222,8 @@ public class DamageProfilerMainController {
         });
 
         btn_leftpane_run_config.setOnAction(e -> {
-            if(plotAlreadyGenerated()){
+            if(starter.isCalculationsDone()){
+                mainGUI.getRoot().setCenter(runInfoDialogue.getGridPane());
                 // show info (parameter / input / output / ...)
                 // ask for new configuration
             } else {
@@ -276,33 +231,104 @@ public class DamageProfilerMainController {
             }
         });
 
+        runInfoDialogue.getBtn_new_config().setOnAction(e -> {
+            mainGUI.getRoot().setCenter(mainGUI.getConfig_dialogue().getConfig_gridpane());
+            clear();
+        });
+
 
     }
 
+    private void clear() {
+        btn_leftpane_lengthDist.setDisable(true);
+        btn_leftpane_identityDist.setDisable(true);
+        btn_leftpane_damageProfile.setDisable(true);
+        starter.setCalculationsDone(false);
+        btn_inputfile.setTooltip(null);
+        btn_output.setTooltip(null);
+        btn_reference.setTooltip(null);
+    }
+
+    private void runDamageProfiler() {
+
+        // set all user options
+        communicator.setLength(Integer.parseInt(textfield_length.getText()));
+        communicator.setThreshold(Integer.parseInt(textfield_threshold.getText()));
+        communicator.setSsLibsProtocolUsed(checkbox_ssLibs_protocol.isSelected());
+        communicator.setUse_merged_and_mapped_reads(checkbox_use_merged_reads.isSelected());
+        communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
+        communicator.setTitle_plots(textfield_title.getText());
+
+        if(textfield_specie.getText().equals(""))
+            communicator.setSpecies_ref_identifier(null);
+        else
+            communicator.setSpecies_ref_identifier(textfield_specie.getText());
+
+        if(!textfield_title.getText().equals("")){
+            communicator.setTitle_plots(textfield_title.getText());
+        }
+
+
+        try {
+            // add progress indicator
+            Task startCalculuations = new Task() {
+                @Override
+                protected Object call() throws Exception {
+                    starter.start(communicator);
+                    runInfoDialogue.updateParameters();
+                    return true;
+                }
+            };
+
+            progressBarController.activate(startCalculuations);
+
+            startCalculuations.setOnSucceeded((EventHandler<Event>) event -> {
+                // replace config with result GUI
+                btn_leftpane_lengthDist.setDisable(false);
+                btn_leftpane_identityDist.setDisable(false);
+                btn_leftpane_damageProfile.setDisable(false);
+                generateDamageProfile();
+                progressBarController.stop();
+            });
+
+            new Thread(startCalculuations).start();
+
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
+    }
+
+    /**
+     * The following methods generate the result plots after successful damage profile calculations.
+     *    todo: if plot already created, just reload
+     */
+
     private void generateLengthDist() {
-        LengthDistPlot lengthDistPlot = new LengthDistPlot();
+        LengthDistPlot lengthDistPlot = new LengthDistPlot(starter.getDamageProfiler());
         mainGUI.getRoot().setCenter(lengthDistPlot.getBc());
 
     }
 
     private void generateIdentityDist() {
-
-        IdentityHistPlot identityHistPlot = new IdentityHistPlot();
-        mainGUI.getRoot().setCenter(identityHistPlot.getRoot());
+        IdentityHistPlot identityHistPlot = new IdentityHistPlot(starter.getDamageProfiler().getIdentity());
+        mainGUI.getRoot().setCenter(identityHistPlot.getBarChart());
 
     }
 
     private void generateDamageProfile() {
-        DamagePlot damagePlot = new DamagePlot();
-        mainGUI.getRoot().setCenter(damagePlot.getLineChart());
+        DamagePlot damagePlot = new DamagePlot(starter.getOutputGenerator(), starter);
+        HBox dp_plots = damagePlot.getDamageProfile();
+        dp_plots.prefHeightProperty().bind(mainGUI.getRoot().heightProperty());
+        dp_plots.prefWidthProperty().bind(mainGUI.getRoot().widthProperty());
+        mainGUI.getRoot().setCenter(dp_plots);
     }
 
-    // todo
-    private boolean plotAlreadyGenerated() {
-        return false;
-    }
 
-
+    /**
+     * This method checks if all mandatory fields are set. Otherwise, it's not possible to run the tool.
+     * @return
+     */
     private boolean checkIfInputWasSelected() {
         boolean tmp = false;
         if (communicator.getInput() != null && communicator.getReference() != null && communicator.getOutfolder() != null) {
@@ -314,6 +340,12 @@ public class DamageProfilerMainController {
     }
 
 
+    /**
+     * This method overrides the default tooltip delay and sets it to 0 seconds. So the tooptip
+     * pops up immediately when hovering over the item.
+     *
+     * @param tooltip
+     */
     private static void setTooltipDelay(Tooltip tooltip) {
         try {
             Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");

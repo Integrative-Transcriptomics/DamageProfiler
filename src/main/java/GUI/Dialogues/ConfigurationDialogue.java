@@ -15,8 +15,8 @@ public class ConfigurationDialogue {
     private Button btn_inputfile;
     private Button btn_reference;
     private Button btn_output;
-    private Button btn_plotting_options;
     private Button btn_run;
+    private Button btn_estimate_runtime;
     private Button btn_specieList;
 
     private TextField textfield_threshold;
@@ -49,9 +49,9 @@ public class ConfigurationDialogue {
         btn_inputfile = new Button("Select input file");
         btn_reference = new Button("Select reference");
         btn_output = new Button("Select output");
-        btn_plotting_options = new Button("Plotting options");
         btn_specieList = new Button("Set list");
         btn_run = new Button("Run");
+        btn_estimate_runtime = new Button("Estimate Runtime");
 
         Label label_threshold = new Label("Number of bases (x-axis)");
         Label label_yaxis = new Label("Height y-axis");
@@ -82,12 +82,10 @@ public class ConfigurationDialogue {
         //checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
 
         btn_run.setDisable(true);
+        btn_estimate_runtime.setDisable(true);
         textfield_length.setText("100");
         textfield_threshold.setText("25");
         textfield_y_axis_height.setText("0.4");
-        //checkbox_dynamic_y_axis_height.setSelected(true);
-        //textfield_y_axis_height.setDisable(true);
-
 
         // add components to grid
 
@@ -125,8 +123,9 @@ public class ConfigurationDialogue {
         config_gridpane.add(label_length, 0, ++row, 1,1);
         config_gridpane.add(textfield_length, 1, row, 2,1);
         config_gridpane.add(new Separator(), 0, ++row,3,1);
-        config_gridpane.add(btn_run, 0, ++row,1,1);
-        config_gridpane.add(progressBar, 1, row,1,1);
+        config_gridpane.add(btn_estimate_runtime, 0, ++row,1,1);
+        config_gridpane.add(btn_run, 1, row,1,1);
+        config_gridpane.add(progressBar, 2, row,1,1);
 
     }
 
@@ -144,10 +143,6 @@ public class ConfigurationDialogue {
 
     public Button getBtn_output() {
         return btn_output;
-    }
-
-    public Button getBtn_plotting_options() {
-        return btn_plotting_options;
     }
 
     public Button getBtn_run() {
@@ -186,4 +181,7 @@ public class ConfigurationDialogue {
         return textfield_y_axis_height;
     }
 
+    public Button getBtn_estimate_runtime() {
+        return btn_estimate_runtime;
+    }
 }
