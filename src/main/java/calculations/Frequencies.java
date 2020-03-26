@@ -2,9 +2,6 @@ package calculations;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
-
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -693,7 +690,6 @@ public class Frequencies {
      * compare each position in aligned record with reference to get misincorporations
      * @param seq
      * @param ref
-     * @param mis_positions
      * @param a_c
      * @param a_g
      * @param a_t

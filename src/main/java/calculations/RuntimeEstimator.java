@@ -1,6 +1,5 @@
 package calculations;
 
-import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
@@ -22,9 +21,14 @@ public class RuntimeEstimator {
 
     }
 
+    /**
+     * Estimate runtime based on the time needed in previous runs and the number of reads in the
+     * current input file.
+     *
+     */
     public void estimate() {
         // estimate runtime:
-        numberOfRecords = getNumberOfRecordsIntern();
+        numberOfRecords = input.iterator().toList().size();
         System.out.println("Number of records to process: " + numberOfRecords);
 
         estimatedRuntimeInSeconds = (long) (numberOfRecords/100000 * timePer100000RecordsInSeconds);
@@ -38,16 +42,6 @@ public class RuntimeEstimator {
         }
 
     }
-
-    private long getNumberOfRecordsIntern() {
-        long count = 0;
-        for(SAMRecord record : input){
-            count++;
-        }
-
-        return count;
-    }
-
 
     public long getEstimatedRuntimeInSeconds() {
         return estimatedRuntimeInSeconds;

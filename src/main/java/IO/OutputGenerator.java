@@ -4,7 +4,6 @@ import IO.PDFoutput.Histogram;
 import IO.PDFoutput.LinePlot;
 import calculations.DamageProfiler;
 import calculations.Frequencies;
-import calculations.RuntimeEstimator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.itextpdf.awt.PdfGraphics2D;
@@ -18,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
-
 
 import java.awt.*;
 import java.io.*;

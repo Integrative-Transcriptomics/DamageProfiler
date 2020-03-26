@@ -24,14 +24,14 @@ public class Functions {
     public static int getHammingDistance(String sequence1, String sequence2){
         int distance =0;
         if(sequence1 == null || sequence2==null)
-            System.exit(0);
+            System.exit(1);
 
         sequence1 = sequence1.toUpperCase();
         sequence2 = sequence2.toUpperCase();
 
         if(sequence1.length() != sequence2.length())
         {
-            System.out.println("The string are not equal in length ,Please enter the strings wit equal lengths ");
+            System.out.println("Functions:getHammingDistance(): Different length, please enter the strings with equal length.");
         }
 
         for(int i=0;i < sequence1.length();i++)
@@ -40,6 +40,7 @@ public class Functions {
                 distance++;
         }
 
+        //System.out.println("Hamming Distance: " + distance);
         return distance;
 
     }

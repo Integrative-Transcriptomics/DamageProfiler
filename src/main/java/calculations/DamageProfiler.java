@@ -3,13 +3,13 @@ package calculations;
 
 import IO.FastACacher;
 import htsjdk.samtools.*;
+import htsjdk.samtools.cram.ref.CRAMReferenceSource;
+import htsjdk.samtools.cram.ref.ReferenceSource;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 
@@ -34,7 +34,6 @@ public class  DamageProfiler {
     private ArrayList<Double> identity;
     private SpecieHandler specieHandler;
     private long actualRuntime=0;
-
     private long runtime_ms;
 
     /**
@@ -56,7 +55,7 @@ public class  DamageProfiler {
      * @param LOG
      */
     public void init(File input, File reference, int threshold, int length, String specie, Logger LOG){
-        // read bam/sam file
+        // read bam/sam/cram file
         if (!input.exists()){
             System.err.println("SAM/BAM file not found. Please check your file path.\nInput: " +
                     input.getAbsolutePath());
@@ -64,8 +63,22 @@ public class  DamageProfiler {
         } else {
             try{
 
-                inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                        validationStringency(ValidationStringency.LENIENT).open(input);
+                if(input.getAbsolutePath().endsWith(".sam") || input.getAbsolutePath().endsWith(".bam") ) {
+
+                    inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                            validationStringency(ValidationStringency.LENIENT).open(input);
+
+                } else if(input.getAbsolutePath().endsWith(".cram")){
+                    System.out.println(reference.getName());
+                    if(!reference.isFile()){
+                        System.err.println("Reference file is needed to reads CRAM files.");
+                        System.exit(1);
+                    } else {
+                        inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
+                                referenceSequence(reference).validationStringency(ValidationStringency.LENIENT).open(input);
+
+                    }
+                }
 
                 numberOfUsedReads = 0;
                 numberOfRecords = 0;
@@ -84,8 +97,8 @@ public class  DamageProfiler {
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
                 LOG.error("Invalid SAM/BAM file. Please check your file.");
-                System.out.println(e.toString());
-                System.exit(0);
+                System.err.println(e.toString());
+                System.exit(-1);
             }
         }
     }
@@ -105,7 +118,7 @@ public class  DamageProfiler {
         if(use_all_reads && use_only_merged_reads){
             LOG.info("-------------------");
             LOG.info("0 reads processed.\nRunning not possible. 'use_only_merged_reads' and 'use_all_reads' was set to 'true'");
-            System.exit(0);
+            System.exit(1);
 
         } else {
 
@@ -149,9 +162,6 @@ public class  DamageProfiler {
                 }
             }
 
-
-
-
             frequencies.normalizeValues();
 
             LOG.info("-------------------");
@@ -165,15 +175,12 @@ public class  DamageProfiler {
         } else {
             System.out.println("Runtime for processing all records: " + actualRuntime + " seconds and " + runtime_ms%60 + " milliseconds");
         }
-
     }
 
 
 
 
     private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) throws Exception {
-
-
 
         if(use_all_reads && !use_only_merged_reads){
             // process all reads
@@ -212,7 +219,7 @@ public class  DamageProfiler {
 
         /*
             If MD value is set, use it to reconstruct reference
-            Otherwise reconstruct reference it based on the CIGAR string
+            Otherwise reconstruct it based on reference.
 
          */
 
@@ -223,55 +230,26 @@ public class  DamageProfiler {
         // check if record has MD tag and no reference file is specified
         if(record.getStringAttribute(SAMTag.MD.name()) == null && this.reference == null){
 
-            LOG.error("SAM/BAM file has no MD tag. Please specify reference file ");
-            System.exit(0);
+            LOG.error("SAM/BAM file has no MD tag. Please specify reference file which is needed for MD tag calculations.");
+            System.exit(1);
 
-        } else if (record.getStringAttribute(SAMTag.MD.name()) == null){
+        } else {
 
-            readReferenceInCache();
-            Aligner aligner = new Aligner(LOG);
-            // SAMRecord has 1-based coordinate system -> closed interval [..,..]
-            // normal Array 0-based coordinate system -> interval half-cloded-half-open [...,...)
-            int start = record.getAlignmentStart() - 1;
-            int stop = record.getAlignmentEnd();
-
-            // get reference sequence
-            byte[] refSeq = Arrays.copyOfRange(cache.getData().get(cache.getKeyName(record.getReferenceName())), start, stop);
-            String reference = new String(refSeq, "UTF-8");
-            // align record and reference
-
-            if (record.getReadLength() != reference.length()) {
-                String[] record_reference = aligner.align(record.getReadString(), reference, record);
-                reference_aligned = record_reference[1];
-                record_aligned = record_reference[0];
-
-            } else {
-                reference_aligned = record.getReadString();
-                record_aligned = record.getReadString();
+            // MD tag needs to be calculated --> REF needs to be specified
+            if (record.getStringAttribute(SAMTag.MD.name()) == null){
+                if(!reference.isFile()){
+                    System.err.println("No MD tag defined. Please specify reference file which is needed for MD tag calculations.");
+                    System.exit(1);
+                }
+                readReferenceInCache();
+                SequenceUtil.calculateMdAndNmTags(record, cache.getData().get(record.getReferenceName()), true, false);
             }
 
-        } else if(record.getStringAttribute(SAMTag.MD.name()) != null){
-
-            // get reference corresponding to the record
-            if(record.getCigar().getReadLength() != 0 && record.getCigar().getReadLength() == record.getReadLength()){
-//                if(record.getCigarString().contains("S")){
-//                    System.out.println("Cigar contains soft clipping");
-//                } else if(record.getCigarString().contains("D")){
-//                    System.out.println("Cigar contains deletion");
-//                } else {
-                    byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
-                    reference_aligned = new String(ref_seq, "UTF-8");
-                    record_aligned = record.getReadString();
-               // }
-
-
-
-            } else {
-                LOG.info("Skipped record (length does not match): " + record.getReadName());
-            }
+            byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
+            reference_aligned = new String(ref_seq, "UTF-8");
+            record_aligned = record.getReadString();
 
         }
-
 
         // report length distribution
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
@@ -342,9 +320,6 @@ public class  DamageProfiler {
         return null;
     }
 
-    public long getActualRuntime() {
-        return actualRuntime;
-    }
 
     public int getNumberOfRecords() {
         return numberOfRecords;

@@ -114,10 +114,6 @@ public class LengthDistribution {
         return length_distribution_map_reverse;
     }
 
-    public HashMap<Double, Double> getLength_distribution_map() {
-        return length_distribution_map;
-    }
-
     public List<Double> getLength_forward() {
         return length_forward;
     }
