@@ -1,5 +1,7 @@
 package IO;
 
+import GUI.Plots.IdentityHistPlot;
+import GUI.Plots.LengthDistPlot;
 import IO.PDFoutput.Histogram;
 import IO.PDFoutput.LinePlot;
 import calculations.DamageProfiler;
@@ -12,13 +14,17 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import javafx.scene.chart.BarChart;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
+import org.jfree.graphics2d.svg.SVGUtils;
 
 import java.awt.*;
+import java.awt.Rectangle;
 import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -459,6 +465,8 @@ public class OutputGenerator {
                 "Read length", "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo);
 
         createPdf("/Length_plot.pdf", new JFreeChart[]{chart_all, chart_separated}, file);
+        createSVG("/Length_plot_combined_data.svg", chart_all);
+        createSVG("/Length_plot_forward_reverse_separated.svg", chart_separated);
 
 
     }
@@ -479,8 +487,10 @@ public class OutputGenerator {
         JFreeChart chart_all = hist_all.createChart(dataset,  "Read identity distribution", "Identity", "Occurrences",
                 x_axis_min_id_histo, x_axis_max_id_histo);
         createPdf("/identity_histogram.pdf", new JFreeChart[]{chart_all}, file);
+        createSVG("/identity_histogram.svg", chart_all);
 
     }
+
 
     /**
      * write percentage of misincorporations per read position
@@ -843,17 +853,22 @@ public class OutputGenerator {
             ymax = damagePlot_five.getY_max();
         }
 
-
+        JFreeChart[] charts;
         // create damage plot five prime
         JFreeChart chart = damagePlot_five.createChart(dataset_five, ymax, threshold);
         if(!ssLibProtocolUsed){
             XYDataset dataset_three = damagePlot_three.createDataset();
             // create damage plot three prime
             JFreeChart chart1 = damagePlot_three.createChart(dataset_three, ymax, threshold);
-            createPdf("/DamagePlot.pdf", new JFreeChart[]{chart, chart1}, file);
+            charts = new JFreeChart[]{chart, chart1};
+            createSVG("/DamagePlot_three_prime.svg", chart1);
         } else {
-            createPdf("/DamagePlot.pdf", new JFreeChart[]{chart}, file);
+            charts = new JFreeChart[]{chart};
         }
+
+        createPdf("/DamagePlot.pdf", charts, file);
+        createSVG("/DamagePlot_five_prime.svg", chart);
+
     }
 
 
@@ -913,6 +928,18 @@ public class OutputGenerator {
     }
 
 
+    public void createSVG(String filename, JFreeChart chart) throws IOException {
+
+        int height = (int)(PageSize.A4.getWidth() * (float)0.8);
+        int width = (int)(PageSize.A4.getHeight() / 2);
+
+        SVGGraphics2D g2 = new SVGGraphics2D(width, height);
+        Rectangle r = new Rectangle(0, 0, width, height);
+        chart.draw(g2, r);
+        File f = new File(outpath + "/" + filename);
+        SVGUtils.writeToSVG(f, g2.getSVGElement());
+
+    }
     /**
      * Creates a PDF document.
      *
@@ -941,11 +968,22 @@ public class OutputGenerator {
 
         String read_per;
         if(!ssLibProtocolUsed){
-            read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                    (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Specie: " + this.specie;
+            if(this.specie == null){
+                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
+                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads)";
+            } else{
+                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
+                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Specie: " + this.specie;
+            }
+
         } else {
-            read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                    (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Specie: " + this.specie + " | ssLib protocol";
+            if(this.specie == null){
+                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
+                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | ssLib protocol";
+            } else {
+                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
+                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | Specie: " + this.specie + " | ssLib protocol";
+            }
         }
 
 
