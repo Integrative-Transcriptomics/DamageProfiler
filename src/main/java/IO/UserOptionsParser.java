@@ -26,121 +26,134 @@ public class UserOptionsParser {
         // create command line parameters
         Options helpOptions = new Options();
         helpOptions.addOption("h", "help", false, "show this help page");
+
         Options options = new Options();
-        options.addOption("h", "help", false, "show this help page");
 
-        Option version = new Option("version", "version", false,
-                "Show version of DamageProfiler");
-        options.addOption(version);
+        options.addOption("h", false, "Shows this help page.");
 
-        options.addOption(OptionBuilder.withLongOpt("input")
-                .withArgName("INPUT")
-                .withDescription("The input sam/bam file")
-                .hasArg()
-                .create("i"));
-        options.addOption(OptionBuilder.withLongOpt("reference")
-                .withArgName("REFERENCE")
-                .withDescription("The reference file")
-                .hasArg()
-                .create("r"));
-        options.addOption(OptionBuilder.withLongOpt("output")
-                .withArgName("OUTPUT")
-                .withDescription("The output folder")
-                .hasArg()
-                .create("o"));
-        options.addOption(OptionBuilder.withLongOpt("threshold")
-                .withArgName("THRESHOLD")
-                .withDescription("Number of bases which are considered for plotting nucleotide misincorporations")
-                .hasArg()
-                .create("t"));
-        options.addOption(OptionBuilder.withLongOpt("specie")
-                .withArgName("SPECIE")
-                .withDescription("RNAME flag SAM record (Reference sequence name)")
-                .hasArg()
-                .create("s"));
-        options.addOption(OptionBuilder.withLongOpt("specieslist file")
-                .withArgName("SPECIES LIST")
-                .withDescription("List with species for which damage profile has to be calculated.")
-                .hasArg()
-                .create("sf"));
-        options.addOption(OptionBuilder.withLongOpt("length")
-                .withArgName("LENGTH")
-                .withDescription("Number of bases which are considered for frequency computations.")
-                .hasArg()
-                .create("l"));
+        options.addOption(new Option("version", false,
+                "Shows the version of DamageProfiler."));
 
-        options.addOption(OptionBuilder.withLongOpt("title")
-                .withArgName("TITLE")
-                .withDescription("Title used for all plots. Default: filepath of input SAM/BAM file.")
+        options.addOption(Option.builder("i")
+                .argName("INPUT")
+                .desc("The input sam/bam/cram file.")
                 .hasArg()
-                .create("title"));
+                .build());
 
-        options.addOption(OptionBuilder.withLongOpt("yaxis_damageplot")
-                .withArgName("YAXIS_DAMAGEPLOT")
-                .withDescription("Maximal value on y axis of damage plot.")
+        options.addOption(Option.builder("r")
+                .argName("REFERENCE")
+                .desc("The reference file (fasta format).")
                 .hasArg()
-                .create("yaxis_damageplot"));
+                .build());
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_id_min")
-                .withArgName("XAXIS_HISTO_ID_MIN")
-                .withDescription("Minimal value x-axis of identity histogram.")
+        options.addOption(Option.builder("o")
+                .argName("OUTPUT")
+                .desc("The output folder.")
                 .hasArg()
-                .create("xaxis_histo_id_min"));
+                .build());
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_id_max")
-                .withArgName("XAXIS_HISTO_ID_MAX")
-                .withDescription("Maximal value x-axis of identity histogram.")
+        options.addOption(Option.builder("t")
+                .argName("THRESHOLD")
+                .desc("DamagePlot: Number of bases which are considered for plotting nucleotide misincorporations. Default: 25")
                 .hasArg()
-                .create("xaxis_histo_id_max"));
+                .build());
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_length_min")
-                .withArgName("XAXIS_HISTO_LENGTH_MIN")
-                .withDescription("Minimal value x-axis of length histogram.")
+        options.addOption(Option.builder("s")
+                .argName("SPECIES")
+                .desc("Reference sequence name (RNAME flag of SAM record). For more details see Documentation.")
                 .hasArg()
-                .create("xaxis_histo_length_min"));
+                .build());
 
-        options.addOption(OptionBuilder.withLongOpt("xaxis_histo_length_max")
-                .withArgName("XAXIS_HISTO_LENGTH_MAX")
-                .withDescription("Maximal value x-axis of length histogram.")
+        options.addOption(Option.builder("sf")
+                .argName("SPECIES LIST")
+                .desc("List with species for which damage profile has to be calculated. For more details see Documentation.")
                 .hasArg()
-                .create("xaxis_histo_length_max"));
+                .build());
 
-        Option mapped_and_merged = new Option("merged", "all_mapped_and_merged_reads", false,
-                "Use all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
-                        " it will be skipped. Default: false ");
-        options.addOption(mapped_and_merged);
-
-        Option use_all_reads = new Option("useall", "use_all_reads", false,
-                "Use all reads (mapped and unmapped) to calculate damage plot. Default: false ");
-        options.addOption(use_all_reads);
-
-        Option ssLib_used = new Option("sslib", "sslib", false,
-                "Single-stranded library protocol was used. Default: false ");
-        options.addOption(ssLib_used);
+        options.addOption(Option.builder("l")
+                .argName("LENGTH")
+                .desc("Number of bases which are considered for frequency computations. Default: 100.")
+                .hasArg()
+                .build());
 
 
-        HelpFormatter helpformatter = new HelpFormatter();
+        /*
+                plotting options
+         */
+
+        options.addOption(Option.builder("title")
+                .argName("TITLE")
+                .desc("Title used for all plots. Default: input filename.")
+                .hasArg()
+                .build());
+
+        // damage plot
+
+        options.addOption(Option.builder("yaxis_dp_max")
+                .argName("MAX_VALUE")
+                .desc("DamagePlot: Maximal y-axis value.")
+                .hasArg()
+                .build());
+
+        // Identity plot
+
+        options.addOption(Option.builder("xaxis_id_min")
+                .argName("MIN_VALUE")
+                .desc("Identity Distribution: Minimal value x-axis.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("xaxis_id_max")
+                .argName("MAX_VALUE")
+                .desc("Identity Distribution: Maximal value x-axis.")
+                .hasArg()
+                .build());
+
+        // Length plot
+
+        options.addOption(Option.builder("xaxis_length_min")
+                .argName("MIN_VALUE")
+                .desc("Length Distribution: Minimal value x-axis.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("xaxis_length_max")
+                .argName("MAX_VALUE")
+                .desc("Length Distribution: Maximal value x-axis.")
+                .hasArg()
+                .build());
+
+
+        // others
+
+        options.addOption(Option.builder("only_merged")
+                .desc("Use only mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
+                        " it will be skipped. Default: false ")
+                .build());
+
+        options.addOption(Option.builder("ssLib")
+                .desc("Single-stranded library protocol was used. Default: false")
+                .build());
+
+        String header = "\nDetailed description:\n\n";
+
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.setOptionComparator(null);
+        formatter.setWidth(130);
         CommandLineParser parser = new BasicParser();
 
-        if (args[0].equals("-version") || args[0].equals("--version")){
-            System.out.println("DamageProfiler v" + this.version);
-            System.exit(0);
-        } else if (args.length < 2) {
-            helpformatter.printHelp(CLASS_NAME, options);
-            System.exit(0);
-        }
+
+// ---------------------------------------------------------------------------------------
+
+
         try {
-            CommandLine cmd = parser.parse(helpOptions, args);
+
+            CommandLine cmd = parser.parse(options, args);
+
             if (cmd.hasOption('h')) {
-                helpformatter.printHelp(CLASS_NAME, options);
+                formatter.printHelp("DamageProfiler", header, options, null, true);
                 System.exit(0);
             }
-        } catch (ParseException e1) {
-        }
-
-
-        try {
-            CommandLine cmd = parser.parse(options, args);
 
             if(cmd.hasOption("version")) {
                 System.out.print("DamageProfiler v" + this.version + "\n");
@@ -217,9 +230,9 @@ public class UserOptionsParser {
 
 
         } catch (ParseException e) {
-            helpformatter.printHelp(CLASS_NAME, options);
+            formatter.printHelp(CLASS_NAME, options);
             System.err.println(e.getMessage());
-            System.exit(0);
+            System.exit(1);
         }
 
     }

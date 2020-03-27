@@ -1,7 +1,5 @@
 package IO;
 
-import GUI.Plots.IdentityHistPlot;
-import GUI.Plots.LengthDistPlot;
 import IO.PDFoutput.Histogram;
 import IO.PDFoutput.LinePlot;
 import calculations.DamageProfiler;
@@ -444,14 +442,14 @@ public class OutputGenerator {
      * @throws IOException
      * @throws DocumentException
      */
-    public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse,
+    public void plotLengthHistogram(List<Integer> length_all, List<Integer> length_forward, List<Integer> length_reverse,
                                     String file) throws  IOException, DocumentException {
 
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(length_all);
         HistogramDataset dataset_all = hist_all.createDataset(new String[]{"all reads"}, max_length);
-        JFreeChart chart_all = hist_all.createChart(dataset_all, "Read length distribution", "Read length",
-                "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo);
+        JFreeChart chart_all = hist_all.createChart(dataset_all, "", "Read length",
+                "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, false);
 
         Histogram hist_separated = new Histogram(LOG);
         if(length_forward.size()>0){
@@ -461,8 +459,8 @@ public class OutputGenerator {
             hist_separated.addData(length_reverse);
         }
         HistogramDataset dataset_separated = hist_separated.createDataset(new String[]{"+ strand", "- strand"}, max_length);
-        JFreeChart chart_separated = hist_separated.createChart(dataset_separated, "Read length distribution",
-                "Read length", "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo);
+        JFreeChart chart_separated = hist_separated.createChart(dataset_separated, "",
+                "Read length", "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, true);
 
         createPdf("/Length_plot.pdf", new JFreeChart[]{chart_all, chart_separated}, file);
         createSVG("/Length_plot_combined_data.svg", chart_all);
@@ -480,12 +478,13 @@ public class OutputGenerator {
      * @throws DocumentException
      * @throws IOException
      */
-    public void plotIdentitiyHistogram(ArrayList distances, String title, String file) throws DocumentException, IOException{
+    public void plotIdentitiyHistogram(List<Integer>  distances, String title, String file) throws DocumentException, IOException{
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(distances);
+
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
-        JFreeChart chart_all = hist_all.createChart(dataset,  "Read identity distribution", "Identity", "Occurrences",
-                x_axis_min_id_histo, x_axis_max_id_histo);
+        JFreeChart chart_all = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",
+                x_axis_min_id_histo, x_axis_max_id_histo, false);
         createPdf("/identity_histogram.pdf", new JFreeChart[]{chart_all}, file);
         createSVG("/identity_histogram.svg", chart_all);
 

@@ -369,7 +369,7 @@ public class StartCalculations {
                     inputfileNameWithOutExtension
             );
             outputGenerator.plotIdentitiyHistogram(
-                    damageProfiler.getIdentity(),
+                    damageProfiler.getEditDistances(), // damageProfiler.getIdentity(),
                     "Identity distribution",
                     inputfileNameWithOutExtension
             );

@@ -1,6 +1,7 @@
 package controller;
 
 import GUI.*;
+import GUI.Dialogues.HelpDialogue;
 import GUI.Dialogues.RunInfoDialogue;
 import GUI.Dialogues.RuntimeEstimatorDialogue;
 import GUI.Plots.DamagePlot;
@@ -17,8 +18,11 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import javax.swing.*;
 import java.lang.reflect.Field;
 
 public class DamageProfilerMainController {
@@ -29,6 +33,8 @@ public class DamageProfilerMainController {
     private final Button btn_leftpane_lengthDist;
     private final ProgressBarController progressBarController;
     private final Button btn_estimate_runtime;
+    private final Button btn_help;
+    private final HelpDialogue help_dialogue;
     private RunInfoDialogue runInfoDialogue;
     private Communicator communicator;
     private Button btn_inputfile;
@@ -46,15 +52,19 @@ public class DamageProfilerMainController {
     private StartCalculations starter = new StartCalculations();
     private DamageProfilerMainGUI mainGUI;
     private RuntimeEstimatorDialogue runtimeInfoDialogue;
-    private long numberOfRecords;
 
-
+    /**
+     * Constructor
+     * @param damageProfilerMainGUI
+     * @param progressBarController
+     */
     public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI, ProgressBarController progressBarController){
         this.mainGUI = damageProfilerMainGUI;
         this.progressBarController = progressBarController;
         this.communicator = mainGUI.getCommunicator();
         runInfoDialogue = new RunInfoDialogue("Run configuration", communicator);
         starter.setVERSION(damageProfilerMainGUI.getVersion());
+        this.help_dialogue = new HelpDialogue();
 
         this.btn_inputfile = mainGUI.getConfig_dialogue().getBtn_inputfile();
         this.btn_reference = mainGUI.getConfig_dialogue().getBtn_reference();
@@ -64,6 +74,7 @@ public class DamageProfilerMainController {
         this.btn_specieList = mainGUI.getConfig_dialogue().getBtn_specieList();
         this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
         this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
+        this.btn_help = mainGUI.getBtn_help();
         this.btn_leftpane_damageProfile = mainGUI.getBtn_leftpane_damageProfile();
         this.btn_leftpane_lengthDist = mainGUI.getBtn_leftpane_lengthDist();
 
@@ -104,6 +115,9 @@ public class DamageProfilerMainController {
 
         });
 
+        btn_help.setOnAction(e -> {
+            mainGUI.getRoot().setCenter(new ScrollPane(this.help_dialogue.getGridPane()));
+        });
 
         btn_reference.setOnAction(e -> {
 

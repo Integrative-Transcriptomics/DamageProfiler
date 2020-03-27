@@ -23,6 +23,7 @@ public class DamageProfilerMainGUI {
     private Button btn_leftpane_info;
     private Button btn_leftpane_damageProfile;
     private Button btn_leftpane_lengthDist;
+    private Button btn_help;
 
 
     public DamageProfilerMainGUI(String version, ProgressBarController progressBarController) {
@@ -46,7 +47,7 @@ public class DamageProfilerMainGUI {
 
         //jMetro.setScene(new Scene(root, 750, 500));
         //this.primaryStage.setScene(jMetro.getScene());
-        this.primaryStage.setScene(new Scene(root, 900, 600));
+        this.primaryStage.setScene(new Scene(root, 950, 700));
         this.primaryStage.setResizable(true);
         this.primaryStage.show();
 
@@ -56,12 +57,16 @@ public class DamageProfilerMainGUI {
         VBox leftPanel = new VBox();
         btn_leftpane_damageProfile = new Button("Damage Plot");
         btn_leftpane_info = new Button("Run Configuration");
+        btn_help = new Button("Show help");
         btn_leftpane_lengthDist = new Button("Length Distribution");
         btn_leftpane_identityDist = new Button("Identity Distribution");
 
         // style buttons
         btn_leftpane_info.setPrefHeight(30);
         btn_leftpane_info.setPrefWidth(200);
+
+        btn_help.setPrefHeight(30);
+        btn_help.setPrefWidth(200);
 
         btn_leftpane_damageProfile.setPrefHeight(30);
         btn_leftpane_damageProfile.setPrefWidth(200);
@@ -75,7 +80,7 @@ public class DamageProfilerMainGUI {
         btn_leftpane_identityDist.setPrefWidth(200);
         btn_leftpane_identityDist.setDisable(true);
 
-        leftPanel.getChildren().addAll(btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist, btn_leftpane_identityDist);
+        leftPanel.getChildren().addAll(btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist, btn_leftpane_identityDist, btn_help);
         leftPanel.setPadding(new Insets(10,10,10,10));
 
         return leftPanel;
@@ -105,6 +110,10 @@ public class DamageProfilerMainGUI {
 
     public Button getBtn_leftpane_lengthDist() {
         return btn_leftpane_lengthDist;
+    }
+
+    public Button getBtn_help() {
+        return btn_help;
     }
 
     public ConfigurationDialogue getConfig_dialogue() {

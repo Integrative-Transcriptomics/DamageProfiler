@@ -22,12 +22,12 @@ public class RunDamageProfiler {
           */
 
 
-        System.setProperty("java.awt.headless", "true");
 
         if(args.length==0){
             new Thread(() -> Application.launch(StarterGUI.class)).start();
 
         } else {
+            System.setProperty("java.awt.headless", "true");
             StarterCLI starterCLI = new StarterCLI(VERSION, args);
         }
 

@@ -4,10 +4,13 @@ import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 
@@ -31,7 +34,7 @@ public class Histogram {
         data_collected = new ArrayList<>();
     }
 
-    public void addData(List<Double> data){
+    public void addData(List<Integer> data){
         double[] d = new double[data.size()];
         for(int i = 0; i < data.size(); i++){
             d[i] = data.get(i);
@@ -58,7 +61,7 @@ public class Histogram {
 
 
     public JFreeChart createChart(HistogramDataset dataset, String title, String xlab, String ylab,
-                                  double xmin, double xmax){
+                                  double xmin, double xmax, boolean legend){
 
         JFreeChart chart = ChartFactory.createHistogram(
                 title,//"Histogram read length",
@@ -66,17 +69,18 @@ public class Histogram {
                 ylab, // "Occurrences",
                 dataset,
                 PlotOrientation.VERTICAL,
-                true,
+                legend,
                 false,
                 false
         );
 
-        chart.setBackgroundPaint(new Color(230,230,230));
+//        chart.setBackgroundPaint(new Color(230,230,230));
         XYPlot xyplot = (XYPlot)chart.getPlot();
         xyplot.setForegroundAlpha(0.7F);
         xyplot.setBackgroundPaint(Color.WHITE);
         xyplot.setDomainGridlinePaint(new Color(150,150,150));
         xyplot.setRangeGridlinePaint(new Color(150,150,150));
+
 
         if(xmin > -1){
             ValueAxis axis = xyplot.getDomainAxis();
@@ -90,8 +94,8 @@ public class Histogram {
 
         XYBarRenderer xybarrenderer = (XYBarRenderer)xyplot.getRenderer();
         xybarrenderer.setShadowVisible(false);
-        xybarrenderer.setBarPainter(new StandardXYBarPainter());
-        xybarrenderer.setMargin(0.2);
+//        xybarrenderer.setBarPainter(new StandardXYBarPainter());
+//        xybarrenderer.setMargin(0.2);
 
         return chart;
 

@@ -78,7 +78,7 @@ public class LengthDistPlot {
 
     }
 
-    private void generate_alldata(List<Double> length_all) {
+    private void generate_alldata(List<Integer> length_all) {
 
         Double[] data_all = prepareData(length_all);
         HashMap<Double, Integer> length_map_all = groupData(data_all);
@@ -130,7 +130,7 @@ public class LengthDistPlot {
         return idents_count;
     }
 
-    private Double[] prepareData(List<Double> length_data_all) {
+    private Double[] prepareData(List<Integer> length_data_all) {
 
 
         Double[] data_all = new Double[length_data_all.size()];

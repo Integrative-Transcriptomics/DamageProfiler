@@ -3,8 +3,6 @@ package calculations;
 
 import IO.FastACacher;
 import htsjdk.samtools.*;
-import htsjdk.samtools.cram.ref.CRAMReferenceSource;
-import htsjdk.samtools.cram.ref.ReferenceSource;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
@@ -35,6 +33,7 @@ public class  DamageProfiler {
     private SpecieHandler specieHandler;
     private long actualRuntime=0;
     private long runtime_ms;
+    private List<Integer> editDistances;
 
     /**
      * constructor
@@ -90,6 +89,7 @@ public class  DamageProfiler {
                 this.lengthDistribution = new LengthDistribution(this.LOG);
                 this.lengthDistribution.init();
                 this.identity = new ArrayList();
+                this.editDistances = new ArrayList();
                 this.specie = specie;
                 useful_functions = new Functions(this.LOG);
 
@@ -242,7 +242,7 @@ public class  DamageProfiler {
                     System.exit(1);
                 }
                 readReferenceInCache();
-                SequenceUtil.calculateMdAndNmTags(record, cache.getData().get(record.getReferenceName()), true, false);
+                SequenceUtil.calculateMdAndNmTags(record, cache.getData().get(record.getReferenceName()), true, true);
             }
 
             byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
@@ -253,12 +253,21 @@ public class  DamageProfiler {
 
         // report length distribution
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
+
+        // calculate distance between record and reference
         int hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
+
+        // todo: so far unused, could be added as user-choice
+        int levenshtein = useful_functions.getLevenshteinDistance(record_aligned, reference_aligned);
+
         double id = (double)(record_aligned.length()-hamming) / (double)record_aligned.length();
         this.identity.add(id);
+        this.editDistances.add(hamming);
 
         // calculate frequencies
         frequencies.count(record, record_aligned, reference_aligned);
+
+        // calculate base misincorporations
         frequencies.calculateMisincorporations(record, record_aligned, reference_aligned);
 
     }
@@ -291,13 +300,13 @@ public class  DamageProfiler {
     }
     public HashMap<Integer, Integer> getLength_distribution_map_forward() {return lengthDistribution.getLength_distribution_map_forward(); }
     public HashMap<Integer, Integer> getLength_distribution_map_reverse() {return lengthDistribution.getLength_distribution_map_reverse(); }
-    public List<Double> getLength_forward() {
+    public List<Integer> getLength_forward() {
         return lengthDistribution.getLength_forward();
     }
-    public List<Double> getLength_all() {
+    public List<Integer> getLength_all() {
         return lengthDistribution.getLength_all();
     }
-    public List<Double> getLength_reverse() { return lengthDistribution.getLength_reverse(); }
+    public List<Integer> getLength_reverse() { return lengthDistribution.getLength_reverse(); }
     public int getNumberOfUsedReads() {
         return numberOfUsedReads;
     }
@@ -323,5 +332,9 @@ public class  DamageProfiler {
 
     public int getNumberOfRecords() {
         return numberOfRecords;
+    }
+
+    public List<Integer> getEditDistances() {
+        return editDistances;
     }
 }

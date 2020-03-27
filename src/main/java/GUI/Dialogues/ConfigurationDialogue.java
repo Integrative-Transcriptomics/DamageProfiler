@@ -4,6 +4,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -87,6 +89,21 @@ public class ConfigurationDialogue {
         textfield_threshold.setText("25");
         textfield_y_axis_height.setText("0.4");
 
+        TitledPane pane_advanced_plotting_options = new TitledPane();
+        pane_advanced_plotting_options.setText("Advanced options (Plotting)");
+        AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue = new AdvancedPlottingOptionsDialogue();
+        pane_advanced_plotting_options.setContent(advancedPlottingOptionsDialogue.getGridPane());
+        pane_advanced_plotting_options.setExpanded(false);
+
+        TitledPane pane_advanced_calculation_options = new TitledPane();
+        pane_advanced_calculation_options.setText("Advanced options (Calculation)");
+        HBox hbox_length_calc = new HBox();
+        hbox_length_calc.setPadding(new Insets(10,10,10,10));
+        hbox_length_calc.getChildren().addAll(label_length, textfield_length);
+        pane_advanced_calculation_options.setContent(hbox_length_calc);
+        pane_advanced_calculation_options.setExpanded(false);
+
+
         // add components to grid
 
         int row = 0;
@@ -111,17 +128,18 @@ public class ConfigurationDialogue {
         config_gridpane.add(textfield_y_axis_height, 1, row, 2,1);
         config_gridpane.add(label_threshold, 0, ++row, 1,1);
         config_gridpane.add(textfield_threshold, 1, row, 2,1);
-        config_gridpane.add(label_specie, 0, ++row, 1,1);
-        config_gridpane.add(textfield_specie, 1, row, 2,1);
-        config_gridpane.add(btn_specieList, 3, row, 1,1);
+        config_gridpane.add(pane_advanced_plotting_options, 0,++row, 3,1);
         config_gridpane.add(new Separator(), 0, ++row,3,1);
 
         //          CALCULATIONS
         config_gridpane.add(label_calculations, 0, ++row, 1,1);
         config_gridpane.add(checkbox_use_merged_reads, 0, ++row,1,1);
         config_gridpane.add(checkbox_ssLibs_protocol, 0, ++row, 1,1);
-        config_gridpane.add(label_length, 0, ++row, 1,1);
-        config_gridpane.add(textfield_length, 1, row, 2,1);
+        config_gridpane.add(label_specie, 0, ++row, 1,1);
+        config_gridpane.add(textfield_specie, 1, row, 2,1);
+        config_gridpane.add(btn_specieList, 3, row, 1,1);
+        config_gridpane.add(pane_advanced_calculation_options, 0,++row, 3,1);
+
         config_gridpane.add(new Separator(), 0, ++row,3,1);
         config_gridpane.add(btn_estimate_runtime, 0, ++row,1,1);
         config_gridpane.add(btn_run, 1, row,1,1);
