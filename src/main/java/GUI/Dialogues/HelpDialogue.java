@@ -35,7 +35,7 @@ public class HelpDialogue {
      * Fill dialogue with help content
      */
     private void fill() {
-        Label label_title = new Label("Welcome to damageProfiler help page");
+        Label label_title = new Label("Welcome to DamageProfiler help page");
         label_title.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
         Label label_usage = new Label("Usage:\n");
@@ -60,6 +60,7 @@ public class HelpDialogue {
             }
         }).start());
 
+        // todo: one could make it a bit nicer
         Label label_helppage = new Label(" -h\t\t\t\t\t\t\tShows this help page.\n" +
                 " -version\t\t\t\t\t\tShows the version of DamageProfiler.\n" +
                 " -i <INPUT>\t\t\t\t\tREQUIRED: The input sam/bam/cram file.\n" +
@@ -90,11 +91,7 @@ public class HelpDialogue {
         gridPane.add(label_details,0, ++row,2,1);
         gridPane.add(label_helppage, 0,++row, 2,1);
 
-
-
-
     }
-
 
 
     // Getter

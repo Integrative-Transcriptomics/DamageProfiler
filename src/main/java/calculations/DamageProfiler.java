@@ -126,6 +126,7 @@ public class  DamageProfiler {
             long startTime = System.currentTimeMillis();
 
             for(SAMRecord record : inputSam) {
+
                 numberOfRecords++;
 
                 if (this.specie == null) {
@@ -150,16 +151,6 @@ public class  DamageProfiler {
                     }
                 }
 
-                if((numberOfUsedReads % 100000) == 0){
-
-                    long currtime_post_execution = System.currentTimeMillis();
-                    long diff = currtime_post_execution - startTime;
-
-                    runtime_ms = diff;
-                    long runtime_s = diff / 1000;
-                    actualRuntime += runtime_s;
-                    startTime = System.currentTimeMillis();
-                }
             }
 
             frequencies.normalizeValues();
@@ -168,13 +159,6 @@ public class  DamageProfiler {
             LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
         }
 
-        if(actualRuntime > 60) {
-            long minutes = actualRuntime / 60;
-            long seconds = actualRuntime % 60;
-            System.out.println("Runtime for processing all records: " + minutes + " minutes, and " + seconds + " seconds.");
-        } else {
-            System.out.println("Runtime for processing all records: " + actualRuntime + " seconds and " + runtime_ms%60 + " milliseconds");
-        }
     }
 
 

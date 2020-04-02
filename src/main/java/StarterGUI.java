@@ -1,10 +1,10 @@
 import controller.DamageProfilerMainController;
 import GUI.DamageProfilerMainGUI;
 import controller.ProgressBarController;
+import controller.TabPaneAdvPlottingController;
 import javafx.application.Application;
 
 import javafx.stage.Stage;
-
 
 
 public class StarterGUI extends Application {
@@ -22,8 +22,6 @@ public class StarterGUI extends Application {
         damageProfilerMainGUI.init(primaryStage);
 
         DamageProfilerMainController damageProfilerMainController = new DamageProfilerMainController(damageProfilerMainGUI, progressBarController);
-
-
 
     }
 

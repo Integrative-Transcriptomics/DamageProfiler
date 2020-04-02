@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.DocumentException;
+import javafx.scene.paint.Color;
 import org.apache.log4j.*;
 
 
@@ -42,6 +43,18 @@ public class StartCalculations {
     private boolean ssLibProtocolUsed;
     private DamageProfiler damageProfiler;
     private OutputGenerator outputGenerator;
+    private String inputfileNameWithOutExtension;
+    private Communicator communicator;
+
+
+    // plot settings
+    private Color color_DP_C_to_T;
+    private Color color_DP_G_to_A;
+    private Color color_DP_insertions;
+    private Color color_DP_deletions;
+    private Color color_DP_other;
+    private String output_folder;
+    private String speciesname = null;
 
 
     public StartCalculations(){
@@ -72,11 +85,21 @@ public class StartCalculations {
         speciesListParser=null;
         species_name_list=null;
 
+        color_DP_C_to_T = c.getColor_DP_C_to_T();
+        color_DP_G_to_A = c.getColor_DP_G_to_A();
+        color_DP_insertions = c.getColor_DP_insertions();
+        color_DP_deletions = c.getColor_DP_deletions();
+        color_DP_other = c.getColor_DP_other();
+
+
+        this.inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+        this.communicator = c;
 
         SpeciesListParser speciesListParser = new SpeciesListParser(
                 specieslist_filepath,
                 LOG
         );
+
 
         if(specieslist_filepath != null){
 
@@ -94,28 +117,19 @@ public class StartCalculations {
 
 
                 // start DamageProfiler
-                File file = new File(input);
                 damageProfiler = new DamageProfiler(specieHandler);
 
 
                 String ref = specie_input_string.split("\\|")[0].trim();
-                String speciesname = damageProfiler.getSpeciesname(file, ref);
+                speciesname = damageProfiler.getSpeciesname(new File(input), ref);
 
-                String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-                String output_folder = createOutputFolder(
+
+                createOutputFolder(
                         outfolder,
                         inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]
                                 + File.separator + ref + "_" + speciesname);
 
-
-
-                if (c.getTitle_plots() == null) {
-                    inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-                } else {
-                    inputfileNameWithOutExtension = c.getTitle_plots();
-                }
-
-
+                initPlot();
 
                 // init Logger
                 initLogger(output_folder + "/DamageProfiler_" + ref + "_" + speciesname +".log",
@@ -129,7 +143,7 @@ public class StartCalculations {
 
                 // create new output folder
                 // log settings
-                LOG.info("Analysis of file (-i):" + file + "\n"
+                LOG.info("\nAnalysis of file (-i):" + input + "\n"
                         + "Output folder (-o):" + output_folder + "\n"
                         + "Reference (-r, optional) :" + reference + "\n"
                         + "Specie (-s, optional):" + specie_input_string + "\n"
@@ -143,7 +157,7 @@ public class StartCalculations {
                         + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
 
-                damageProfiler.init(file,
+                damageProfiler.init(new File(input),
                         new File(reference),
                         threshold,
                         length,
@@ -152,7 +166,6 @@ public class StartCalculations {
 
                 damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
 
-                generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, speciesname, ssLibProtocolUsed);
             }
 
 
@@ -169,24 +182,16 @@ public class StartCalculations {
 
             this.specieslist = new ArrayList<>();
             specieslist.add(species_ref_identifier);
-            String speciesname = damageProfiler.getSpeciesname(new File(input), species_ref_identifier);
+            speciesname = damageProfiler.getSpeciesname(new File(input), species_ref_identifier);
 
             String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
-            String output_folder = createOutputFolder(
+            createOutputFolder(
                     outfolder,
                     inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] +
                              File.separator + species_ref_identifier + "_" + speciesname);
 
-
-            if (c.getTitle_plots() == null) {
-                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-            }
-            else {
-                inputfileNameWithOutExtension = c.getTitle_plots();
-            }
-
-
+            initPlot();
 
             // init Logger
             initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
@@ -197,10 +202,8 @@ public class StartCalculations {
                 input = unzip.decompress(input);
             }
 
-            // create new output folder
-            File file = new File(input);
             // log settings
-            LOG.info("Analysis of file (-i):" + file + "\n"
+            LOG.info("Analysis of file (-i):" + input + "\n"
                     + "Output folder (-o):" + output_folder + "\n"
                     + "Reference (-r, optional) :" + reference + "\n"
                     + "Specie (-s, optional):" + specieslist + "\n"
@@ -216,7 +219,7 @@ public class StartCalculations {
 
 
 
-            damageProfiler.init(file,
+            damageProfiler.init(new File(input),
                     new File(reference),
                     threshold,
                     length,
@@ -224,9 +227,8 @@ public class StartCalculations {
                     LOG);
 
             damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
-
             speciesListParser.setLOG(LOG);
-            generateOutput(damageProfiler,output_folder, inputfileNameWithOutExtension, null, ssLibProtocolUsed);
+
         } else {
 
             /*
@@ -234,15 +236,11 @@ public class StartCalculations {
              */
             String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
-            String output_folder = createOutputFolder(
+            createOutputFolder(
                     outfolder,
                     inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
 
-            if (c.getTitle_plots() == null) {
-                inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-            } else {
-                inputfileNameWithOutExtension = c.getTitle_plots();
-            }
+            initPlot();
 
             // init Logger
             initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
@@ -254,9 +252,9 @@ public class StartCalculations {
             }
 
             // create new output folder
-            File file = new File(input);
+
             // log settings
-            LOG.info("Analysis of file (-i):" + file + "\n"
+            LOG.info("Analysis of file (-i):" + input + "\n"
                     + "Output folder (-o):" + output_folder + "\n"
                     + "Reference (-r, optional) :" + reference + "\n"
                     + "Specie (-s, optional):" + specieslist + "\n"
@@ -274,7 +272,7 @@ public class StartCalculations {
             // start DamageProfiler
             damageProfiler = new DamageProfiler(specieHandler);
 
-            damageProfiler.init(file,
+            damageProfiler.init(new File(input),
                     new File(reference),
                     threshold,
                     length,
@@ -282,9 +280,12 @@ public class StartCalculations {
                     LOG);
             damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
             speciesListParser.setLOG(LOG);
-            generateOutput(damageProfiler, output_folder, inputfileNameWithOutExtension, null, ssLibProtocolUsed);
+
+
 
         }
+
+        generateOutput();
 
 
         // print runtime
@@ -303,6 +304,15 @@ public class StartCalculations {
 
     }
 
+    private void initPlot() {
+        if (communicator.getTitle_plots() == null) {
+            inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
+        } else {
+            inputfileNameWithOutExtension = communicator.getTitle_plots();
+        }
+
+    }
+
     private void initLogger(String outfolder, String log) {
 
         logClass = new LogClass();
@@ -311,24 +321,18 @@ public class StartCalculations {
 
         LOG = logClass.getLogger(this.getClass());
         System.out.println("DamageProfiler v" + VERSION);
-        LOG.info("DamageProfiler v" + VERSION);
         LOG.info(log);
 
     }
 
-    private void generateOutput(
-            DamageProfiler damageProfiler,
-            String output_folder,
-            String inputfileNameWithOutExtension,
-            String spe,
-            boolean ssLibProtocolUsed) throws IOException, DocumentException {
+    private void generateOutput() throws IOException, DocumentException {
 
         if (damageProfiler.getNumberOfUsedReads() != 0) {
 
             outputGenerator = new OutputGenerator(
                     output_folder,
                     damageProfiler,
-                    spe,
+                    speciesname,
                     threshold,
                     length,
                     height_damageplot,
@@ -381,6 +385,8 @@ public class StartCalculations {
         }
     }
 
+
+
     /**
      * create output folder.
      * Save all files in subfolder, which has the same name as the input file
@@ -389,7 +395,7 @@ public class StartCalculations {
      * @param path
      * @throws IOException
      */
-    private static String createOutputFolder(String path, String inputfileNameWithOutExtension) {
+    private void createOutputFolder(String path, String inputfileNameWithOutExtension) {
 
         // use Pattern.quote(File.separator) to split file path
         File f = new File(path + File.separator + inputfileNameWithOutExtension);
@@ -399,7 +405,7 @@ public class StartCalculations {
             f.mkdirs();
         }
 
-        return f.getAbsolutePath();
+        this.output_folder = f.getAbsolutePath();
     }
 
 
@@ -409,10 +415,6 @@ public class StartCalculations {
 
     public void setCalculationsDone(boolean calculationsDone) {
         this.calculationsDone = calculationsDone;
-    }
-
-    public DamageProfiler getDamageProfiler(){
-        return damageProfiler;
     }
 
     public OutputGenerator getOutputGenerator() {

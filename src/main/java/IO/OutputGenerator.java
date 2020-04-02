@@ -12,7 +12,6 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
-import javafx.scene.chart.BarChart;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
@@ -59,6 +58,11 @@ public class OutputGenerator {
     private HashMap<String,Object> json_map = new HashMap<>();
     private double[] three_C_to_T_reverse;
     private double[] three_G_to_A_reverse;
+    private JFreeChart chart_DP_5prime;
+    private JFreeChart chart_DP_3prime;
+    private JFreeChart length_chart_all;
+    private JFreeChart length_chart_separated;
+    private JFreeChart editDist_chart;
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
@@ -448,7 +452,7 @@ public class OutputGenerator {
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(length_all);
         HistogramDataset dataset_all = hist_all.createDataset(new String[]{"all reads"}, max_length);
-        JFreeChart chart_all = hist_all.createChart(dataset_all, "", "Read length",
+        length_chart_all = hist_all.createChart(dataset_all, "", "Read length",
                 "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, false);
 
         Histogram hist_separated = new Histogram(LOG);
@@ -459,12 +463,12 @@ public class OutputGenerator {
             hist_separated.addData(length_reverse);
         }
         HistogramDataset dataset_separated = hist_separated.createDataset(new String[]{"+ strand", "- strand"}, max_length);
-        JFreeChart chart_separated = hist_separated.createChart(dataset_separated, "",
+        length_chart_separated = hist_separated.createChart(dataset_separated, "",
                 "Read length", "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, true);
 
-        createPdf("/Length_plot.pdf", new JFreeChart[]{chart_all, chart_separated}, file);
-        createSVG("/Length_plot_combined_data.svg", chart_all);
-        createSVG("/Length_plot_forward_reverse_separated.svg", chart_separated);
+        createPdf("/Length_plot.pdf", new JFreeChart[]{length_chart_all, length_chart_separated}, file);
+        createSVG("/Length_plot_combined_data.svg", length_chart_all);
+        createSVG("/Length_plot_forward_reverse_separated.svg", length_chart_separated);
 
 
     }
@@ -483,10 +487,10 @@ public class OutputGenerator {
         hist_all.addData(distances);
 
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
-        JFreeChart chart_all = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",
+        editDist_chart = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",
                 x_axis_min_id_histo, x_axis_max_id_histo, false);
-        createPdf("/identity_histogram.pdf", new JFreeChart[]{chart_all}, file);
-        createSVG("/identity_histogram.svg", chart_all);
+        createPdf("/identity_histogram.pdf", new JFreeChart[]{editDist_chart}, file);
+        createSVG("/identity_histogram.svg", editDist_chart);
 
     }
 
@@ -854,19 +858,19 @@ public class OutputGenerator {
 
         JFreeChart[] charts;
         // create damage plot five prime
-        JFreeChart chart = damagePlot_five.createChart(dataset_five, ymax, threshold);
+        chart_DP_5prime = damagePlot_five.createChart(dataset_five, ymax, threshold);
         if(!ssLibProtocolUsed){
             XYDataset dataset_three = damagePlot_three.createDataset();
             // create damage plot three prime
-            JFreeChart chart1 = damagePlot_three.createChart(dataset_three, ymax, threshold);
-            charts = new JFreeChart[]{chart, chart1};
-            createSVG("/DamagePlot_three_prime.svg", chart1);
+            chart_DP_3prime = damagePlot_three.createChart(dataset_three, ymax, threshold);
+            charts = new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};
+            createSVG("/DamagePlot_three_prime.svg", chart_DP_3prime);
         } else {
-            charts = new JFreeChart[]{chart};
+            charts = new JFreeChart[]{chart_DP_5prime};
         }
 
         createPdf("/DamagePlot.pdf", charts, file);
-        createSVG("/DamagePlot_five_prime.svg", chart);
+        createSVG("/DamagePlot_five_prime.svg", chart_DP_5prime);
 
     }
 
@@ -1034,5 +1038,22 @@ public class OutputGenerator {
 
     public double getMaxYdamapePlot() {
         return height;
+    }
+
+    public JFreeChart[] getDP_chart() {
+        if(chart_DP_3prime!=null){
+            return new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};
+        } else {
+            return new JFreeChart[]{chart_DP_5prime};
+        }
+    }
+
+    public JFreeChart[] getLengthDistPlots() {
+        return new JFreeChart[]{length_chart_all, length_chart_separated};
+
+    }
+
+    public JFreeChart getEditDist_chart() {
+        return editDist_chart;
     }
 }

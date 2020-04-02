@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
@@ -27,10 +26,10 @@ public class ConfigurationDialogue {
     private CheckBox checkbox_use_merged_reads;
     private CheckBox checkbox_ssLibs_protocol;
     private TextField textfield_title;
-    //private CheckBox checkbox_dynamic_y_axis_height;
     private TextField textfield_y_axis_height;
 
     private ProgressBar progressBar;
+    private AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue;
 
 
     public ConfigurationDialogue(ProgressBar progressBar){
@@ -81,7 +80,6 @@ public class ConfigurationDialogue {
 
         checkbox_use_merged_reads = new CheckBox("Only merged reads");
         checkbox_ssLibs_protocol = new CheckBox("Single-stranded library protocol");
-        //checkbox_dynamic_y_axis_height = new CheckBox("Dynamic");
 
         btn_run.setDisable(true);
         btn_estimate_runtime.setDisable(true);
@@ -91,7 +89,8 @@ public class ConfigurationDialogue {
 
         TitledPane pane_advanced_plotting_options = new TitledPane();
         pane_advanced_plotting_options.setText("Advanced options (Plotting)");
-        AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue = new AdvancedPlottingOptionsDialogue();
+
+        advancedPlottingOptionsDialogue = new AdvancedPlottingOptionsDialogue();
         pane_advanced_plotting_options.setContent(advancedPlottingOptionsDialogue.getGridPane());
         pane_advanced_plotting_options.setExpanded(false);
 
@@ -201,5 +200,9 @@ public class ConfigurationDialogue {
 
     public Button getBtn_estimate_runtime() {
         return btn_estimate_runtime;
+    }
+
+    public AdvancedPlottingOptionsDialogue getAdvancedPlottingOptionsDialogue() {
+        return advancedPlottingOptionsDialogue;
     }
 }

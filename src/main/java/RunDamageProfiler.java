@@ -7,8 +7,6 @@ public class RunDamageProfiler {
 
     private static final String VERSION = "0.4.9";
 
-
-    @SuppressWarnings("static-access")
     public static void main(String[] args) throws Exception {
 
          /*

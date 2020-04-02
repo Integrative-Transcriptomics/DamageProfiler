@@ -6,9 +6,12 @@ import controller.ProgressBarController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import java.io.InputStream;
 
 public class DamageProfilerMainGUI {
 
@@ -31,9 +34,7 @@ public class DamageProfilerMainGUI {
         this.progressBarController = progressBarController;
     }
 
-    public void init(Stage primaryStage){
-
-        //JMetro jMetro = new JMetro(Style.LIGHT);
+    public void init(Stage primaryStage) {
 
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("DamageProfiler v" + version);
@@ -42,11 +43,12 @@ public class DamageProfilerMainGUI {
 
         config_dialogue = new ConfigurationDialogue(progressBarController.getProgressBar());
 
-        root.setCenter(config_dialogue.getConfig_gridpane());
+        ScrollPane scrollPane_adv_config = new ScrollPane();
+        scrollPane_adv_config.setPadding(new Insets(10,10,10,10));
+        scrollPane_adv_config.setContent(config_dialogue.getConfig_gridpane());
+        root.setCenter(scrollPane_adv_config);
         root.setLeft(generateLeftPane());
 
-        //jMetro.setScene(new Scene(root, 750, 500));
-        //this.primaryStage.setScene(jMetro.getScene());
         this.primaryStage.setScene(new Scene(root, 950, 700));
         this.primaryStage.setResizable(true);
         this.primaryStage.show();
@@ -54,6 +56,17 @@ public class DamageProfilerMainGUI {
     }
 
     private VBox generateLeftPane() {
+
+        // Image Source
+        InputStream input= getClass().getClassLoader().getResourceAsStream("logo.png");
+        Image image = new Image(input);
+        ImageView imageView = new ImageView(image);
+
+        // Create a Label with label and Icon
+        Label label = new Label("", imageView);
+
+
+
         VBox leftPanel = new VBox();
         btn_leftpane_damageProfile = new Button("Damage Plot");
         btn_leftpane_info = new Button("Run Configuration");
@@ -80,7 +93,7 @@ public class DamageProfilerMainGUI {
         btn_leftpane_identityDist.setPrefWidth(200);
         btn_leftpane_identityDist.setDisable(true);
 
-        leftPanel.getChildren().addAll(btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist, btn_leftpane_identityDist, btn_help);
+        leftPanel.getChildren().addAll(label, btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist, btn_leftpane_identityDist, btn_help);
         leftPanel.setPadding(new Insets(10,10,10,10));
 
         return leftPanel;
@@ -100,9 +113,7 @@ public class DamageProfilerMainGUI {
         return btn_leftpane_identityDist;
     }
 
-    public Button getBtn_leftpane_info() {
-        return btn_leftpane_info;
-    }
+    public Button getBtn_leftpane_info() { return btn_leftpane_info; }
 
     public Button getBtn_leftpane_damageProfile() {
         return btn_leftpane_damageProfile;
@@ -112,15 +123,9 @@ public class DamageProfilerMainGUI {
         return btn_leftpane_lengthDist;
     }
 
-    public Button getBtn_help() {
-        return btn_help;
-    }
+    public Button getBtn_help() { return btn_help; }
 
-    public ConfigurationDialogue getConfig_dialogue() {
-        return config_dialogue;
-    }
+    public ConfigurationDialogue getConfig_dialogue() { return config_dialogue; }
 
-    public String getVersion() {
-        return version;
-    }
+    public String getVersion() { return version; }
 }

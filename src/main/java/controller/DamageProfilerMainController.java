@@ -1,12 +1,10 @@
 package controller;
 
 import GUI.*;
+import GUI.Dialogues.AdvancedPlottingOptionsDialogue;
 import GUI.Dialogues.HelpDialogue;
 import GUI.Dialogues.RunInfoDialogue;
 import GUI.Dialogues.RuntimeEstimatorDialogue;
-import GUI.Plots.DamagePlot;
-import GUI.Plots.IdentityHistPlot;
-import GUI.Plots.LengthDistPlot;
 import IO.Communicator;
 import calculations.RuntimeEstimator;
 import calculations.StartCalculations;
@@ -16,13 +14,11 @@ import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.fx.ChartViewer;
 
-import javax.swing.*;
 import java.lang.reflect.Field;
 
 public class DamageProfilerMainController {
@@ -35,6 +31,7 @@ public class DamageProfilerMainController {
     private final Button btn_estimate_runtime;
     private final Button btn_help;
     private final HelpDialogue help_dialogue;
+    private final AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue;
     private RunInfoDialogue runInfoDialogue;
     private Communicator communicator;
     private Button btn_inputfile;
@@ -52,13 +49,13 @@ public class DamageProfilerMainController {
     private StartCalculations starter = new StartCalculations();
     private DamageProfilerMainGUI mainGUI;
     private RuntimeEstimatorDialogue runtimeInfoDialogue;
-
     /**
      * Constructor
      * @param damageProfilerMainGUI
      * @param progressBarController
      */
     public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI, ProgressBarController progressBarController){
+
         this.mainGUI = damageProfilerMainGUI;
         this.progressBarController = progressBarController;
         this.communicator = mainGUI.getCommunicator();
@@ -86,13 +83,35 @@ public class DamageProfilerMainController {
 
         this.checkbox_use_merged_reads = mainGUI.getConfig_dialogue().getCheckbox_use_merged_reads();
         this.checkbox_ssLibs_protocol = mainGUI.getConfig_dialogue().getCheckbox_ssLibs_protocol();
-        //this.checkbox_dynamic_y_axis_height = mainGUI.getConfig_dialogue().get??;
+
+
+        // attributes of advanced plotting settings
+        this.advancedPlottingOptionsDialogue = this.mainGUI.getConfig_dialogue().getAdvancedPlottingOptionsDialogue();
+
 
         runtimeInfoDialogue = new RuntimeEstimatorDialogue("Runtime information",
                 "This gives you an estimate of the runtime. For large files with a long runtime,\n" +
                         "it's recommended to use the command line version of DamageProfiler.");
 
         addListener();
+
+        addListenerAdvPlotting();
+    }
+
+    private void addListenerAdvPlotting() {
+
+        Color color_c_to_t = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_C_to_T().getValue();
+        Color color_g_to_a = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_G_to_A().getValue();
+        Color color_insertions = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_insertions().getValue();
+        Color color_deletions = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_deletions().getValue();
+        Color color_other = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue();
+
+        // set colors in communicator
+        communicator.setColor_DP_C_to_T(color_c_to_t);
+        communicator.setColor_DP_G_to_A(color_g_to_a);
+        communicator.setColor_DP_insertions(color_insertions);
+        communicator.setColor_DP_deletions(color_deletions);
+        communicator.setColor_DP_other(color_other);
 
     }
 
@@ -319,23 +338,62 @@ public class DamageProfilerMainController {
      */
 
     private void generateLengthDist() {
-        LengthDistPlot lengthDistPlot = new LengthDistPlot(starter.getDamageProfiler());
-        mainGUI.getRoot().setCenter(lengthDistPlot.getBc());
+
+        JFreeChart[] lengthCharts = starter.getOutputGenerator().getLengthDistPlots();
+
+        TabPane tabPane_lengthDist = new TabPane();
+        Tab allData = new Tab("All data");
+        Tab splitData = new Tab("Forward vs. Reverse");
+
+        ChartViewer viewerLengthAll = new ChartViewer(lengthCharts[0]);
+        ChartViewer viewerLengthSep = new ChartViewer(lengthCharts[1]);
+
+        // disable zoom on x-axis
+        viewerLengthAll.getCanvas().setDomainZoomable(false);
+        viewerLengthAll.getCanvas().setDomainZoomable(false);
+
+        allData.setContent(viewerLengthAll);
+        splitData.setContent(viewerLengthSep);
+
+        tabPane_lengthDist.getTabs().addAll(allData, splitData);
+
+        mainGUI.getRoot().setCenter(tabPane_lengthDist);
 
     }
 
     private void generateIdentityDist() {
-        IdentityHistPlot identityHistPlot = new IdentityHistPlot(starter.getDamageProfiler().getIdentity());
-        mainGUI.getRoot().setCenter(identityHistPlot.getBarChart());
+        ChartViewer viewerEditDistance = new ChartViewer(starter.getOutputGenerator().getEditDist_chart());
+        mainGUI.getRoot().setCenter(viewerEditDistance);
 
     }
 
     private void generateDamageProfile() {
-        DamagePlot damagePlot = new DamagePlot(starter.getOutputGenerator(), starter);
-        HBox dp_plots = damagePlot.getDamageProfile();
-        dp_plots.prefHeightProperty().bind(mainGUI.getRoot().heightProperty());
-        dp_plots.prefWidthProperty().bind(mainGUI.getRoot().widthProperty());
-        mainGUI.getRoot().setCenter(dp_plots);
+
+        JFreeChart[] dpCharts = starter.getOutputGenerator().getDP_chart();
+        if(dpCharts.length==1){
+            ChartViewer viewer5prime = new ChartViewer(dpCharts[0]);
+            viewer5prime.getCanvas().setDomainZoomable(false);
+            mainGUI.getRoot().setCenter(viewer5prime);
+        } else if(dpCharts.length == 2){
+
+            TabPane tabPane_damagePlot = new TabPane();
+            Tab fivePrime = new Tab("5'end");
+            Tab threePrime = new Tab("3'end");
+
+            ChartViewer viewer5prime = new ChartViewer(dpCharts[0]);
+            ChartViewer viewer3prime = new ChartViewer(dpCharts[1]);
+
+            // disable zoom on x-axis
+            viewer5prime.getCanvas().setDomainZoomable(false);
+            viewer3prime.getCanvas().setDomainZoomable(false);
+
+            fivePrime.setContent(viewer5prime);
+            threePrime.setContent(viewer3prime);
+
+            tabPane_damagePlot.getTabs().addAll(fivePrime, threePrime);
+
+            mainGUI.getRoot().setCenter(tabPane_damagePlot);
+        }
     }
 
 

@@ -1,5 +1,7 @@
 package IO;
 
+import javafx.scene.paint.Color;
+
 /**
  * Created by neukamm on 11.11.2016.
  */
@@ -29,7 +31,11 @@ public class Communicator {
 
     // plot settings
     private String title_plots;
-
+    private Color color_DP_C_to_T;
+    private Color color_DP_G_to_A;
+    private Color color_DP_insertions;
+    private Color color_DP_deletions;
+    private Color color_DP_other;
 
 
     public String getInput() {
@@ -159,5 +165,47 @@ public class Communicator {
 
     public void setXaxis_histo_length_max(double xaxis_histo_length_max) {
         this.xaxis_histo_length_max = xaxis_histo_length_max;
+    }
+
+    public void setColor_DP_C_to_T(Color color_c_to_t) {
+        this.color_DP_C_to_T = color_c_to_t;
+
+    }
+
+    public void setColor_DP_G_to_A(Color color_g_to_a) {
+        this.color_DP_G_to_A = color_g_to_a;
+    }
+
+    public void setColor_DP_insertions(Color color_insertions) {
+        this.color_DP_insertions = color_insertions;
+    }
+
+    public void setColor_DP_deletions(Color color_deletions) {
+        this.color_DP_deletions = color_deletions;
+    }
+
+    public void setColor_DP_other(Color color_other) {
+        this.color_DP_other = color_other;
+
+    }
+
+    public Color getColor_DP_C_to_T() {
+        return color_DP_C_to_T;
+    }
+
+    public Color getColor_DP_G_to_A() {
+        return color_DP_G_to_A;
+    }
+
+    public Color getColor_DP_insertions() {
+        return color_DP_insertions;
+    }
+
+    public Color getColor_DP_deletions() {
+        return color_DP_deletions;
+    }
+
+    public Color getColor_DP_other() {
+        return color_DP_other;
     }
 }
