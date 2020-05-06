@@ -17,7 +17,7 @@ public class RuntimeEstimator {
         input = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                 validationStringency(ValidationStringency.LENIENT).open(new File(inputfile));
 
-        estimate();
+        estimate(inputfile);
 
     }
 
@@ -25,10 +25,23 @@ public class RuntimeEstimator {
      * Estimate runtime based on the time needed in previous runs and the number of reads in the
      * current input file.
      *
+     * @param inputfile
      */
-    public void estimate() {
+    public void estimate(String inputfile) {
         // estimate runtime:
-        numberOfRecords = input.iterator().toList().size();
+
+        double bytes = new File (inputfile).length();
+        double kilobytes = (bytes / 1024);
+        double megabytes = (kilobytes / 1024);
+        double gigabytes = (megabytes / 1024);
+
+        double sizeSamRecordInBytes = 50;
+
+        double estimatedNumberOfRecords = bytes/sizeSamRecordInBytes;
+        System.out.println("Estimated number of records to process: " + estimatedNumberOfRecords);
+
+//        numberOfRecords = input.iterator().toList().size();
+        numberOfRecords = (long)estimatedNumberOfRecords;
         System.out.println("Number of records to process: " + numberOfRecords);
 
         estimatedRuntimeInSeconds = (long) (numberOfRecords/100000 * timePer100000RecordsInSeconds);

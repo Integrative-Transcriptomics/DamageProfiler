@@ -12,6 +12,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import javafx.scene.paint.Color;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
@@ -64,11 +65,19 @@ public class OutputGenerator {
     private JFreeChart length_chart_separated;
     private JFreeChart editDist_chart;
 
+    private Color color_DP_C_to_T;
+    private Color color_DP_G_to_A;
+    private Color color_DP_insertions;
+    private Color color_DP_deletions;
+    private Color color_DP_other;
+
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
                            int length, double height, double x_axis_min_id_histo, double x_axis_max_id_histo,
                            double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG,
-                           int numberOfRecords, boolean ssLibProtocolUsed) {
+                           int numberOfRecords, boolean ssLibProtocolUsed, Color color_DP_C_to_T,
+                           Color color_DP_deletions, Color color_DP_G_to_A, Color color_DP_insertions,
+                           Color color_DP_other) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
@@ -85,6 +94,14 @@ public class OutputGenerator {
         this.LOG = LOG;
         this.numberOfRecords = numberOfRecords;
         this.ssLibProtocolUsed = ssLibProtocolUsed;
+
+        this.color_DP_C_to_T = color_DP_C_to_T;
+        this.color_DP_deletions = color_DP_deletions;
+        this.color_DP_G_to_A = color_DP_G_to_A;
+        this.color_DP_other = color_DP_other;
+        this.color_DP_insertions = color_DP_insertions;
+
+
 
         // set tax id if specified by user
         if(specie != null && !specie.equals("")){
@@ -766,7 +783,8 @@ public class OutputGenerator {
 
         // create plots
         if(!ssLibProtocolUsed){
-            damagePlot_three = new LinePlot("3' end", threshold, height, LOG);
+            damagePlot_three = new LinePlot("3' end", threshold, height, LOG, color_DP_C_to_T, color_DP_G_to_A,
+                    color_DP_insertions, color_DP_deletions, color_DP_other);
 
             // three prime end
             // red
@@ -800,7 +818,8 @@ public class OutputGenerator {
 
         }
 
-        LinePlot damagePlot_five  = new LinePlot("5' end", threshold, height, LOG);
+        LinePlot damagePlot_five  = new LinePlot("5' end", threshold, height, LOG, color_DP_C_to_T,
+                color_DP_G_to_A, color_DP_insertions, color_DP_deletions, color_DP_other);
 
           /*
                 add data to plots
@@ -961,7 +980,7 @@ public class OutputGenerator {
         document.open();
 
         // compute percentage of used reads
-        double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / numberOfRecords;
+        double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / (double)numberOfRecords;
 
         // draw text
         String[] splitted = file.split("/");

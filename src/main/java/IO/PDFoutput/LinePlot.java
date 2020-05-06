@@ -30,13 +30,42 @@ public class LinePlot {
     private String title;
     private int threshold;
 
+    private Color awtColor_DP_C_to_T;
+    private Color awtColor_DP_G_to_A;
+    private Color awtColor_DP_insertions;
+    private Color awtColor_DP_deletions;
+    private Color awtColor_DP_other;
 
-    public LinePlot(String title, int threshold, double height, Logger LOG) {
+
+    public LinePlot(String title, int threshold, double height, Logger LOG, javafx.scene.paint.Color color_DP_C_to_T,
+                    javafx.scene.paint.Color color_DP_G_to_A, javafx.scene.paint.Color color_DP_insertions,
+                    javafx.scene.paint.Color color_DP_deletions, javafx.scene.paint.Color color_DP_other) {
         this.LOG = LOG;
         all_data = new ArrayList<>();
         this.title = title;
         this.threshold = threshold;
         this.height = height;
+
+        awtColor_DP_C_to_T = new java.awt.Color((float) color_DP_C_to_T.getRed(),
+                (float) color_DP_C_to_T.getGreen(),
+                (float) color_DP_C_to_T.getBlue(),
+                (float) color_DP_C_to_T.getOpacity());
+        awtColor_DP_G_to_A = new java.awt.Color((float) color_DP_G_to_A.getRed(),
+                (float) color_DP_G_to_A.getGreen(),
+                (float) color_DP_G_to_A.getBlue(),
+                (float) color_DP_G_to_A.getOpacity());
+        awtColor_DP_insertions = new java.awt.Color((float) color_DP_insertions.getRed(),
+                (float) color_DP_insertions.getGreen(),
+                (float) color_DP_insertions.getBlue(),
+                (float) color_DP_insertions.getOpacity());
+        awtColor_DP_deletions = new java.awt.Color((float) color_DP_deletions.getRed(),
+                (float) color_DP_deletions.getGreen(),
+                (float) color_DP_deletions.getBlue(),
+                (float) color_DP_deletions.getOpacity());
+        awtColor_DP_other = new java.awt.Color((float) color_DP_other.getRed(),
+                (float) color_DP_other.getGreen(),
+                (float) color_DP_other.getBlue(),
+                (float) color_DP_other.getOpacity());
 
     }
 
@@ -127,11 +156,12 @@ public class LinePlot {
         legendItemsNew.add(legendItemsOld.get(3));
         legendItemsNew.add(legendItemsOld.get(4));
 
-        legendItemsNew.get(0).setLinePaint(Color.RED);
-        legendItemsNew.get(1).setLinePaint(Color.BLUE);
-        legendItemsNew.get(2).setLinePaint(new Color(255, 0, 255));
-        legendItemsNew.get(3).setLinePaint(Color.GREEN);
-        legendItemsNew.get(4).setLinePaint(Color.GRAY);
+        //legendItemsNew.get(0).setLinePaint(Color.RED);
+        legendItemsNew.get(0).setLinePaint(this.awtColor_DP_C_to_T);
+        legendItemsNew.get(1).setLinePaint(this.awtColor_DP_G_to_A);
+        legendItemsNew.get(2).setLinePaint(this.awtColor_DP_insertions);
+        legendItemsNew.get(3).setLinePaint(this.awtColor_DP_deletions);
+        legendItemsNew.get(4).setLinePaint(this.awtColor_DP_other);
 
         renderer.setSeriesStroke(0, new BasicStroke(3.0f));
         renderer.setSeriesStroke(1, new BasicStroke(3.0f));
@@ -140,13 +170,13 @@ public class LinePlot {
         plot.setFixedLegendItems(legendItemsNew);
 
         // set colour of line
-        renderer.setSeriesPaint(0, Color.RED);
-        renderer.setSeriesPaint(1, Color.BLUE);
-        renderer.setSeriesPaint(2, new Color(255, 0, 255));
-        renderer.setSeriesPaint(3, Color.GREEN);
-        renderer.setSeriesPaint(4, Color.GRAY);
+        renderer.setSeriesPaint(0, this.awtColor_DP_C_to_T);
+        renderer.setSeriesPaint(1, this.awtColor_DP_G_to_A);
+        renderer.setSeriesPaint(2, this.awtColor_DP_insertions);
+        renderer.setSeriesPaint(3, this.awtColor_DP_deletions);
+        renderer.setSeriesPaint(4, this.awtColor_DP_other);
         for(int i=5; i < all_data.size(); i++){
-            renderer.setSeriesPaint(i, Color.GRAY);
+            renderer.setSeriesPaint(i, this.awtColor_DP_other);
         }
 
         plot.setRenderer(renderer);

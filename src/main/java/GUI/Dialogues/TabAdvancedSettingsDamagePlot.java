@@ -17,27 +17,47 @@ public class TabAdvancedSettingsDamagePlot {
     private ColorPicker colorPicker_insertions;
     private ColorPicker colorPicker_deletions;
     private ColorPicker colorPicker_others;
+    private Button btn_reset;
+    private GridPane gridpane;
 
     public TabAdvancedSettingsDamagePlot(String title){
 
         this.tab = new Tab(title);
-        fill();
+        btn_reset = new Button("Reset");
 
+        fill(   generateColorPicker(Color.RED),
+                generateColorPicker(Color.BLUE),
+                generateColorPicker(Color.valueOf("FF00FF")),
+                generateColorPicker(Color.GREEN),
+                generateColorPicker(Color.GREY));
+
+        addListener();
     }
 
-    private void fill() {
-        GridPane gridpane = new GridPane();
+    private void addListener() {
+        this.btn_reset.setOnAction(e ->{
+            gridpane.getChildren().clear();
+            fill(   generateColorPicker(Color.RED),
+                    generateColorPicker(Color.BLUE),
+                    generateColorPicker(Color.valueOf("FF00FF")),
+                    generateColorPicker(Color.GREEN),
+                    generateColorPicker(Color.GREY));
+        });
+    }
+
+    private void fill(ColorPicker c_t, ColorPicker g_a, ColorPicker insertions, ColorPicker deletions, ColorPicker others) {
+        gridpane = new GridPane();
         gridpane.setAlignment(Pos.BOTTOM_LEFT);
         gridpane.setHgap(7);
         gridpane.setVgap(7);
         gridpane.setPadding(new Insets(10,10,10,10));
 
-        Button btn_reset = new Button("Reset");
-        colorPicker_C_to_T = generateColorPicker(Color.RED);
-        colorPicker_G_to_A = generateColorPicker(Color.BLUE);
-        colorPicker_insertions = generateColorPicker(Color.valueOf("FF00FF"));
-        colorPicker_deletions = generateColorPicker(Color.GREEN);
-        colorPicker_others = generateColorPicker(Color.GREY);
+
+        colorPicker_C_to_T = c_t;
+        colorPicker_G_to_A = g_a;
+        colorPicker_insertions = insertions;
+        colorPicker_deletions = deletions;
+        colorPicker_others = others;
 
         gridpane.add(new Label("C->T"), 0,0,1,1);
         gridpane.add(colorPicker_C_to_T, 0,1,1,1);
@@ -63,7 +83,6 @@ public class TabAdvancedSettingsDamagePlot {
     private ColorPicker generateColorPicker(Color color) {
         ColorPickerPane colorPickerPane = new ColorPickerPane(color);
         return colorPickerPane.getPicker();
-
     }
 
     public Tab getTab() {
@@ -89,4 +108,5 @@ public class TabAdvancedSettingsDamagePlot {
     public ColorPicker getColorPicker_others() {
         return colorPicker_others;
     }
+
 }

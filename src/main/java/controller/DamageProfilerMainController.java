@@ -93,12 +93,12 @@ public class DamageProfilerMainController {
                 "This gives you an estimate of the runtime. For large files with a long runtime,\n" +
                         "it's recommended to use the command line version of DamageProfiler.");
 
+        setColorsPlotting();
         addListener();
 
-        addListenerAdvPlotting();
     }
 
-    private void addListenerAdvPlotting() {
+    private void setColorsPlotting() {
 
         Color color_c_to_t = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_C_to_T().getValue();
         Color color_g_to_a = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_G_to_A().getValue();
@@ -106,16 +106,11 @@ public class DamageProfilerMainController {
         Color color_deletions = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_deletions().getValue();
         Color color_other = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue();
 
-        // set colors in communicator
-        communicator.setColor_DP_C_to_T(color_c_to_t);
-        communicator.setColor_DP_G_to_A(color_g_to_a);
-        communicator.setColor_DP_insertions(color_insertions);
-        communicator.setColor_DP_deletions(color_deletions);
-        communicator.setColor_DP_other(color_other);
 
     }
 
     private void addListener() {
+
         btn_inputfile.setOnAction(e -> {
 
             BamFileChooser fqfc = new BamFileChooser(communicator);
@@ -291,6 +286,14 @@ public class DamageProfilerMainController {
         communicator.setUse_merged_and_mapped_reads(checkbox_use_merged_reads.isSelected());
         communicator.setyAxis_damageplot(Double.parseDouble(textfield_y_axis_height.getText()));
         communicator.setTitle_plots(textfield_title.getText());
+
+        // set colors
+        communicator.setColor_DP_C_to_T(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_C_to_T().getValue());
+        communicator.setColor_DP_G_to_A(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_G_to_A().getValue());
+        communicator.setColor_DP_insertions(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_insertions().getValue());
+        communicator.setColor_DP_deletions(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_deletions().getValue());
+        communicator.setColor_DP_other(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue());
+
 
         if(textfield_specie.getText().equals(""))
             communicator.setSpecies_ref_identifier(null);

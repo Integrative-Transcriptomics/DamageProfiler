@@ -14,7 +14,7 @@ public class FastACacher {
     private final Logger LOG;
     private HashMap<String,byte[]> data = new HashMap<>();
 
-    public FastACacher(File f, Logger LOG) throws FileNotFoundException {
+    public FastACacher(File f, Logger LOG) {
         ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(f);
         this.LOG = LOG;
 

@@ -3,11 +3,13 @@ package calculations;
 import IO.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.itextpdf.text.DocumentException;
+import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import javafx.scene.paint.Color;
 import org.apache.log4j.*;
 
@@ -45,6 +47,9 @@ public class StartCalculations {
     private OutputGenerator outputGenerator;
     private String inputfileNameWithOutExtension;
     private Communicator communicator;
+    private IndexedFastaSequenceFile fastaSequenceFile;
+    private FastACacher cache;
+
 
 
     // plot settings
@@ -101,6 +106,9 @@ public class StartCalculations {
         );
 
 
+        if(!this.reference.equals(""))
+            readReferenceInCache();
+
         if(specieslist_filepath != null){
 
             /*
@@ -117,7 +125,7 @@ public class StartCalculations {
 
 
                 // start DamageProfiler
-                damageProfiler = new DamageProfiler(specieHandler);
+                damageProfiler = new DamageProfiler(specieHandler, cache);
 
 
                 String ref = specie_input_string.split("\\|")[0].trim();
@@ -174,7 +182,7 @@ public class StartCalculations {
             // start DamageProfiler
             damageProfiler = new DamageProfiler(
 
-                    specieHandler);
+                    specieHandler, cache);
 
             /*
                 parse species reference (-s) and run DP
@@ -270,7 +278,7 @@ public class StartCalculations {
 
 
             // start DamageProfiler
-            damageProfiler = new DamageProfiler(specieHandler);
+            damageProfiler = new DamageProfiler(specieHandler, cache);
 
             damageProfiler.init(new File(input),
                     new File(reference),
@@ -343,7 +351,8 @@ public class StartCalculations {
                     input,
                     LOG,
                     damageProfiler.getNumberOfRecords(),
-                    ssLibProtocolUsed
+                    ssLibProtocolUsed,
+                    color_DP_C_to_T, color_DP_deletions, color_DP_G_to_A, color_DP_insertions, color_DP_other
             );
 
             outputGenerator.writeLengthDistribution();
@@ -408,6 +417,20 @@ public class StartCalculations {
         this.output_folder = f.getAbsolutePath();
     }
 
+    /**
+     * index reference file and put it in cache to get faster
+     * access
+     *
+     * @throws FileNotFoundException
+     */
+
+    private void readReferenceInCache() throws FileNotFoundException{
+        // read reference file as indexed reference
+        fastaSequenceFile = new IndexedFastaSequenceFile(new File(this.reference));
+        // store reference in cache to get faster access
+        cache = new FastACacher(new File(reference), LOG);
+
+    }
 
     public boolean isCalculationsDone() {
         return calculationsDone;

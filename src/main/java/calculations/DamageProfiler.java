@@ -3,7 +3,6 @@ package calculations;
 
 import IO.FastACacher;
 import htsjdk.samtools.*;
-import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
 
@@ -16,31 +15,30 @@ import java.util.*;
  */
 public class  DamageProfiler {
 
+    private final FastACacher cache;
     private SamReader inputSam=null;
     private Functions useful_functions=null;
     private String specie=null;
     private Logger LOG=null;
-    private IndexedFastaSequenceFile fastaSequenceFile;
     private int numberOfUsedReads;
     private int numberOfRecords;
     private int threshold;
     private int length;
     private Frequencies frequencies;
     private File reference;
-    private FastACacher cache;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
     private SpecieHandler specieHandler;
-    private long actualRuntime=0;
-    private long runtime_ms;
     private List<Integer> editDistances;
 
     /**
      * constructor
      * @param specieHandler
+     * @param cache
      */
-    public DamageProfiler(SpecieHandler specieHandler) {
+    public DamageProfiler(SpecieHandler specieHandler, FastACacher cache) {
         this.specieHandler = specieHandler;
+        this.cache = cache;
 
     }
 
@@ -68,7 +66,6 @@ public class  DamageProfiler {
                             validationStringency(ValidationStringency.LENIENT).open(input);
 
                 } else if(input.getAbsolutePath().endsWith(".cram")){
-                    System.out.println(reference.getName());
                     if(!reference.isFile()){
                         System.err.println("Reference file is needed to reads CRAM files.");
                         System.exit(1);
@@ -92,6 +89,20 @@ public class  DamageProfiler {
                 this.editDistances = new ArrayList();
                 this.specie = specie;
                 useful_functions = new Functions(this.LOG);
+
+                // number of records in file:
+                //numberOfRecords = inputSam.iterator().toList().size();
+                // estimate number of records in file:
+                double bytes = input.length();
+                double kilobytes = (bytes / 1024);
+                double megabytes = (kilobytes / 1024);
+                double gigabytes = (megabytes / 1024);
+
+                double sizeSamRecordInBytes = 50;
+
+                double estimatedNumberOfRecords = bytes/sizeSamRecordInBytes;
+                System.out.println("Estimated number of records to process: " + Math.round(estimatedNumberOfRecords));
+
 
 
             } catch (Exception e){
@@ -122,9 +133,6 @@ public class  DamageProfiler {
 
         } else {
 
-            // measure runtime
-            long startTime = System.currentTimeMillis();
-
             for(SAMRecord record : inputSam) {
 
                 numberOfRecords++;
@@ -133,21 +141,11 @@ public class  DamageProfiler {
 
                     handleRecord(use_only_merged_reads, use_all_reads, record);
 
-                    // print number of processed reads
-                    if (numberOfUsedReads % 100 == 0) {
-                        LOG.info(numberOfUsedReads + " Reads processed.");
-                    }
-
                 } else {
 
                     if (record.getReferenceName().contains(this.specie)) {
 
                         handleRecord(use_only_merged_reads, use_all_reads, record);
-
-                        // print number of processed reads
-                        if (numberOfUsedReads % 100 == 0) {
-                            LOG.info(numberOfUsedReads + " Reads processed.");
-                        }
                     }
                 }
 
@@ -157,6 +155,8 @@ public class  DamageProfiler {
 
             LOG.info("-------------------");
             LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
+            System.out.println(numberOfRecords + " Reads in total");
+            //System.out.println(numberOfUsedReads + " Reads used for calculations");
         }
 
     }
@@ -198,8 +198,14 @@ public class  DamageProfiler {
      * @throws IOException
      */
 
-    private void processRecord(SAMRecord record) throws Exception{
+    private void processRecord(SAMRecord record) {
         numberOfUsedReads++;
+
+        // print number of processed reads
+        //if (numberOfUsedReads % 10000 == 0) {
+            //LOG.info(numberOfUsedReads + " Reads used.");
+            //System.out.println(numberOfUsedReads + " Reads used.");
+        //}
 
         /*
             If MD value is set, use it to reconstruct reference
@@ -221,20 +227,49 @@ public class  DamageProfiler {
 
             // MD tag needs to be calculated --> REF needs to be specified
             if (record.getStringAttribute(SAMTag.MD.name()) == null){
+
                 if(!reference.isFile()){
                     System.err.println("No MD tag defined. Please specify reference file which is needed for MD tag calculations.");
                     System.exit(1);
                 }
-                readReferenceInCache();
                 SequenceUtil.calculateMdAndNmTags(record, cache.getData().get(record.getReferenceName()), true, true);
+
             }
 
-            byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
-            reference_aligned = new String(ref_seq, "UTF-8");
-            record_aligned = record.getReadString();
+            try{
 
+                byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
+                reference_aligned = new String(ref_seq, "UTF-8");
+                record_aligned = record.getReadString();
+                proceed(record, record_aligned, reference_aligned);
+
+            } catch (Exception e){
+
+                System.err.println(record.getReadName() + "\nMD and NM value will be re-calculated. Error: \n" + e);
+                if(!reference.isFile()){
+                    System.err.println("No MD tag defined. Please specify reference file which is needed for MD tag calculations.");
+                    System.exit(1);
+                }
+
+                try{
+                    SequenceUtil.calculateMdAndNmTags(record, cache.getData().get(record.getReferenceName()), true, true);
+                    byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
+                    reference_aligned = new String(ref_seq, "UTF-8");
+                    record_aligned = record.getReadString();
+                    proceed(record, record_aligned, reference_aligned);
+                    System.err.println("Re-calculation was successful!\n");
+
+                } catch (Exception e1){
+                    System.err.println("Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
+                }
+
+
+            }
         }
+    }
 
+
+    private void proceed(SAMRecord record, String record_aligned, String reference_aligned) throws Exception {
         // report length distribution
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
 
@@ -257,20 +292,7 @@ public class  DamageProfiler {
     }
 
 
-    /**
-     * index reference file and put it in cache to get faster
-     * access
-     *
-     * @throws FileNotFoundException
-     */
 
-    private void readReferenceInCache() throws FileNotFoundException{
-        // read reference file as indexed reference
-        fastaSequenceFile = new IndexedFastaSequenceFile(reference);
-        // store reference in cache to get faster access
-        cache = new FastACacher(reference, LOG);
-
-    }
 
 
 

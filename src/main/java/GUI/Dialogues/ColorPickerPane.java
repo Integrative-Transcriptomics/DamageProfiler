@@ -1,6 +1,5 @@
 package GUI.Dialogues;
 
-import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 

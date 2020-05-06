@@ -127,8 +127,9 @@ public class UserOptionsParser {
         // others
 
         options.addOption(Option.builder("only_merged")
-                .desc("Use only mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
-                        " it will be skipped. Default: false ")
+                .desc("Use only mapped and merged (in case of paired-end sequencing) reads to calculate damage plot " +
+                        "instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
+                        "it will be skipped. Default: false ")
                 .build());
 
         options.addOption(Option.builder("ssLib")
