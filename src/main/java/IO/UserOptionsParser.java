@@ -95,6 +95,36 @@ public class UserOptionsParser {
                 .hasArg()
                 .build());
 
+        options.addOption(Option.builder("color_c_t")
+                .argName("COLOR_C_T")
+                .desc("DamagePlot: Color for C to T misincoporation frequency.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("color_g_a")
+                .argName("COLOR_G_A")
+                .desc("DamagePlot: Color for G to A misincoporation frequency.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("color_instertions")
+                .argName("COLOR_C_T")
+                .desc("DamagePlot: Color for base insertions.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("color_deletions")
+                .argName("COLOR_DELETIONS")
+                .desc("DamagePlot: Color for base deletions.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("color_other")
+                .argName("COLOR_OTHER")
+                .desc("DamagePlot: Color for other bases different to reference.")
+                .hasArg()
+                .build());
+
         // Identity plot
 
         options.addOption(Option.builder("xaxis_id_min")
