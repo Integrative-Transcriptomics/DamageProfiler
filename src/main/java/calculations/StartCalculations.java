@@ -36,7 +36,7 @@ public class StartCalculations {
     private String reference;
     private String outfolder;
     private String input;
-    private SpecieHandler specieHandler;
+    private SpecieHandler specieHandler = new SpecieHandler();
     private boolean use_all_reads;
     private double xaxis_min_id_histogram;
     private double xaxis_max_id_histogram;
@@ -111,6 +111,7 @@ public class StartCalculations {
 
         if(specieslist_filepath != null){
 
+            specieHandler = new SpecieHandler();
             /*
                 parse species references (-sf) and run DP for each reference in the file
              */

@@ -232,8 +232,8 @@ public class UserOptionsParser {
                 communicator.setTitle_plots(cmd.getOptionValue("title"));
             }
 
-            if(cmd.hasOption("yaxis_damageplot")) {
-                communicator.setyAxis_damageplot(Double.parseDouble(cmd.getOptionValue("yaxis_damageplot")));
+            if(cmd.hasOption("yaxis_dp_max")) {
+                communicator.setyAxis_damageplot(Double.parseDouble(cmd.getOptionValue("yaxis_dp_max")));
             }
 
             if(cmd.hasOption("xaxis_histo_id_min")) {

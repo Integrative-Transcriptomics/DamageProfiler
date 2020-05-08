@@ -31,11 +31,11 @@ public class Communicator {
 
     // plot settings
     private String title_plots;
-    private Color color_DP_C_to_T;
-    private Color color_DP_G_to_A;
-    private Color color_DP_insertions;
-    private Color color_DP_deletions;
-    private Color color_DP_other;
+    private Color color_DP_C_to_T = Color.RED;
+    private Color color_DP_G_to_A = Color.BLUE;
+    private Color color_DP_insertions = Color.valueOf("FF00FF");
+    private Color color_DP_deletions = Color.GREEN;
+    private Color color_DP_other = Color.GREY;
 
 
     public String getInput() {

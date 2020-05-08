@@ -93,15 +93,15 @@ public class  DamageProfiler {
                 // number of records in file:
                 //numberOfRecords = inputSam.iterator().toList().size();
                 // estimate number of records in file:
-                double bytes = input.length();
-                double kilobytes = (bytes / 1024);
-                double megabytes = (kilobytes / 1024);
-                double gigabytes = (megabytes / 1024);
-
-                double sizeSamRecordInBytes = 50;
-
-                double estimatedNumberOfRecords = bytes/sizeSamRecordInBytes;
-                System.out.println("Estimated number of records to process: " + Math.round(estimatedNumberOfRecords));
+//                double bytes = input.length();
+//                double kilobytes = (bytes / 1024);
+//                double megabytes = (kilobytes / 1024);
+//                double gigabytes = (megabytes / 1024);
+//
+//                double sizeSamRecordInBytes = 50;
+//
+//                double estimatedNumberOfRecords = bytes/sizeSamRecordInBytes;
+//                System.out.println("Estimated number of records to process: " + Math.round(estimatedNumberOfRecords));
 
 
 
@@ -134,6 +134,8 @@ public class  DamageProfiler {
         } else {
 
             for(SAMRecord record : inputSam) {
+
+                List<SAMSequenceRecord> refs = inputSam.getFileHeader().getSequenceDictionary().getSequences();
 
                 numberOfRecords++;
 
