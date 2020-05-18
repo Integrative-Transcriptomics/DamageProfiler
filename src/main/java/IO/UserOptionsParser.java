@@ -53,7 +53,7 @@ public class UserOptionsParser {
                 .withDescription("Number of bases which are considered for plotting nucleotide misincorporations")
                 .hasArg()
                 .create("t"));
-        options.addOption(OptionBuilder.withLongOpt("specie")
+        options.addOption(OptionBuilder.withLongOpt("species")
                 .withArgName("SPECIE")
                 .withDescription("RNAME flag SAM record (Reference sequence name)")
                 .hasArg()
