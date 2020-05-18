@@ -926,7 +926,7 @@ public class OutputGenerator {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         DecimalFormat df = (DecimalFormat)nf;
         String read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Specie: " + this.specie;
+                (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Species: " + this.specie;
 
         Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
         Font font = FontFactory.getFont("Times-Roman", 14);
