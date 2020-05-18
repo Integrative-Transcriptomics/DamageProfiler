@@ -57,7 +57,7 @@ public class ConfigurationDialogue {
         Label label_threshold = new Label("Number of bases (x-axis)");
         Label label_yaxis = new Label("Height y-axis");
         Label label_length = new Label("Set number of bases (calculations)");
-        Label label_specie = new Label("Filter for specie");
+        Label label_specie = new Label("Filter for species");
         Label label_title = new Label("Set title");
 
         Label label_plot = new Label("Plot");

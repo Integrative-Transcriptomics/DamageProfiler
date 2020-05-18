@@ -995,7 +995,7 @@ public class OutputGenerator {
                         (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads)";
             } else{
                 read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Specie: " + this.specie;
+                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Species: " + this.specie;
             }
 
         } else {
@@ -1004,7 +1004,7 @@ public class OutputGenerator {
                         (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | ssLib protocol";
             } else {
                 read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | Specie: " + this.specie + " | ssLib protocol";
+                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | Species: " + this.specie + " | ssLib protocol";
             }
         }
 
