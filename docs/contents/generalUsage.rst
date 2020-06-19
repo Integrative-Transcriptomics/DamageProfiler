@@ -40,7 +40,7 @@ Options:
 
 
 DamageProfiler can be used in offline mode.
-Running the jar file without any parameter starts a GUI to configure the run.
+Running the jar file without any parameter starts a org.damageprofiler.GUI to configure the run.
 
 
 Log file
