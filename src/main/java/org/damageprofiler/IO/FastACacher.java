@@ -11,10 +11,11 @@ import java.util.HashMap;
  */
 public class FastACacher {
     private final Logger LOG;
+    private final ReferenceSequenceFile refSeq;
     private HashMap<String,byte[]> data = new HashMap<>();
 
     public FastACacher(File f, Logger LOG) {
-        ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(f);
+        refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(f);
         this.LOG = LOG;
 
 
@@ -23,7 +24,6 @@ public class FastACacher {
             if(rs == null){
                 break;
             } else {
-
                 data.put(getKeyName(rs.getName()), rs.getBases());
             }
         }
@@ -31,6 +31,11 @@ public class FastACacher {
 
     public HashMap<String, byte[]> getData() {
         return data;
+    }
+
+    public ReferenceSequence getSubSequence(String chr, int start, int end){
+        ReferenceSequence subsequenceAt = refSeq.getSubsequenceAt(chr, start, end);
+        return subsequenceAt;
     }
 
     public String getKeyName(String reference_name){
@@ -41,10 +46,7 @@ public class FastACacher {
             name = reference_name_splitted[1].substring(1, reference_name_splitted[1].length()-1);
 
         }
-
         return name;
-
-
     }
 }
 

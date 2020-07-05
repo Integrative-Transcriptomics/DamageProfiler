@@ -27,7 +27,6 @@ public class LinePlot {
     private double y_max=0.0;
     private double y_min=0.0;
     private ArrayList<XYSeries> all_data;
-    private String title;
     private int threshold;
 
     private Color awtColor_DP_C_to_T;
@@ -37,12 +36,11 @@ public class LinePlot {
     private Color awtColor_DP_other;
 
 
-    public LinePlot(String title, int threshold, double height, Logger LOG, javafx.scene.paint.Color color_DP_C_to_T,
+    public LinePlot(int threshold, double height, Logger LOG, javafx.scene.paint.Color color_DP_C_to_T,
                     javafx.scene.paint.Color color_DP_G_to_A, javafx.scene.paint.Color color_DP_insertions,
                     javafx.scene.paint.Color color_DP_deletions, javafx.scene.paint.Color color_DP_other) {
         this.LOG = LOG;
         all_data = new ArrayList<>();
-        this.title = title;
         this.threshold = threshold;
         this.height = height;
 
@@ -119,7 +117,7 @@ public class LinePlot {
      * @param dataset  the data for the chart.
      * @return a chart.
      */
-    public JFreeChart createChart(final XYDataset dataset, double yMax, int threshold) {
+    public JFreeChart createChart(String title, final XYDataset dataset, double yMax, int threshold) {
 
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -202,13 +200,13 @@ public class LinePlot {
         }
 
 
-        switch (this.title){
+        switch (title){
             case ("3' end"):
 
                 String[] axis_three_prime =  new String[threshold];
                 int position_three_prime=0;
                 for(int i=threshold; i > 0; i--){
-                    axis_three_prime[position_three_prime] = "-" + String.valueOf(i);
+                    axis_three_prime[position_three_prime] = "-" + i;
                     position_three_prime++;
                 }
 

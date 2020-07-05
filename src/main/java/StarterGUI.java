@@ -1,5 +1,3 @@
-package org.damageprofiler;
-
 import org.damageprofiler.controller.DamageProfilerMainController;
 import org.damageprofiler.GUI.DamageProfilerMainGUI;
 import org.damageprofiler.controller.ProgressBarController;
@@ -9,7 +7,7 @@ import javafx.stage.Stage;
 
 public class StarterGUI extends Application {
 
-    private static final String VERSION = "0.4.9";
+    private static final String VERSION = "0.5.0";
 
     @Override
     public void start(Stage primaryStage) {

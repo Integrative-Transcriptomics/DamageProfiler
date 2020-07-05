@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.itextpdf.text.DocumentException;
@@ -11,6 +12,7 @@ import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import javafx.scene.paint.Color;
 import org.apache.log4j.*;
 import org.damageprofiler.IO.*;
+import org.jfree.chart.JFreeChart;
 
 
 /**
@@ -48,7 +50,7 @@ public class StartCalculations {
     private Communicator communicator;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private FastACacher cache;
-
+    private HashMap<String, List<JFreeChart>> species_output_summary;
 
 
     // plot settings
@@ -68,6 +70,7 @@ public class StartCalculations {
     public void setVERSION(String version){
         VERSION = version;
     }
+
     public void start(Communicator c) throws Exception {
 
         currtime_prior_execution = System.currentTimeMillis();
@@ -109,6 +112,7 @@ public class StartCalculations {
             readReferenceInCache();
 
         if(specieslist_filepath != null){
+            species_output_summary = new HashMap<>();
 
             specieHandler = new SpecieHandler();
             /*
@@ -122,15 +126,11 @@ public class StartCalculations {
                 String specie_input_string = specieslist.get(i);
                 //String specie_name = species_real_name_list.get(i);
 
-
-
-                // start DamageProfiler
+               // start DamageProfiler
                 damageProfiler = new DamageProfiler(specieHandler, cache);
-
 
                 String ref = specie_input_string.split("\\|")[0].trim();
                 speciesname = damageProfiler.getSpeciesname(new File(input), ref);
-
 
                 createOutputFolder(
                         outfolder,
@@ -164,7 +164,6 @@ public class StartCalculations {
                         + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
                         + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
-
                 damageProfiler.init(new File(input),
                         new File(reference),
                         threshold,
@@ -173,16 +172,29 @@ public class StartCalculations {
                         LOG);
 
                 damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
-
+                generateOutput();
+                String spec_no_space = specie_input_string.replace(" ","_");
+                species_output_summary.put(spec_no_space + " (" + speciesname + ")",
+                        List.of(outputGenerator.getChart_DP_5prime(),
+                                outputGenerator.getChart_DP_3prime(),
+                                outputGenerator.getEditDist_chart(),
+                                outputGenerator.getLength_chart_all())
+                );
             }
+
+            // generate metagenomic output summary
+            MetagenomicOutput metagenomicOutput = new MetagenomicOutput();
+            String[] splitted = input.split("/");
+            String filename = splitted[splitted.length-1];
+            metagenomicOutput.generate(outfolder + File.separator +
+                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1],
+                    species_output_summary, filename);
 
 
         } else if(species_ref_identifier != null){
 
             // start DamageProfiler
-            damageProfiler = new DamageProfiler(
-
-                    specieHandler, cache);
+            damageProfiler = new DamageProfiler(specieHandler, cache);
 
             /*
                 parse species reference (-s) and run DP
@@ -224,9 +236,6 @@ public class StartCalculations {
                     + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
                     + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
-
-
-
             damageProfiler.init(new File(input),
                     new File(reference),
                     threshold,
@@ -236,11 +245,12 @@ public class StartCalculations {
 
             damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
             speciesListParser.setLOG(LOG);
+            generateOutput();
 
         } else {
 
             /*
-                    No species specified --> use all (mapping) reads
+                    No species specified --> use all mapped reads
              */
             String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
@@ -275,8 +285,6 @@ public class StartCalculations {
                     + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
                     + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
-
-
             // start DamageProfiler
             damageProfiler = new DamageProfiler(specieHandler, cache);
 
@@ -288,13 +296,10 @@ public class StartCalculations {
                     LOG);
             damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
             speciesListParser.setLOG(LOG);
-
-
-
+            generateOutput();
         }
 
-        generateOutput();
-
+        calculationsDone=true;
 
         // print runtime
         long currtime_post_execution = System.currentTimeMillis();
@@ -303,12 +308,10 @@ public class StartCalculations {
         if(runtime_s > 60) {
             long minutes = runtime_s / 60;
             long seconds = runtime_s % 60;
-            LOG.info("Runtime of Module was: " + minutes + " minutes, and " + seconds + " seconds.");
+            LOG.info("Runtime of Module was: " + minutes + " minutes, and " + seconds + " seconds.\n\n");
         } else {
-            LOG.info("Runtime of Module was: " + runtime_s + " seconds.");
+            LOG.info("Runtime of Module was: " + runtime_s + " seconds.\n\n");
         }
-
-        calculationsDone=true;
 
     }
 
@@ -318,7 +321,6 @@ public class StartCalculations {
         } else {
             inputfileNameWithOutExtension = communicator.getTitle_plots();
         }
-
     }
 
     private void initLogger(String outfolder, String log) {
@@ -394,7 +396,6 @@ public class StartCalculations {
             LOG.warn("No reads processed. Can't create any output");
         }
     }
-
 
 
     /**

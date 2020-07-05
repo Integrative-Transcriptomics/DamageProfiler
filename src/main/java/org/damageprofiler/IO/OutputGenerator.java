@@ -72,6 +72,8 @@ public class OutputGenerator {
     private Color color_DP_other;
 
 
+
+
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
                            int length, double height, double x_axis_min_id_histo, double x_axis_max_id_histo,
                            double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG,
@@ -100,8 +102,6 @@ public class OutputGenerator {
         this.color_DP_G_to_A = color_DP_G_to_A;
         this.color_DP_other = color_DP_other;
         this.color_DP_insertions = color_DP_insertions;
-
-
 
         // set tax id if specified by user
         if(specie != null && !specie.equals("")){
@@ -802,7 +802,7 @@ public class OutputGenerator {
 
         // create plots
         if(!ssLibProtocolUsed){
-            damagePlot_three = new LinePlot("3' end", threshold, height, LOG, color_DP_C_to_T, color_DP_G_to_A,
+            damagePlot_three = new LinePlot(threshold, height, LOG, color_DP_C_to_T, color_DP_G_to_A,
                     color_DP_insertions, color_DP_deletions, color_DP_other);
 
             // three prime end
@@ -837,7 +837,7 @@ public class OutputGenerator {
 
         }
 
-        LinePlot damagePlot_five  = new LinePlot("5' end", threshold, height, LOG, color_DP_C_to_T,
+        LinePlot damagePlot_five  = new LinePlot(threshold, height, LOG, color_DP_C_to_T,
                 color_DP_G_to_A, color_DP_insertions, color_DP_deletions, color_DP_other);
 
           /*
@@ -896,11 +896,11 @@ public class OutputGenerator {
 
         JFreeChart[] charts;
         // create damage plot five prime
-        chart_DP_5prime = damagePlot_five.createChart(dataset_five, ymax, threshold);
+        chart_DP_5prime = damagePlot_five.createChart("5' end", dataset_five, ymax, threshold);
         if(!ssLibProtocolUsed){
             XYDataset dataset_three = damagePlot_three.createDataset();
             // create damage plot three prime
-            chart_DP_3prime = damagePlot_three.createChart(dataset_three, ymax, threshold);
+            chart_DP_3prime = damagePlot_three.createChart("3' end", dataset_three, ymax, threshold);
             charts = new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};
             createSVG("/DamagePlot_three_prime.svg", chart_DP_3prime);
         } else {
@@ -1090,8 +1090,20 @@ public class OutputGenerator {
         return new JFreeChart[]{length_chart_all, length_chart_separated};
 
     }
-
     public JFreeChart getEditDist_chart() {
         return editDist_chart;
     }
+
+    public JFreeChart getChart_DP_5prime() {
+        return chart_DP_5prime;
+    }
+
+    public JFreeChart getChart_DP_3prime() {
+        return chart_DP_3prime;
+    }
+
+    public JFreeChart getLength_chart_all() {
+        return length_chart_all;
+    }
+
 }

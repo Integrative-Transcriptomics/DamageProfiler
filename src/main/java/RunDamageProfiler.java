@@ -1,5 +1,3 @@
-package org.damageprofiler;
-
 import javafx.application.Application;
 
 /**
@@ -12,16 +10,12 @@ public class RunDamageProfiler {
     public static void main(String[] args) throws Exception {
 
          /*
-
                   get input parameters
 
                     $ damageprofiler                    :   starts org.damageprofiler.GUI
 
                     $ damageprofiler -i <> -o <> ....   :   parse command line arguments
-
           */
-
-
 
         if(args.length==0){
             new Thread(() -> Application.launch(StarterGUI.class)).start();
@@ -30,8 +24,5 @@ public class RunDamageProfiler {
             System.setProperty("java.awt.headless", "true");
             StarterCLI starterCLI = new StarterCLI(VERSION, args);
         }
-
-
     }
-
 }

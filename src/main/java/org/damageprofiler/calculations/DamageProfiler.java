@@ -1,6 +1,7 @@
 package org.damageprofiler.calculations;
 
 
+import htsjdk.samtools.reference.ReferenceSequence;
 import org.damageprofiler.IO.FastACacher;
 import htsjdk.samtools.*;
 import htsjdk.samtools.util.SequenceUtil;
@@ -39,7 +40,6 @@ public class  DamageProfiler {
     public DamageProfiler(SpecieHandler specieHandler, FastACacher cache) {
         this.specieHandler = specieHandler;
         this.cache = cache;
-
     }
 
     /**
@@ -59,11 +59,10 @@ public class  DamageProfiler {
             System.exit(0);
         } else {
             try{
-
                 if(input.getAbsolutePath().endsWith(".sam") || input.getAbsolutePath().endsWith(".bam") ) {
 
                     inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                            validationStringency(ValidationStringency.LENIENT).open(input);
+                            validationStringency(ValidationStringency.SILENT).open(input);
 
                 } else if(input.getAbsolutePath().endsWith(".cram")){
                     if(!reference.isFile()){
@@ -71,7 +70,7 @@ public class  DamageProfiler {
                         System.exit(1);
                     } else {
                         inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                                referenceSequence(reference).validationStringency(ValidationStringency.LENIENT).open(input);
+                                referenceSequence(reference).validationStringency(ValidationStringency.SILENT).open(input);
 
                     }
                 }
@@ -103,8 +102,6 @@ public class  DamageProfiler {
 //                double estimatedNumberOfRecords = bytes/sizeSamRecordInBytes;
 //                System.out.println("Estimated number of records to process: " + Math.round(estimatedNumberOfRecords));
 
-
-
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
                 LOG.error("Invalid SAM/BAM file. Please check your file.");
@@ -135,32 +132,24 @@ public class  DamageProfiler {
 
             for(SAMRecord record : inputSam) {
 
-                List<SAMSequenceRecord> refs = inputSam.getFileHeader().getSequenceDictionary().getSequences();
+//              List<SAMSequenceRecord> refs = inputSam.getFileHeader().getSequenceDictionary().getSequences();
 
                 numberOfRecords++;
 
                 if (this.specie == null) {
-
                     handleRecord(use_only_merged_reads, use_all_reads, record);
-
                 } else {
-
                     if (record.getReferenceName().contains(this.specie)) {
-
                         handleRecord(use_only_merged_reads, use_all_reads, record);
                     }
                 }
-
             }
 
             frequencies.normalizeValues();
 
             LOG.info("-------------------");
             LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
-            System.out.println(numberOfRecords + " Reads in total");
-            //System.out.println(numberOfUsedReads + " Reads used for org.damageprofiler.calculations");
         }
-
     }
 
 
@@ -184,7 +173,6 @@ public class  DamageProfiler {
                 processRecord(record);
             }
         }
-
     }
 
 
@@ -204,9 +192,9 @@ public class  DamageProfiler {
         numberOfUsedReads++;
 
         // print number of processed reads
-        if (numberOfUsedReads % 10000 == 0) {
+        if (numberOfUsedReads % 100000 == 0) {
             LOG.info(numberOfUsedReads + " Reads used.");
-            System.out.println(numberOfUsedReads + " Reads used.");
+            //System.out.println(numberOfUsedReads + " Reads used.");
         }
 
         /*
@@ -222,7 +210,7 @@ public class  DamageProfiler {
         // check if record has MD tag and no reference file is specified
         if(record.getStringAttribute(SAMTag.MD.name()) == null && (this.reference == null || !reference.isFile())){
 
-            LOG.error("SAM/BAM file has no MD tag. Please specify reference file which is needed for MD tag org.damageprofiler.calculations.");
+            LOG.error("SAM/BAM file has no MD tag. Please specify reference file which is needed for MD tag calculations.");
             System.exit(1);
 
         } else {
@@ -239,7 +227,6 @@ public class  DamageProfiler {
             }
 
             try{
-
                 byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
                 reference_aligned = new String(ref_seq, "UTF-8");
                 record_aligned = record.getReadString();
@@ -264,8 +251,6 @@ public class  DamageProfiler {
                 } catch (Exception e1){
                     System.err.println("Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
                 }
-
-
             }
         }
     }
@@ -291,17 +276,36 @@ public class  DamageProfiler {
         // calculate base misincorporations
         frequencies.calculateMisincorporations(record, record_aligned, reference_aligned);
 
+        // if reference file provided: calculate fragmentation pattern
+/*        int algnStart = record.getAlignmentStart();
+        int algnEnd = record.getAlignmentEnd();
+        if ( this.cache != null ){
+            // Correct indexes!
+            ReferenceSequence ref_chr_left = this.cache.getSubSequence(record.getReferenceName(), algnStart - 10, algnStart-1);
+            ReferenceSequence ref_chr_right = this.cache.getSubSequence(record.getReferenceName(), algnEnd+1, algnEnd + 10);
+            char[] ref_chr_left_string;
+            char[] ref_chr_right_string;
+            if(record.getReadNegativeStrandFlag()){
+                ref_chr_left_string = SequenceUtil.reverseComplement(ref_chr_left.getBaseString()).toCharArray();
+                ref_chr_right_string = SequenceUtil.reverseComplement(ref_chr_right.getBaseString()).toCharArray();
+            } else {
+                ref_chr_left_string = ref_chr_left.getBaseString().toCharArray();
+                ref_chr_right_string = ref_chr_right.getBaseString().toCharArray();
+            }
+            frequencies.countRecordFlankingRegions(ref_chr_left_string.toString(), ref_chr_right_string.toString());
+
+
+            String bases_left = ref_chr_left.getBaseString();
+            String bases_right = ref_chr_right.getBaseString();
+            System.out.println(bases_left + "|" + reference_aligned + "|" + bases_right);
+            //System.out.println(ref_chr_complete_region.getBaseString());
+        }
+*/
     }
-
-
-
-
-
 
     /*
      * Getter
      */
-
 
     public Frequencies getFrequencies() {
         return frequencies;
@@ -325,7 +329,7 @@ public class  DamageProfiler {
     public String getSpeciesname(File file, String ref) {
 
         SamReader input = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                validationStringency(ValidationStringency.LENIENT).open(file);
+                validationStringency(ValidationStringency.SILENT).open(file);
 
         for(SAMRecord record : input) {
             if(record.getReferenceName().contains(ref)){
@@ -337,11 +341,9 @@ public class  DamageProfiler {
         return null;
     }
 
-
     public int getNumberOfRecords() {
         return numberOfRecords;
     }
-
     public List<Integer> getEditDistances() {
         return editDistances;
     }

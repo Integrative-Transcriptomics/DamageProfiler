@@ -598,7 +598,14 @@ public class Frequencies {
                     countG_ref_forward_3, countT_ref_forward_3, count0_ref_forward_3, null);
 
         }
+    }
 
+    /**
+     * Count purine bases
+     * @param ref_left bases left of record
+     * @param ref_right bases right of record
+     */
+    public void countRecordFlankingRegions(String ref_left, String ref_right) {
 
     }
 
