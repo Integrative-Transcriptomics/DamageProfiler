@@ -1,7 +1,6 @@
 package org.damageprofiler.calculations;
 
 
-import htsjdk.samtools.reference.ReferenceSequence;
 import org.damageprofiler.IO.FastACacher;
 import htsjdk.samtools.*;
 import htsjdk.samtools.util.SequenceUtil;
@@ -19,7 +18,7 @@ public class  DamageProfiler {
     private final FastACacher cache;
     private SamReader inputSam=null;
     private Functions useful_functions=null;
-    private String specie=null;
+    private String species =null;
     private Logger LOG=null;
     private int numberOfUsedReads;
     private int numberOfRecords;
@@ -29,16 +28,16 @@ public class  DamageProfiler {
     private File reference;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
-    private SpecieHandler specieHandler;
+    private SpeciesHandler speciesHandler;
     private List<Integer> editDistances;
 
     /**
      * constructor
-     * @param specieHandler
+     * @param speciesHandler
      * @param cache
      */
-    public DamageProfiler(SpecieHandler specieHandler, FastACacher cache) {
-        this.specieHandler = specieHandler;
+    public DamageProfiler(SpeciesHandler speciesHandler, FastACacher cache) {
+        this.speciesHandler = speciesHandler;
         this.cache = cache;
     }
 
@@ -86,7 +85,7 @@ public class  DamageProfiler {
                 this.lengthDistribution.init();
                 this.identity = new ArrayList();
                 this.editDistances = new ArrayList();
-                this.specie = specie;
+                this.species = specie;
                 useful_functions = new Functions(this.LOG);
 
                 // number of records in file:
@@ -136,10 +135,10 @@ public class  DamageProfiler {
 
                 numberOfRecords++;
 
-                if (this.specie == null) {
+                if (this.species == null) {
                     handleRecord(use_only_merged_reads, use_all_reads, record);
                 } else {
-                    if (record.getReferenceName().contains(this.specie)) {
+                    if (record.getReferenceName().contains(this.species)) {
                         handleRecord(use_only_merged_reads, use_all_reads, record);
                     }
                 }
@@ -333,8 +332,8 @@ public class  DamageProfiler {
 
         for(SAMRecord record : input) {
             if(record.getReferenceName().contains(ref)){
-                specieHandler.getSpecie(record.getReferenceName());
-                String spe = specieHandler.getSpecie_name();
+                speciesHandler.getSpecies(record.getReferenceName());
+                String spe = speciesHandler.getSpecies_name();
                 return spe.replace(" ", "_").trim();
             }
         }

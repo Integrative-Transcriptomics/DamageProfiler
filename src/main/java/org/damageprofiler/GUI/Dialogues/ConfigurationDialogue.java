@@ -18,11 +18,11 @@ public class ConfigurationDialogue {
     private Button btn_output;
     private Button btn_run;
     private Button btn_estimate_runtime;
-    private Button btn_specieList;
+    private Button btn_speciesList;
 
     private TextField textfield_threshold;
     private TextField textfield_length;
-    private TextField textfield_specie;
+    private TextField textfield_species;
     private CheckBox checkbox_use_merged_reads;
     private CheckBox checkbox_ssLibs_protocol;
     private TextField textfield_title;
@@ -51,7 +51,7 @@ public class ConfigurationDialogue {
         btn_inputfile = new Button("Select input file");
         btn_reference = new Button("Select reference");
         btn_output = new Button("Select output");
-        btn_specieList = new Button("Set species file");
+        btn_speciesList = new Button("Set species file");
         btn_loadSpecies = new Button("Load Species");
         btn_run = new Button("Run");
         btn_estimate_runtime = new Button("Estimate Runtime");
@@ -76,7 +76,7 @@ public class ConfigurationDialogue {
 
         textfield_threshold = new TextField();
         textfield_length = new TextField();
-        textfield_specie = new TextField();
+        textfield_species = new TextField();
         textfield_title = new TextField();
         textfield_y_axis_height = new TextField();
 
@@ -137,8 +137,8 @@ public class ConfigurationDialogue {
         config_gridpane.add(checkbox_use_merged_reads, 0, ++row,1,1);
         config_gridpane.add(checkbox_ssLibs_protocol, 0, ++row, 1,1);
         config_gridpane.add(label_specie, 0, ++row, 1,1);
-        config_gridpane.add(textfield_specie, 1, row, 2,1);
-        config_gridpane.add(btn_specieList, 1, ++row, 1,1);
+        config_gridpane.add(textfield_species, 1, row, 2,1);
+        config_gridpane.add(btn_speciesList, 1, ++row, 1,1);
         //config_gridpane.add(btn_loadSpecies, 3, row, 1,1);
         config_gridpane.add(pane_advanced_calculation_options, 0,++row, 3,1);
 
@@ -169,8 +169,8 @@ public class ConfigurationDialogue {
         return btn_run;
     }
 
-    public Button getBtn_specieList() {
-        return btn_specieList;
+    public Button getBtn_speciesList() {
+        return btn_speciesList;
     }
 
     public TextField getTextfield_threshold() {
@@ -181,8 +181,8 @@ public class ConfigurationDialogue {
         return textfield_length;
     }
 
-    public TextField getTextfield_specie() {
-        return textfield_specie;
+    public TextField getTextfield_species() {
+        return textfield_species;
     }
 
     public CheckBox getCheckbox_use_merged_reads() {

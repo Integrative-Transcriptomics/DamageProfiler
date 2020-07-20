@@ -14,19 +14,19 @@ public class SpeciesListParser {
 
     private Logger LOG;
     private String speciesFile;
-    private SpecieHandler specieHandler;
+    private SpeciesHandler speciesHandler;
 
     public SpeciesListParser(String speciesListFile, Logger LOG) {
         this.speciesFile = speciesListFile;
         this.LOG = LOG;
-        specieHandler = new SpecieHandler();
+        speciesHandler = new SpeciesHandler();
     }
 
 
-    public String getSingleSpecie(String rname) {
+    public String getSingleSpecies(String rname) {
 
-        specieHandler.getSpecie(rname);
-        return specieHandler.getSpecie_name();
+        speciesHandler.getSpecies(rname);
+        return speciesHandler.getSpecies_name();
     }
 
     public List<String> getList() {
@@ -61,7 +61,7 @@ public class SpeciesListParser {
 
     public void setLOG(Logger LOG) {
         this.LOG = LOG;
-        specieHandler.setLOG(LOG);
+        speciesHandler.setLOG(LOG);
     }
 }
 

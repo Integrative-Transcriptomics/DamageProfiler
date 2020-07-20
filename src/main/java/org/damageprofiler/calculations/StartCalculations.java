@@ -37,7 +37,7 @@ public class StartCalculations {
     private String reference;
     private String outfolder;
     private String input;
-    private SpecieHandler specieHandler = new SpecieHandler();
+    private SpeciesHandler speciesHandler = new SpeciesHandler();
     private boolean use_all_reads;
     private double xaxis_min_id_histogram;
     private double xaxis_max_id_histogram;
@@ -114,7 +114,7 @@ public class StartCalculations {
         if(specieslist_filepath != null){
             species_output_summary = new HashMap<>();
 
-            specieHandler = new SpecieHandler();
+            speciesHandler = new SpeciesHandler();
             /*
                 parse species references (-sf) and run DP for each reference in the file
              */
@@ -127,7 +127,7 @@ public class StartCalculations {
                 //String specie_name = species_real_name_list.get(i);
 
                // start DamageProfiler
-                damageProfiler = new DamageProfiler(specieHandler, cache);
+                damageProfiler = new DamageProfiler(speciesHandler, cache);
 
                 String ref = specie_input_string.split("\\|")[0].trim();
                 speciesname = damageProfiler.getSpeciesname(new File(input), ref);
@@ -194,7 +194,7 @@ public class StartCalculations {
         } else if(species_ref_identifier != null){
 
             // start DamageProfiler
-            damageProfiler = new DamageProfiler(specieHandler, cache);
+            damageProfiler = new DamageProfiler(speciesHandler, cache);
 
             /*
                 parse species reference (-s) and run DP
@@ -286,7 +286,7 @@ public class StartCalculations {
                     + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
 
             // start DamageProfiler
-            damageProfiler = new DamageProfiler(specieHandler, cache);
+            damageProfiler = new DamageProfiler(speciesHandler, cache);
 
             damageProfiler.init(new File(input),
                     new File(reference),

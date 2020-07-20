@@ -10,17 +10,17 @@ import org.apache.log4j.Logger;
 /**
  * Created by neukamm on 25.07.16.
  */
-public class SpecieHandler {
+public class SpeciesHandler {
 
     private Logger LOG;
     private String gi;
-    private String specie_name;
+    private String species_name;
 
-    public SpecieHandler(){
+    public SpeciesHandler(){
     }
 
 
-    public void getSpecie(String rname){
+    public void getSpecies(String rname){
         if (rname != null) {
             String tax = "";
 
@@ -44,7 +44,7 @@ public class SpecieHandler {
                         "Please make sure that the SAM/BAM file reference tag contains the tax ID");
             }
             if(!tax.equals("")){
-               specie_name = getSpeciesByID(Integer.parseInt(tax));
+               species_name = getSpeciesByID(Integer.parseInt(tax));
                // specie_name = specie_name.replaceAll(" ", "_");
             }
         }
@@ -102,8 +102,8 @@ public class SpecieHandler {
     }
 
 
-    public String getSpecie_name() {
-        return specie_name;
+    public String getSpecies_name() {
+        return species_name;
     }
 
     public void setLOG(Logger LOG) {

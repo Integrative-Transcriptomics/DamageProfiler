@@ -39,10 +39,10 @@ public class DamageProfilerMainController {
     private Button btn_reference;
     private Button btn_output;
     private Button btn_run;
-    private Button btn_specieList;
+    private Button btn_speciesList;
     private TextField textfield_threshold;
     private TextField textfield_length;
-    private TextField textfield_specie;
+    private TextField textfield_species;
     private CheckBox checkbox_use_merged_reads;
     private CheckBox checkbox_ssLibs_protocol;
     private TextField textfield_title;
@@ -69,7 +69,7 @@ public class DamageProfilerMainController {
         this.btn_output = mainGUI.getConfig_dialogue().getBtn_output();
         this.btn_run = mainGUI.getConfig_dialogue().getBtn_run();
         this.btn_estimate_runtime = mainGUI.getConfig_dialogue().getBtn_estimate_runtime();
-        this.btn_specieList = mainGUI.getConfig_dialogue().getBtn_specieList();
+        this.btn_speciesList = mainGUI.getConfig_dialogue().getBtn_speciesList();
         this.btn_loadSpecies = mainGUI.getConfig_dialogue().getBtn_loadSpecies();
         this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
         this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
@@ -79,7 +79,7 @@ public class DamageProfilerMainController {
 
         this.textfield_threshold = mainGUI.getConfig_dialogue().getTextfield_threshold();
         this.textfield_length = mainGUI.getConfig_dialogue().getTextfield_length();
-        this.textfield_specie = mainGUI.getConfig_dialogue().getTextfield_specie();
+        this.textfield_species = mainGUI.getConfig_dialogue().getTextfield_species();
         this.textfield_title = mainGUI.getConfig_dialogue().getTextfield_title();
         this.textfield_y_axis_height = mainGUI.getConfig_dialogue().getTextfield_y_axis_height();
 
@@ -210,13 +210,13 @@ public class DamageProfilerMainController {
             runDamageProfiler();
         });
 
-        btn_specieList.setOnAction(e -> {
+        btn_speciesList.setOnAction(e -> {
 
             SpeciesListFileChooser slfc = new SpeciesListFileChooser(communicator);
             if (checkIfInputWasSelected()) {
-                btn_specieList.setDisable(false);
+                btn_speciesList.setDisable(false);
             } else {
-                btn_specieList.setDisable(true);
+                btn_speciesList.setDisable(true);
             }
 
         });
@@ -301,10 +301,10 @@ public class DamageProfilerMainController {
         communicator.setColor_DP_other(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue());
 
 
-        if(textfield_specie.getText().equals(""))
+        if(textfield_species.getText().equals(""))
             communicator.setSpecies_ref_identifier(null);
         else
-            communicator.setSpecies_ref_identifier(textfield_specie.getText());
+            communicator.setSpecies_ref_identifier(textfield_species.getText());
 
         if(!textfield_title.getText().equals("")){
             communicator.setTitle_plots(textfield_title.getText());

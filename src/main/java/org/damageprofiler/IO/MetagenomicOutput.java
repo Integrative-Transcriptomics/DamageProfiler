@@ -18,9 +18,8 @@ import java.util.List;
 
 public class MetagenomicOutput {
 
-    public void generate(String output_folder, HashMap<String, List<JFreeChart>> species_output_summary, String sample_name) throws FileNotFoundException, DocumentException {
-
-        // todo: tile page
+    public void generate(String output_folder, HashMap<String, List<JFreeChart>> species_output_summary, String sample_name)
+            throws FileNotFoundException, DocumentException {
 
         // step 1
         Document document = new Document(PageSize.A4);

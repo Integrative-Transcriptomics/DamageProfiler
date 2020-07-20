@@ -52,7 +52,7 @@ public class OutputGenerator {
     private int numberOfRecords;
     private int max_length;
     private int min_length;
-    private String specie;
+    private String species;
     private int threshold;
     private int length;
     private String input;
@@ -74,7 +74,7 @@ public class OutputGenerator {
 
 
 
-    public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String specie, int threshold,
+    public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String species, int threshold,
                            int length, double height, double x_axis_min_id_histo, double x_axis_max_id_histo,
                            double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG,
                            int numberOfRecords, boolean ssLibProtocolUsed, Color color_DP_C_to_T,
@@ -104,8 +104,8 @@ public class OutputGenerator {
         this.color_DP_insertions = color_DP_insertions;
 
         // set tax id if specified by user
-        if(specie != null && !specie.equals("")){
-            this.specie = specie;
+        if(species != null && !species.equals("")){
+            this.species = species;
         }
     }
 
@@ -1009,21 +1009,21 @@ public class OutputGenerator {
 
         String read_per;
         if(!ssLibProtocolUsed){
-            if(this.specie == null){
+            if(this.species == null){
                 read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
                         (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads)";
             } else{
                 read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Species: " + this.specie;
+                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Species: " + this.species;
             }
 
         } else {
-            if(this.specie == null){
+            if(this.species == null){
                 read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
                         (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | ssLib protocol";
             } else {
                 read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | Species: " + this.specie + " | ssLib protocol";
+                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | Species: " + this.species + " | ssLib protocol";
             }
         }
 
