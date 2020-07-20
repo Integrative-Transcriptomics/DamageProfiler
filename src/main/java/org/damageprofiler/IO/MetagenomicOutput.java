@@ -20,24 +20,31 @@ public class MetagenomicOutput {
 
     public void generate(String output_folder, HashMap<String, List<JFreeChart>> species_output_summary, String sample_name) throws FileNotFoundException, DocumentException {
 
+        // todo: tile page
+
         // step 1
         Document document = new Document(PageSize.A4);
 
         // step 2
-        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(output_folder + File.separator + "metagenomic_summary.pdf"));
+        PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(output_folder + File.separator + sample_name +"_summary.pdf"));
         // step 3
         document.open();
 
-        Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
+        Font fontbold = FontFactory.getFont("Times-Roman", 24, Font.BOLD);
 
         Paragraph para = new Paragraph();
-        Chunk c_title = new Chunk("Summary of damage patterns for sample " + sample_name, fontbold);
+        Chunk c_title = new Chunk("\n\n\n\nSummary of damage patterns\n\n" + sample_name, fontbold);
 
         Phrase p1 = new Phrase(c_title);
         para.add(p1);
+        para.setAlignment(1);
 
         document.add(para);
-        document.addTitle("Summary of damage patterns for sample " + sample_name);
+        document.addTitle("Summary_damage_patterns");
+
+
+
+        document.newPage();
 
         PdfContentByte cb = writer.getDirectContent();
         float height = PageSize.A4.getHeight() * (float)0.25;
