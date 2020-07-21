@@ -18,7 +18,19 @@ import java.util.List;
 
 public class MetagenomicOutput {
 
-    public void generate(String output_folder, HashMap<String, List<JFreeChart>> species_output_summary, String sample_name)
+    /**
+     * Writes summary of the metagenomic results. Only a overview of the results is presented for
+     * each species.
+     *
+     * @param output_folder
+     * @param species_output_summary
+     * @param sample_name
+     * @param mapped_reads
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
+    public void generate(String output_folder, HashMap<String, List<JFreeChart>> species_output_summary, String sample_name,
+                         HashMap<String, Integer> mapped_reads)
             throws FileNotFoundException, DocumentException {
 
         // step 1
@@ -50,11 +62,11 @@ public class MetagenomicOutput {
         float width = PageSize.A4.getWidth() / 2;
 
         for(String species : species_output_summary.keySet()){
-            int ypos = 20;
             Paragraph para2 = new Paragraph();
-            Phrase p2 = new Phrase("Results for species: " + species);
-            p2.setFont(FontFactory.getFont("Times-Roman", 14));
+            Phrase p2 = new Phrase("Results for species:\n\n" + species, FontFactory.getFont("Times-Roman", 22));
+            Phrase p3 = new Phrase("\n\nNumber of mapped reads:" + mapped_reads.get(species), FontFactory.getFont("Times-Roman", 18));
             para2.add(p2);
+            para2.add(p3);
             document.add(para2);
 
             double xpos = 0;
@@ -76,8 +88,6 @@ public class MetagenomicOutput {
                 } else if(i==3){
                     cb.addTemplate(plot, width, 500-height);
                 }
-
-                ypos += height;
 
             }
             document.newPage();

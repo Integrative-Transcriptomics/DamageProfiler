@@ -78,7 +78,7 @@ public class LinePlot {
 
         final XYSeries series = new XYSeries(name);
         for(int i = 0; i < threshold; i++){
-            series.add((double)i, data[i]);
+            series.add(i, data[i]);
         }
         all_data.add(series);
 
@@ -98,7 +98,6 @@ public class LinePlot {
         for(XYSeries series : all_data){
             dataset.addSeries(series);
             if(series.getMaxY() > y_max){y_max=series.getMaxY();}
-            //if(series.getMinY() < y_min){y_min=series.getMinY();}
         }
 
         y_min = 0.0;
@@ -154,7 +153,6 @@ public class LinePlot {
         legendItemsNew.add(legendItemsOld.get(3));
         legendItemsNew.add(legendItemsOld.get(4));
 
-        //legendItemsNew.get(0).setLinePaint(Color.RED);
         legendItemsNew.get(0).setLinePaint(this.awtColor_DP_C_to_T);
         legendItemsNew.get(1).setLinePaint(this.awtColor_DP_G_to_A);
         legendItemsNew.get(2).setLinePaint(this.awtColor_DP_insertions);

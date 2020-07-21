@@ -60,7 +60,6 @@ public class HelpDialogue {
             }
         }).start());
 
-        // todo: one could make it a bit nicer
         Label label_helppage = new Label(" -h\t\t\t\t\t\t\tShows this help page.\n" +
                 " -version\t\t\t\t\t\tShows the version of DamageProfiler.\n" +
                 " -i <INPUT>\t\t\t\t\tREQUIRED: The input sam/bam/cram file.\n" +

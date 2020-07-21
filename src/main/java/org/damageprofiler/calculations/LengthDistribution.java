@@ -82,29 +82,9 @@ public class LengthDistribution {
         }
     }
 
-
     /*
-     *  Getter
-     *
+            Getter
      */
-
-
-    public HashMap<Integer, Integer> getSeqLen(LengthDistribution lengthDistribution) {
-
-        List<Integer> length_all = lengthDistribution.getLength_all();
-        HashMap<Integer, Integer> map_length_occurrences_all = new HashMap<>();
-
-        for(double d : length_all){
-            if(!map_length_occurrences_all.containsKey(d)){
-                map_length_occurrences_all.put((int)d, 1);
-            } else {
-                int count = map_length_occurrences_all.get(d);
-                map_length_occurrences_all.put((int)d, count + 1);
-            }
-        }
-        return map_length_occurrences_all;
-    }
-
 
     public HashMap<Integer, Integer> getLength_distribution_map_forward() {
         return length_distribution_map_forward;

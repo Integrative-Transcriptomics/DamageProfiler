@@ -342,7 +342,7 @@ public class DamageProfilerMainController {
     }
 
     /**
-     * The following methods generate the result plots after successful damage profile org.damageprofiler.calculations.
+     * The following methods generate the result plots after successful damage profile calculations.
      *    todo: if plot already created, just reload
      */
 

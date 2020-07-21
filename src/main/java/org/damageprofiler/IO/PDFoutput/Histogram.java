@@ -70,7 +70,6 @@ public class Histogram {
                 false
         );
 
-//        chart.setBackgroundPaint(new Color(230,230,230));
         XYPlot xyplot = (XYPlot)chart.getPlot();
         xyplot.setForegroundAlpha(0.7F);
         xyplot.setBackgroundPaint(Color.WHITE);
@@ -90,8 +89,6 @@ public class Histogram {
 
         XYBarRenderer xybarrenderer = (XYBarRenderer)xyplot.getRenderer();
         xybarrenderer.setShadowVisible(false);
-//        xybarrenderer.setBarPainter(new StandardXYBarPainter());
-//        xybarrenderer.setMargin(0.2);
 
         return chart;
 

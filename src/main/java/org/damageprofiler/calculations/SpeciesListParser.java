@@ -23,17 +23,11 @@ public class SpeciesListParser {
     }
 
 
-    public String getSingleSpecies(String rname) {
-
-        speciesHandler.getSpecies(rname);
-        return speciesHandler.getSpecies_name();
-    }
-
-    public List<String> getList() {
-
-        return readFile();
-    }
-
+    /**
+     * Read file with species listed by the user.
+     *
+     * @return
+     */
     private List<String> readFile() {
 
         try {
@@ -41,15 +35,15 @@ public class SpeciesListParser {
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
-            List<String> list = new ArrayList<>();
+            List<String> list_species = new ArrayList<>();
 
             while ((line = bufferedReader.readLine()) != null) {
-                list.add(line.trim());
+                list_species.add(line.trim());
             }
 
             fileReader.close();
 
-            return list;
+            return list_species;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,9 +53,18 @@ public class SpeciesListParser {
 
     }
 
+    /*
+        Getter and Setter
+     */
     public void setLOG(Logger LOG) {
         this.LOG = LOG;
         speciesHandler.setLOG(LOG);
+    }
+
+
+    public List<String> getSpeciesList() {
+
+        return readFile();
     }
 }
 

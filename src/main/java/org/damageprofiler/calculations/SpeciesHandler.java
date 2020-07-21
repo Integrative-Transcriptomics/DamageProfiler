@@ -14,19 +14,26 @@ public class SpeciesHandler {
 
     private Logger LOG;
     private String gi;
-    private String species_name;
 
+    /**
+     * This class accesses NCBI to find the name of a species based on the RefSeqID.
+     */
     public SpeciesHandler(){
     }
 
 
-    public void getSpecies(String rname){
-        if (rname != null) {
+    /**
+     *
+     * @param ref_name
+     */
+    public String getSpecies(String ref_name){
+        String species_name = "";
+        if (ref_name != null) {
             String tax = "";
 
 
             // get tax id from RNAME string
-            String[] rname_split = rname.split("\\|");
+            String[] rname_split = ref_name.split("\\|");
             for (int i = 0; i < rname_split.length; i++) {
                 switch (rname_split[i]) {
                     case "gi":
@@ -45,9 +52,9 @@ public class SpeciesHandler {
             }
             if(!tax.equals("")){
                species_name = getSpeciesByID(Integer.parseInt(tax));
-               // specie_name = specie_name.replaceAll(" ", "_");
             }
         }
+        return species_name;
     }
 
 
@@ -96,14 +103,7 @@ public class SpeciesHandler {
             System.out.println("'Curl' is not installed. If you would like to use this option, please install it.");
         }
 
-
-
         return species;
-    }
-
-
-    public String getSpecies_name() {
-        return species_name;
     }
 
     public void setLOG(Logger LOG) {

@@ -26,8 +26,6 @@ public class StartCalculations {
     private boolean calculationsDone = false;
     private Logger LOG;
     private List<String> specieslist = null;
-    private List<String> species_name_list;
-    private SpeciesListParser speciesListParser;
     private boolean use_only_merged_reads;
     private double height_damageplot; //= 0.4; // set yaxis height to 40% as default
     private int threshold;
@@ -51,6 +49,7 @@ public class StartCalculations {
     private IndexedFastaSequenceFile fastaSequenceFile;
     private FastACacher cache;
     private HashMap<String, List<JFreeChart>> species_output_summary;
+    private HashMap<String, Integer> number_of_used_reads_summary;
 
 
     // plot settings
@@ -71,6 +70,11 @@ public class StartCalculations {
         VERSION = version;
     }
 
+    /**
+     * Start all calculations.
+     * @param c
+     * @throws Exception
+     */
     public void start(Communicator c) throws Exception {
 
         currtime_prior_execution = System.currentTimeMillis();
@@ -89,8 +93,6 @@ public class StartCalculations {
         use_only_merged_reads = c.isUse_merged_and_mapped_reads();
         use_all_reads = c.isUse_all_reads();
         ssLibProtocolUsed = c.isSsLibsProtocolUsed();
-        speciesListParser=null;
-        species_name_list=null;
 
         color_DP_C_to_T = c.getColor_DP_C_to_T();
         color_DP_G_to_A = c.getColor_DP_G_to_A();
@@ -113,13 +115,14 @@ public class StartCalculations {
 
         if(specieslist_filepath != null){
             species_output_summary = new HashMap<>();
+            number_of_used_reads_summary = new HashMap<>();
 
             speciesHandler = new SpeciesHandler();
             /*
                 parse species references (-sf) and run DP for each reference in the file
              */
             specieslist = new ArrayList<>();
-            specieslist.addAll(speciesListParser.getList());
+            specieslist.addAll(speciesListParser.getSpeciesList());
 
 
             for (int i = 0; i < specieslist.size(); i++) {
@@ -143,11 +146,6 @@ public class StartCalculations {
                 initLogger(output_folder + "/DamageProfiler_" + ref + "_" + speciesname +".log",
                         "Calculate damage profile for species " + ref + " (" + speciesname + ")");
 
-                // decompress input file if necessary
-                if (input.endsWith(".gz")) {
-                    Unzip unzip = new Unzip(LOG);
-                    input = unzip.decompress(input);
-                }
 
                 // create new output folder
                 // log settings
@@ -180,6 +178,10 @@ public class StartCalculations {
                                 outputGenerator.getEditDist_chart(),
                                 outputGenerator.getLength_chart_all())
                 );
+
+                number_of_used_reads_summary.put(
+                        spec_no_space + " (" + speciesname + ")",
+                        damageProfiler.getNumberOfUsedReads());
             }
 
             // generate metagenomic output summary
@@ -188,7 +190,7 @@ public class StartCalculations {
             String filename = splitted[splitted.length-1];
             metagenomicOutput.generate(outfolder + File.separator +
                     inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1],
-                    species_output_summary, filename);
+                    species_output_summary, filename, number_of_used_reads_summary);
 
 
         } else if(species_ref_identifier != null){
@@ -216,11 +218,6 @@ public class StartCalculations {
             // init Logger
             initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
 
-            // decompress input file if necessary
-            if (input.endsWith(".gz")) {
-                Unzip unzip = new Unzip(LOG);
-                input = unzip.decompress(input);
-            }
 
             // log settings
             LOG.info("Analysis of file (-i):" + input + "\n"
@@ -254,6 +251,7 @@ public class StartCalculations {
              */
             String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
 
+            // create output folder based on file name
             createOutputFolder(
                     outfolder,
                     inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
@@ -263,13 +261,6 @@ public class StartCalculations {
             // init Logger
             initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
 
-            // decompress input file if necessary
-            if (input.endsWith(".gz")) {
-                Unzip unzip = new Unzip(LOG);
-                input = unzip.decompress(input);
-            }
-
-            // create new output folder
 
             // log settings
             LOG.info("Analysis of file (-i):" + input + "\n"
@@ -301,18 +292,6 @@ public class StartCalculations {
 
         calculationsDone=true;
 
-        // print runtime
-        long currtime_post_execution = System.currentTimeMillis();
-        long diff = currtime_post_execution - currtime_prior_execution;
-        long runtime_s = diff / 1000;
-        if(runtime_s > 60) {
-            long minutes = runtime_s / 60;
-            long seconds = runtime_s % 60;
-            LOG.info("Runtime of Module was: " + minutes + " minutes, and " + seconds + " seconds.\n\n");
-        } else {
-            LOG.info("Runtime of Module was: " + runtime_s + " seconds.\n\n");
-        }
-
     }
 
     private void initPlot() {
@@ -335,6 +314,12 @@ public class StartCalculations {
 
     }
 
+    /**
+     * Generate output files.
+     *
+     * @throws IOException
+     * @throws DocumentException
+     */
     private void generateOutput() throws IOException, DocumentException {
 
         if (damageProfiler.getNumberOfUsedReads() != 0) {

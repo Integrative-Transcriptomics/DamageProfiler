@@ -25,6 +25,13 @@ public class DOMParser {
         this.LOG = LOG;
 
     }
+
+    /**
+     * Parse file from NCBI with species information to filter species name information.
+     *
+     * @param filepathXML
+     * @return
+     */
     public String parse(String filepathXML) {
 
         String species = null;
