@@ -16,6 +16,8 @@ import javafx.scene.paint.Color;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.title.LegendTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
@@ -483,6 +485,9 @@ public class OutputGenerator {
         length_chart_separated = hist_separated.createChart(dataset_separated, "",
                 "Read length", "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, true);
 
+        LegendTitle lt = length_chart_separated.getLegend();
+        lt.setPosition(RectangleEdge.RIGHT);
+
         createPdf("/Length_plot.pdf", new JFreeChart[]{length_chart_all, length_chart_separated}, file);
         createSVG("/Length_plot_combined_data.svg", length_chart_all);
         createSVG("/Length_plot_forward_reverse_separated.svg", length_chart_separated);
@@ -506,8 +511,8 @@ public class OutputGenerator {
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
         editDist_chart = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",
                 x_axis_min_id_histo, x_axis_max_id_histo, false);
-        createPdf("/identity_histogram.pdf", new JFreeChart[]{editDist_chart}, file);
-        createSVG("/identity_histogram.svg", editDist_chart);
+        createPdf("/edit_distance.pdf", new JFreeChart[]{editDist_chart}, file);
+        createSVG("/edit_distance.svg", editDist_chart);
 
     }
 
