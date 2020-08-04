@@ -85,6 +85,6 @@ Maximal value on y axis (Default: flexible, adapts to the calculated damage).
 
 
 
-Running the jar file without any parameter starts a GUI to configure the run.
+Running the jar file without any parameter starts a org.damageprofiler.GUI to configure the run.
 
 Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
