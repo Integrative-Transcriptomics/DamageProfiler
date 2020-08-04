@@ -7,8 +7,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 
@@ -32,22 +31,21 @@ public class Histogram {
         data_collected = new ArrayList<>();
     }
 
-    public void addData(List<Integer> data){
+    public void addData(List<Double> data){
         double[] d = new double[data.size()];
         for(int i = 0; i < data.size(); i++){
             d[i] = data.get(i);
         }
-
         data_collected.add(d);
     }
 
 
-    public HistogramDataset createDataset(String[] title, int max){
+    public HistogramDataset createDataset(String[] title, double max){
 
         HistogramDataset dataset = new HistogramDataset();
         dataset.setType(HistogramType.FREQUENCY);
 
-        int bin = max;
+        int bin = (int) max;
 
         for(int i = 0; i < data_collected.size(); i++){
             dataset.addSeries(title[i], data_collected.get(i), bin);
@@ -62,7 +60,7 @@ public class Histogram {
                                   double xmin, double xmax, boolean legend){
 
         JFreeChart chart = ChartFactory.createHistogram(
-                title,//"Histogram read length",
+                title,//"Histogram edit distance",
                 xlab, //"Read length",
                 ylab, // "Occurrences",
                 dataset,

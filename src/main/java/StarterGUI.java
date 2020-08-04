@@ -1,5 +1,6 @@
 import org.damageprofiler.controller.DamageProfilerMainController;
 import org.damageprofiler.GUI.DamageProfilerMainGUI;
+import org.damageprofiler.controller.PlottingSettingController;
 import org.damageprofiler.controller.ProgressBarController;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -18,7 +19,8 @@ public class StarterGUI extends Application {
         DamageProfilerMainGUI damageProfilerMainGUI = new DamageProfilerMainGUI(VERSION, progressBarController);
         damageProfilerMainGUI.init(primaryStage);
 
-        DamageProfilerMainController damageProfilerMainController = new DamageProfilerMainController(damageProfilerMainGUI, progressBarController);
+        PlottingSettingController plottingSettingController = new PlottingSettingController();
+        new DamageProfilerMainController(damageProfilerMainGUI, progressBarController, plottingSettingController);
 
     }
 

@@ -29,7 +29,7 @@ public class  DamageProfiler {
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
     private SpeciesHandler speciesHandler;
-    private List<Integer> editDistances;
+    private List<Double> editDistances;
 
     /**
      * constructor
@@ -233,7 +233,7 @@ public class  DamageProfiler {
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
 
         // calculate distance between record and reference
-        int hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
+        double hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
 
         double id = (double)(record_aligned.length()-hamming) / (double)record_aligned.length();
         this.identity.add(id);
@@ -254,15 +254,15 @@ public class  DamageProfiler {
     public Frequencies getFrequencies() {
         return frequencies;
     }
-    public HashMap<Integer, Integer> getLength_distribution_map_forward() {return lengthDistribution.getLength_distribution_map_forward(); }
-    public HashMap<Integer, Integer> getLength_distribution_map_reverse() {return lengthDistribution.getLength_distribution_map_reverse(); }
-    public List<Integer> getLength_forward() {
+    public HashMap<Double, Integer> getLength_distribution_map_forward() {return lengthDistribution.getLength_distribution_map_forward(); }
+    public HashMap<Double, Integer> getLength_distribution_map_reverse() {return lengthDistribution.getLength_distribution_map_reverse(); }
+    public List<Double> getLength_forward() {
         return lengthDistribution.getLength_forward();
     }
-    public List<Integer> getLength_all() {
+    public List<Double> getLength_all() {
         return lengthDistribution.getLength_all();
     }
-    public List<Integer> getLength_reverse() { return lengthDistribution.getLength_reverse(); }
+    public List<Double> getLength_reverse() { return lengthDistribution.getLength_reverse(); }
     public int getNumberOfUsedReads() {
         return numberOfUsedReads;
     }
@@ -291,7 +291,7 @@ public class  DamageProfiler {
     public int getNumberOfRecords() {
         return numberOfRecords;
     }
-    public List<Integer> getEditDistances() {
+    public List<Double> getEditDistances() {
         return editDistances;
     }
 }

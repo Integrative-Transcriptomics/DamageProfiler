@@ -114,9 +114,10 @@ public class LinePlot {
      * Creates a chart.
      *
      * @param dataset  the data for the chart.
+     * @param ssLibProtocolUsed
      * @return a chart.
      */
-    public JFreeChart createChart(String title, final XYDataset dataset, double yMax, int threshold) {
+    public JFreeChart createChart(String title, final XYDataset dataset, double yMax, int threshold, boolean ssLibProtocolUsed) {
 
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -160,7 +161,8 @@ public class LinePlot {
         legendItemsNew.get(4).setLinePaint(this.awtColor_DP_other);
 
         renderer.setSeriesStroke(0, new BasicStroke(3.0f));
-        renderer.setSeriesStroke(1, new BasicStroke(3.0f));
+        if(!ssLibProtocolUsed)
+            renderer.setSeriesStroke(1, new BasicStroke(3.0f));
         renderer.setAutoPopulateSeriesStroke(false);
 
         plot.setFixedLegendItems(legendItemsNew);

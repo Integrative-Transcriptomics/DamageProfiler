@@ -100,7 +100,6 @@ public class StartCalculations {
         color_DP_deletions = c.getColor_DP_deletions();
         color_DP_other = c.getColor_DP_other();
 
-
         this.inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
         this.communicator = c;
 

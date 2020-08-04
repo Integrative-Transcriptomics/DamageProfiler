@@ -60,7 +60,7 @@ public class UserOptionsParser {
 
         options.addOption(Option.builder("s")
                 .argName("SPECIES")
-                .desc("Reference sequence name (RNAME flag of SAM record). For more details see Documentation.")
+                .desc("Reference sequence name (Reference NAME flag of SAM record). For more details see Documentation.")
                 .hasArg()
                 .build());
 
@@ -125,34 +125,6 @@ public class UserOptionsParser {
                 .hasArg()
                 .build());
 
-        // Identity plot
-
-        options.addOption(Option.builder("xaxis_id_min")
-                .argName("MIN_VALUE")
-                .desc("Identity Distribution: Minimal value x-axis.")
-                .hasArg()
-                .build());
-
-        options.addOption(Option.builder("xaxis_id_max")
-                .argName("MAX_VALUE")
-                .desc("Identity Distribution: Maximal value x-axis.")
-                .hasArg()
-                .build());
-
-        // Length plot
-
-        options.addOption(Option.builder("xaxis_length_min")
-                .argName("MIN_VALUE")
-                .desc("Length Distribution: Minimal value x-axis.")
-                .hasArg()
-                .build());
-
-        options.addOption(Option.builder("xaxis_length_max")
-                .argName("MAX_VALUE")
-                .desc("Length Distribution: Maximal value x-axis.")
-                .hasArg()
-                .build());
-
 
         // others
 
@@ -162,7 +134,7 @@ public class UserOptionsParser {
                         "it will be skipped. Default: false ")
                 .build());
 
-        options.addOption(Option.builder("ssLib")
+        options.addOption(Option.builder("sslib")
                 .desc("Single-stranded library protocol was used. Default: false")
                 .build());
 
@@ -234,24 +206,6 @@ public class UserOptionsParser {
 
             if(cmd.hasOption("yaxis_dp_max")) {
                 communicator.setyAxis_damageplot(Double.parseDouble(cmd.getOptionValue("yaxis_dp_max")));
-            }
-
-            if(cmd.hasOption("xaxis_histo_id_min")) {
-                communicator.setXaxis_histo_id_min(Double.parseDouble(cmd.getOptionValue("xaxis_histo_id_min")));
-            }
-
-
-            if(cmd.hasOption("xaxis_histo_id_max")) {
-                communicator.setXaxis_histo_id_max(Double.parseDouble(cmd.getOptionValue("xaxis_histo_id_max")));
-            }
-
-            if(cmd.hasOption("xaxis_histo_length_min")) {
-                communicator.setXaxis_histo_length_min(Double.parseDouble(cmd.getOptionValue("xaxis_histo_length_min")));
-            }
-
-
-            if(cmd.hasOption("xaxis_histo_length_max")) {
-                communicator.setXaxis_histo_length_max(Double.parseDouble(cmd.getOptionValue("xaxis_histo_length_max")));
             }
 
 

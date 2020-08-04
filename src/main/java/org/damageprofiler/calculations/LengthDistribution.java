@@ -13,12 +13,12 @@ import java.util.List;
 public class LengthDistribution {
 
     private final Logger LOG;
-    private HashMap<Integer, Integer> length_distribution_map_forward;
-    private HashMap<Integer, Integer> length_distribution_map_reverse;
+    private HashMap<Double, Integer> length_distribution_map_forward;
+    private HashMap<Double, Integer> length_distribution_map_reverse;
     private HashMap<Double, Double> length_distribution_map;
-    private List<Integer> length_forward;
-    private List<Integer> length_reverse;
-    private List<Integer> length_all;
+    private List<Double> length_forward;
+    private List<Double> length_reverse;
+    private List<Double> length_all;
 
 
     public LengthDistribution(Logger LOG){
@@ -47,7 +47,7 @@ public class LengthDistribution {
     public void fillDistributionTable(SAMRecord record, String record_aligned){
 
         // int record_length = record.getReadLength();
-        int record_length = record_aligned.length();
+        double record_length = record_aligned.length();
         length_all.add(record_length);
 
         // check if record is on forward or reverse strand
@@ -86,23 +86,23 @@ public class LengthDistribution {
             Getter
      */
 
-    public HashMap<Integer, Integer> getLength_distribution_map_forward() {
+    public HashMap<Double, Integer> getLength_distribution_map_forward() {
         return length_distribution_map_forward;
     }
 
-    public HashMap<Integer, Integer> getLength_distribution_map_reverse() {
+    public HashMap<Double, Integer> getLength_distribution_map_reverse() {
         return length_distribution_map_reverse;
     }
 
-    public List<Integer> getLength_forward() {
+    public List<Double> getLength_forward() {
         return length_forward;
     }
 
-    public List<Integer> getLength_reverse() {
+    public List<Double> getLength_reverse() {
         return length_reverse;
     }
 
-    public List<Integer> getLength_all() {
+    public List<Double> getLength_all() {
         return length_all;
     }
 

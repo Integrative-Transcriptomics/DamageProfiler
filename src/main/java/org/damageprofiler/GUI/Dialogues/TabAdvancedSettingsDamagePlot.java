@@ -20,6 +20,11 @@ public class TabAdvancedSettingsDamagePlot {
     private Button btn_reset;
     private GridPane gridpane;
 
+    /**
+     * Tab pane to configure the visualization of the damage profile
+     *  (misincorporation frequencies)
+     * @param title
+     */
     public TabAdvancedSettingsDamagePlot(String title){
 
         this.tab = new Tab(title);
@@ -31,21 +36,20 @@ public class TabAdvancedSettingsDamagePlot {
                 generateColorPicker(Color.GREEN),
                 generateColorPicker(Color.GREY));
 
-        addListener();
     }
 
-    private void addListener() {
-        this.btn_reset.setOnAction(e ->{
-            gridpane.getChildren().clear();
-            fill(   generateColorPicker(Color.RED),
-                    generateColorPicker(Color.BLUE),
-                    generateColorPicker(Color.valueOf("FF00FF")),
-                    generateColorPicker(Color.GREEN),
-                    generateColorPicker(Color.GREY));
-        });
-    }
 
-    private void fill(ColorPicker c_t, ColorPicker g_a, ColorPicker insertions, ColorPicker deletions, ColorPicker others) {
+
+    /**
+     * Fill grid pane with all components
+     *
+     * @param c_t
+     * @param g_a
+     * @param insertions
+     * @param deletions
+     * @param others
+     */
+    public void fill(ColorPicker c_t, ColorPicker g_a, ColorPicker insertions, ColorPicker deletions, ColorPicker others) {
         gridpane = new GridPane();
         gridpane.setAlignment(Pos.BOTTOM_LEFT);
         gridpane.setHgap(7);
@@ -80,11 +84,20 @@ public class TabAdvancedSettingsDamagePlot {
     }
 
 
-    private ColorPicker generateColorPicker(Color color) {
+    /**
+     * Generate and return color picker
+     *
+     * @param color
+     * @return
+     */
+    public ColorPicker generateColorPicker(Color color) {
         ColorPickerPane colorPickerPane = new ColorPickerPane(color);
         return colorPickerPane.getPicker();
     }
 
+    /*
+            Getter
+     */
     public Tab getTab() {
         return tab;
     }
@@ -109,4 +122,22 @@ public class TabAdvancedSettingsDamagePlot {
         return colorPicker_others;
     }
 
+    public Button getBtn_reset() {
+        return btn_reset;
+    }
+
+    public GridPane getGridpane() {
+        return gridpane;
+    }
+
+    public void reset() {
+
+        this.gridpane.getChildren().clear();
+        fill(   generateColorPicker(Color.RED),
+                generateColorPicker(Color.BLUE),
+                generateColorPicker(Color.valueOf("FF00FF")),
+                generateColorPicker(Color.GREEN),
+                generateColorPicker(Color.GREY));
+
+    }
 }

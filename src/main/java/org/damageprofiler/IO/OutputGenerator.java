@@ -52,8 +52,8 @@ public class OutputGenerator {
     private Frequencies frequencies;
     private DamageProfiler damageProfiler;
     private int numberOfRecords;
-    private int max_length;
-    private int min_length;
+    private double max_length;
+    private double min_length;
     private String species;
     private int threshold;
     private int length;
@@ -151,8 +151,8 @@ public class OutputGenerator {
     public void writeLengthDistribution() throws IOException{
 
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
-        HashMap<Integer, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
-        HashMap<Integer, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
+        HashMap<Double, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
+        HashMap<Double, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
 
         lgdist.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
         lgdist.write("# using mapped file " + input + "\n");
@@ -162,17 +162,17 @@ public class OutputGenerator {
 
         // fill file
 
-        List<Integer> key_list = new ArrayList<>();
+        List<Double> key_list = new ArrayList<>();
         key_list.addAll(map_forward.keySet());
         Collections.sort(key_list);
 
-        HashMap<Integer,Integer> yaml_dump_fw = new HashMap<>();
+        HashMap<Double,Integer> yaml_dump_fw = new HashMap<>();
 
         if(key_list.size()>0){
             min_length = key_list.get(0);
             max_length = key_list.get(key_list.size()-1);
 
-            for(int key : key_list){
+            for(double key : key_list){
                 lgdist.write("+\t" + key + "\t" + map_forward.get(key) + "\n");
                 yaml_dump_fw.put(key, map_forward.get(key));
             }
@@ -183,7 +183,7 @@ public class OutputGenerator {
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
 
-        HashMap<Integer,Integer> yaml_dump_rv = new HashMap<>();
+        HashMap<Double,Integer> yaml_dump_rv = new HashMap<>();
 
 
         if(key_list.size()>0){
@@ -194,7 +194,7 @@ public class OutputGenerator {
                 max_length = key_list.get(key_list.size()-1);
 
             }
-            for(int key : key_list){
+            for(double key : key_list){
                 lgdist.write("-\t" + key + "\t" + map_reverse.get(key) + "\n");
                 yaml_dump_rv.put(key, map_reverse.get(key));
             }
@@ -265,29 +265,27 @@ public class OutputGenerator {
         // write header
         freq_file_sample.write("End\tStd\tPos\tA\tC\tG\tT\tTotal\n");
 
-        if(!ssLibProtocolUsed){
-            // fill '3p +'
-            for(int i = 0; i < this.length; i++){
-                double sum=frequencies.getCount_total_forward_3()[i];
+        // fill '3p +'
+        for(int i = 0; i < this.length; i++){
+            double sum=frequencies.getCount_total_forward_3()[i];
 
-                freq_file_sample.write("3p\t+\t"+(i+1)+"\t"
-                        +(int)frequencies.getCountA_forward_3()[i]+"\t"+(int)frequencies.getCountC_forward_3()[i]+"\t"
-                        +(int)frequencies.getCountG_forward_3()[i]+"\t"+(int)frequencies.getCountT_forward_3()[i]+"\t"
-                        +(int)sum+"\n"
-                );
+            freq_file_sample.write("3p\t+\t"+(i+1)+"\t"
+                    +(int)frequencies.getCountA_forward_3()[i]+"\t"+(int)frequencies.getCountC_forward_3()[i]+"\t"
+                    +(int)frequencies.getCountG_forward_3()[i]+"\t"+(int)frequencies.getCountT_forward_3()[i]+"\t"
+                    +(int)sum+"\n"
+            );
 
-            }
+        }
 
-            // fill '3p -'
-            for(int i = 0; i < this.length; i++){
-                double sum = frequencies.getCount_total_reverse_3()[i];
+        // fill '3p -'
+        for(int i = 0; i < this.length; i++){
+            double sum = frequencies.getCount_total_reverse_3()[i];
 
-                freq_file_sample.write("3p\t-\t"+(i+1)+"\t"
-                        +(int)frequencies.getCountA_reverse_3()[i]+"\t"+(int)frequencies.getCountC_reverse_3()[i]+"\t"
-                        +(int)frequencies.getCountG_reverse_3()[i]+"\t"+(int)frequencies.getCountT_reverse_3()[i]+"\t"
-                        +(int)sum+"\n"
-                );
-            }
+            freq_file_sample.write("3p\t-\t"+(i+1)+"\t"
+                    +(int)frequencies.getCountA_reverse_3()[i]+"\t"+(int)frequencies.getCountC_reverse_3()[i]+"\t"
+                    +(int)frequencies.getCountG_reverse_3()[i]+"\t"+(int)frequencies.getCountT_reverse_3()[i]+"\t"
+                    +(int)sum+"\n"
+            );
         }
 
 
@@ -344,58 +342,57 @@ public class OutputGenerator {
         // write header
         freq_file_ref.write("Chr\tEnd\tStd\tPos\tA\tC\tG\tT\tTotal\tG>A\tC>T\tA>G\tT>C\tA>C\tA>T\tC>G\tC>A\tT>G\tT>A\tG>C\tG>T\tA>-\tT>-\tC>-\tG>-\t->A\t->T\t->C\t->G\tS\n");
 
-        if(!ssLibProtocolUsed){
-            // fill '3p +'
-            for(int i = 0; i < this.length; i++){
-                double sum=frequencies.getCountA_ref_forward_3()[i]+frequencies.getCountC_ref_forward_3()[i]+
-                        frequencies.getCountG_ref_forward_3()[i]+frequencies.getCountT_ref_forward_3()[i];
+        // fill '3p +'
+        for(int i = 0; i < this.length; i++){
+            double sum=frequencies.getCountA_ref_forward_3()[i]+frequencies.getCountC_ref_forward_3()[i]+
+                    frequencies.getCountG_ref_forward_3()[i]+frequencies.getCountT_ref_forward_3()[i];
 
-                if(this.numberOfUsedReads>0){
-                    freq_file_ref.write("fwd\t3p\t+\t"+(i+1)+"\t"
-                            +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
-                            +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
-                            +sum+"\t"
-                            +frequencies.getCount_forward_G_A_3()[i]+"\t"+frequencies.getCount_forward_C_T_3()[i]+"\t"
-                            +frequencies.getCount_forward_A_G_3()[i]+"\t"+frequencies.getCount_forward_T_C_3()[i]+"\t"
-                            +frequencies.getCount_forward_A_C_3()[i]+"\t"+frequencies.getCount_forward_A_T_3()[i]+"\t"
-                            +frequencies.getCount_forward_C_G_3()[i]+"\t"+frequencies.getCount_forward_C_A_3()[i]+"\t"
-                            +frequencies.getCount_forward_T_G_3()[i]+"\t"+frequencies.getCount_forward_T_A_3()[i]+"\t"
-                            +frequencies.getCount_forward_G_C_3()[i]+"\t"+frequencies.getCount_forward_G_T_3()[i]+"\t"
-                            +frequencies.getCount_forward_A_0_3()[i]+"\t"+frequencies.getCount_forward_T_0_3()[i]+"\t"
-                            +frequencies.getCount_forward_C_0_3()[i]+"\t"+frequencies.getCount_forward_G_0_3()[i]+"\t"
-                            +frequencies.getCount_forward_0_A_3()[i]+"\t"+frequencies.getCount_forward_0_T_3()[i]+"\t"
-                            +frequencies.getCount_forward_0_C_3()[i]+"\t"+frequencies.getCount_forward_0_G_3()[i]+"\t"
-                            +frequencies.getCountS_forward_3()[i]+"\n"
-                    );
-                }
+            if(this.numberOfUsedReads>0){
+                freq_file_ref.write("fwd\t3p\t+\t"+(i+1)+"\t"
+                        +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
+                        +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
+                        +sum+"\t"
+                        +frequencies.getCount_forward_G_A_3()[i]+"\t"+frequencies.getCount_forward_C_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_A_G_3()[i]+"\t"+frequencies.getCount_forward_T_C_3()[i]+"\t"
+                        +frequencies.getCount_forward_A_C_3()[i]+"\t"+frequencies.getCount_forward_A_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_C_G_3()[i]+"\t"+frequencies.getCount_forward_C_A_3()[i]+"\t"
+                        +frequencies.getCount_forward_T_G_3()[i]+"\t"+frequencies.getCount_forward_T_A_3()[i]+"\t"
+                        +frequencies.getCount_forward_G_C_3()[i]+"\t"+frequencies.getCount_forward_G_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_A_0_3()[i]+"\t"+frequencies.getCount_forward_T_0_3()[i]+"\t"
+                        +frequencies.getCount_forward_C_0_3()[i]+"\t"+frequencies.getCount_forward_G_0_3()[i]+"\t"
+                        +frequencies.getCount_forward_0_A_3()[i]+"\t"+frequencies.getCount_forward_0_T_3()[i]+"\t"
+                        +frequencies.getCount_forward_0_C_3()[i]+"\t"+frequencies.getCount_forward_0_G_3()[i]+"\t"
+                        +frequencies.getCountS_forward_3()[i]+"\n"
+                );
             }
-
-            // fill '3p -'
-            for(int i = 0; i < this.length; i++){
-                double sum = frequencies.getCountA_ref_reverse_3()[i]+frequencies.getCountC_ref_reverse_3()[i]+
-                        frequencies.getCountG_ref_reverse_3()[i]+frequencies.getCountT_ref_reverse_3()[i];
-
-                if(this.numberOfUsedReads>0){
-                    freq_file_ref.write("rev\t3p\t-\t"+(i+1)+"\t"
-                            +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
-                            +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
-                            +sum+"\t"
-                            +frequencies.getCount_reverse_G_A_3()[i]+"\t"+frequencies.getCount_reverse_C_T_3()[i]+"\t"
-                            +frequencies.getCount_reverse_A_G_3()[i]+"\t"+frequencies.getCount_reverse_T_C_3()[i]+"\t"
-                            +frequencies.getCount_reverse_A_C_3()[i]+"\t"+frequencies.getCount_reverse_A_T_3()[i]+"\t"
-                            +frequencies.getCount_reverse_C_G_3()[i]+"\t"+frequencies.getCount_reverse_C_A_3()[i]+"\t"
-                            +frequencies.getCount_reverse_T_G_3()[i]+"\t"+frequencies.getCount_reverse_T_A_3()[i]+"\t"
-                            +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]
-                            +frequencies.getCount_reverse_A_0_3()[i]+"\t"+frequencies.getCount_reverse_T_0_3()[i]+"\t"
-                            +frequencies.getCount_reverse_C_0_3()[i]+"\t"+frequencies.getCount_reverse_G_0_3()[i]+"\t"
-                            +frequencies.getCount_reverse_0_A_3()[i]+"\t"+frequencies.getCount_reverse_0_T_3()[i]+"\t"
-                            +frequencies.getCount_reverse_0_C_3()[i]+"\t"+frequencies.getCount_reverse_0_G_3()[i]+"\t"
-                            +frequencies.getCountS_reverse_3()[i]+"\n"
-                    );
-                }
-            }
-
         }
+
+        // fill '3p -'
+        for(int i = 0; i < this.length; i++){
+            double sum = frequencies.getCountA_ref_reverse_3()[i]+frequencies.getCountC_ref_reverse_3()[i]+
+                    frequencies.getCountG_ref_reverse_3()[i]+frequencies.getCountT_ref_reverse_3()[i];
+
+            if(this.numberOfUsedReads>0){
+                freq_file_ref.write("rev\t3p\t-\t"+(i+1)+"\t"
+                        +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
+                        +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
+                        +sum+"\t"
+                        +frequencies.getCount_reverse_G_A_3()[i]+"\t"+frequencies.getCount_reverse_C_T_3()[i]+"\t"
+                        +frequencies.getCount_reverse_A_G_3()[i]+"\t"+frequencies.getCount_reverse_T_C_3()[i]+"\t"
+                        +frequencies.getCount_reverse_A_C_3()[i]+"\t"+frequencies.getCount_reverse_A_T_3()[i]+"\t"
+                        +frequencies.getCount_reverse_C_G_3()[i]+"\t"+frequencies.getCount_reverse_C_A_3()[i]+"\t"
+                        +frequencies.getCount_reverse_T_G_3()[i]+"\t"+frequencies.getCount_reverse_T_A_3()[i]+"\t"
+                        +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]
+                        +frequencies.getCount_reverse_A_0_3()[i]+"\t"+frequencies.getCount_reverse_T_0_3()[i]+"\t"
+                        +frequencies.getCount_reverse_C_0_3()[i]+"\t"+frequencies.getCount_reverse_G_0_3()[i]+"\t"
+                        +frequencies.getCount_reverse_0_A_3()[i]+"\t"+frequencies.getCount_reverse_0_T_3()[i]+"\t"
+                        +frequencies.getCount_reverse_0_C_3()[i]+"\t"+frequencies.getCount_reverse_0_G_3()[i]+"\t"
+                        +frequencies.getCountS_reverse_3()[i]+"\n"
+                );
+            }
+        }
+
+
 
         // fill '5p +'
         for(int i = 0; i < this.length; i++){
@@ -465,7 +462,7 @@ public class OutputGenerator {
      * @throws IOException
      * @throws DocumentException
      */
-    public void plotLengthHistogram(List<Integer> length_all, List<Integer> length_forward, List<Integer> length_reverse,
+    public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse,
                                     String file) throws  IOException, DocumentException {
 
         Histogram hist_all = new Histogram(LOG);
@@ -504,13 +501,14 @@ public class OutputGenerator {
      * @throws DocumentException
      * @throws IOException
      */
-    public void plotEditDistanceHistogram(List<Integer> distances, String title, String file) throws DocumentException, IOException{
+    public void plotEditDistanceHistogram(List<Double> distances, String title, String file) throws DocumentException, IOException{
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(distances);
 
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
         editDist_chart = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",
                 x_axis_min_id_histo, x_axis_max_id_histo, false);
+
         createPdf("/edit_distance.pdf", new JFreeChart[]{editDist_chart}, file);
         createSVG("/edit_distance.svg", editDist_chart);
 
@@ -538,16 +536,15 @@ public class OutputGenerator {
         json_map.put("dmg_3p",getSubArray(gToA_reverse,this.threshold));
 
 
-        if(!ssLibProtocolUsed){
-            writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
-            writer3Prime.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
-            writer3Prime.write("# using mapped file " + input + "\n");
-            writer3Prime.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
-            writeDamagePattern("pos\t3pG>A\n", getSubArray(gToA_reverse, this.threshold), writer3Prime);
-            writer3Prime.close();
-        }
+        writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
+        writer3Prime.write("# table produced by DamageProfiler\n");
+        writer3Prime.write("# using mapped file " + input + "\n");
+        writer3Prime.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
+        writeDamagePattern("pos\t3pG>A\n", getSubArray(gToA_reverse, this.threshold), writer3Prime);
+        writer3Prime.close();
 
-        writer5Prime.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
+
+        writer5Prime.write("# table produced by DamageProfiler\n");
         writer5Prime.write("# using mapped file " + input + "\n");
         writer5Prime.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
         writeDamagePattern("pos\t5pC>T\n", getSubArray(cToT, this.threshold), writer5Prime);
@@ -571,20 +568,20 @@ public class OutputGenerator {
     }
 
     public void computeSummaryMetrics(){
-        HashMap<Integer,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurrences
-        HashMap<Integer, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
+        HashMap<Double,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurrences
+        HashMap<Double, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
 
         //Create ArrayList<Integer> of read lengths
         DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
 
-        for (int key : forwardMap.keySet()){
+        for (double key : forwardMap.keySet()){
             int occurences = forwardMap.get(key);
             for (int i = 0; i <= occurences; i++) {
                 descriptiveStatistics.addValue(key);
             }
         }
 
-        for (int key : reverseMap.keySet()){
+        for (double key : reverseMap.keySet()){
             int occurences = reverseMap.get(key);
             for (int i = 0; i <= occurences; i++) {
                 descriptiveStatistics.addValue(key);
@@ -678,74 +675,73 @@ public class OutputGenerator {
                         3 prime end
          */
 
-        if(!ssLibProtocolUsed){
-            BufferedWriter writer3PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/3p_freq_misincorporations.txt"));
-            writer3PrimeAll.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
-            writer3PrimeAll.write("# using mapped file " + input + "\n");
-            writer3PrimeAll.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
+        BufferedWriter writer3PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/3p_freq_misincorporations.txt"));
+        writer3PrimeAll.write("# table produced by DamageProfiler\n");
+        writer3PrimeAll.write("# using mapped file " + input + "\n");
+        writer3PrimeAll.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
 
-            double[] three_A_to_C_reverse = getSubArray(frequencies.getCount_A_C_3_norm(),threshold);
-            double[] three_A_to_G_reverse = getSubArray(frequencies.getCount_A_G_3_norm(),threshold);
-            double[] three_A_to_T_reverse = getSubArray(frequencies.getCount_A_T_3_norm(),threshold);
+        double[] three_A_to_C_reverse = getSubArray(frequencies.getCount_A_C_3_norm(),threshold);
+        double[] three_A_to_G_reverse = getSubArray(frequencies.getCount_A_G_3_norm(),threshold);
+        double[] three_A_to_T_reverse = getSubArray(frequencies.getCount_A_T_3_norm(),threshold);
 
-            double[] three_C_to_A_reverse = getSubArray(frequencies.getCount_C_A_3_norm(), threshold);
-            double[] three_C_to_G_reverse = getSubArray(frequencies.getCount_C_G_3_norm(), threshold);
-            double[] three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
+        double[] three_C_to_A_reverse = getSubArray(frequencies.getCount_C_A_3_norm(), threshold);
+        double[] three_C_to_G_reverse = getSubArray(frequencies.getCount_C_G_3_norm(), threshold);
+        double[] three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
 
-            double[] three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(),threshold);
-            double[] three_G_to_C_reverse = getSubArray(frequencies.getCount_G_C_3_norm(),threshold);
-            double[] three_G_to_T_reverse = getSubArray(frequencies.getCount_G_T_3_norm(),threshold);
+        double[] three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(),threshold);
+        double[] three_G_to_C_reverse = getSubArray(frequencies.getCount_G_C_3_norm(),threshold);
+        double[] three_G_to_T_reverse = getSubArray(frequencies.getCount_G_T_3_norm(),threshold);
 
-            double[] three_T_to_A_reverse = getSubArray(frequencies.getCount_T_A_3_norm(),threshold);
-            double[] three_T_to_C_reverse = getSubArray(frequencies.getCount_T_C_3_norm(),threshold);
-            double[] three_T_to_G_reverse = getSubArray(frequencies.getCount_T_G_3_norm(),threshold);
+        double[] three_T_to_A_reverse = getSubArray(frequencies.getCount_T_A_3_norm(),threshold);
+        double[] three_T_to_C_reverse = getSubArray(frequencies.getCount_T_C_3_norm(),threshold);
+        double[] three_T_to_G_reverse = getSubArray(frequencies.getCount_T_G_3_norm(),threshold);
 
 
 
-            double[] insertions_mean_3 = getMean(frequencies.getCount_0_A_3_norm(),frequencies.getCount_0_C_3_norm(),
-                    frequencies.getCount_0_G_3_norm(),frequencies.getCount_0_T_3_norm());
+        double[] insertions_mean_3 = getMean(frequencies.getCount_0_A_3_norm(),frequencies.getCount_0_C_3_norm(),
+                frequencies.getCount_0_G_3_norm(),frequencies.getCount_0_T_3_norm());
 
-            // green (deletions)
-            double[] deletions_mean_3 = getMean(frequencies.getCount_A_0_3_norm(), frequencies.getCount_C_0_3_norm() ,
-                    frequencies.getCount_G_0_3_norm(), frequencies.getCount_T_0_3_norm());
-            // write header
-            writer3PrimeAll.write("Pos\tC>T\tG>A\tA>C\tA>G\tA>T\tC>A\tC>G\tG>C\tG>T\tT>A\tT>C\tT>G\t" +
-                    "->ACGT\tACGT>-\n");
+        // green (deletions)
+        double[] deletions_mean_3 = getMean(frequencies.getCount_A_0_3_norm(), frequencies.getCount_C_0_3_norm() ,
+                frequencies.getCount_G_0_3_norm(), frequencies.getCount_T_0_3_norm());
+        // write header
+        writer3PrimeAll.write("Pos\tC>T\tG>A\tA>C\tA>G\tA>T\tC>A\tC>G\tG>C\tG>T\tT>A\tT>C\tT>G\t" +
+                "->ACGT\tACGT>-\n");
 
-            for(int pos = threshold-1; pos >=0; pos--){
+        for(int pos = threshold-1; pos >=0; pos--){
 
-                writer3PrimeAll.write(pos + "\t" +
-                        String.format("%.6f", three_C_to_T_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_G_to_A_reverse[pos])+ "\t" +
-                        String.format("%.6f", three_A_to_C_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_A_to_G_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_A_to_T_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_C_to_A_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_C_to_G_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_G_to_C_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_G_to_T_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_T_to_A_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_T_to_C_reverse[pos]) + "\t" +
-                        String.format("%.6f", three_T_to_G_reverse[pos]) + "\t" +
-                        String.format("%.6f", insertions_mean_3[pos]) + "\t" +
-                        String.format("%.6f", deletions_mean_3[pos]) + "\n");
+            writer3PrimeAll.write(pos + "\t" +
+                    String.format("%.6f", three_C_to_T_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_G_to_A_reverse[pos])+ "\t" +
+                    String.format("%.6f", three_A_to_C_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_A_to_G_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_A_to_T_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_C_to_A_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_C_to_G_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_G_to_C_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_G_to_T_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_T_to_A_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_T_to_C_reverse[pos]) + "\t" +
+                    String.format("%.6f", three_T_to_G_reverse[pos]) + "\t" +
+                    String.format("%.6f", insertions_mean_3[pos]) + "\t" +
+                    String.format("%.6f", deletions_mean_3[pos]) + "\n");
 
-            }
-
-            writer3PrimeAll.close();
         }
+
+        writer3PrimeAll.close();
+
 
 
     }
 
 
 
-    public void writeEditDistance(List<Integer> editDistances) throws IOException {
+    public void writeEditDistance(List<Double> editDistances) throws IOException {
         Collections.sort(editDistances);
-        Set<Integer> distances_sorted = new HashSet<Integer>(editDistances);
-        HashMap<Integer, Integer> edit_occurrences_map = new HashMap<>();
-        for(int dist : distances_sorted){
+        Set<Double> distances_sorted = new HashSet<Double>(editDistances);
+        HashMap<Double, Integer> edit_occurrences_map = new HashMap<>();
+        for(double dist : distances_sorted){
             int occurrences = Collections.frequency(editDistances, dist);
             edit_occurrences_map.put(dist, occurrences);
 
@@ -755,7 +751,7 @@ public class OutputGenerator {
         writerEditDistance.write("#Edit distances for file:" + input + "\n");
         writerEditDistance.write("Edit distance\tOccurrences\n");
 
-        for(int dist : edit_occurrences_map.keySet())
+        for(double dist : edit_occurrences_map.keySet())
             writerEditDistance.write(dist + "\t" + edit_occurrences_map.get(dist) + "\n");
 
         writerEditDistance.close();
@@ -806,41 +802,39 @@ public class OutputGenerator {
         LinePlot damagePlot_three=null;
 
         // create plots
-        if(!ssLibProtocolUsed){
-            damagePlot_three = new LinePlot(threshold, height, LOG, color_DP_C_to_T, color_DP_G_to_A,
-                    color_DP_insertions, color_DP_deletions, color_DP_other);
+        damagePlot_three = new LinePlot(threshold, height, LOG, color_DP_C_to_T, color_DP_G_to_A,
+                color_DP_insertions, color_DP_deletions, color_DP_other);
 
-            // three prime end
-            // red
-            damagePlot_three.addData(three_C_to_T_reverse, "3'C>T");
-            // blue
-            damagePlot_three.addData(three_G_to_A_reverse, "3'G>A");
+        // three prime end
+        // red
+        damagePlot_three.addData(three_C_to_T_reverse, "3'C>T");
+        // blue
+        damagePlot_three.addData(three_G_to_A_reverse, "3'G>A");
 
-            // purple (insertions)
-            double[] insertions_mean_3 = getMean(frequencies.getCount_0_A_3_norm(),frequencies.getCount_0_C_3_norm(),
-                    frequencies.getCount_0_G_3_norm(),frequencies.getCount_0_T_3_norm());
-            damagePlot_three.addData(insertions_mean_3, "insertions");
+        // purple (insertions)
+        double[] insertions_mean_3 = getMean(frequencies.getCount_0_A_3_norm(),frequencies.getCount_0_C_3_norm(),
+                frequencies.getCount_0_G_3_norm(),frequencies.getCount_0_T_3_norm());
+        damagePlot_three.addData(insertions_mean_3, "insertions");
 
-            // green (deletions)
-            double[] deletions_mean_3 = getMean(frequencies.getCount_A_0_3_norm(), frequencies.getCount_C_0_3_norm() ,
-                    frequencies.getCount_G_0_3_norm(), frequencies.getCount_T_0_3_norm());
-            damagePlot_three.addData(deletions_mean_3, "deletions");
-
-
-            // gray
-            damagePlot_three.addData(three_A_to_C_reverse, "others");
-            damagePlot_three.addData(three_A_to_G_reverse, "3'A>G");
-            damagePlot_three.addData(three_A_to_T_reverse, "3'A>T");
-            damagePlot_three.addData(three_C_to_A_reverse, "3'C>A");
-            damagePlot_three.addData(three_C_to_G_reverse, "3'C>G");
-            damagePlot_three.addData(three_G_to_C_reverse, "3'G>C");
-            damagePlot_three.addData(three_G_to_T_reverse, "3'G>T");
-            damagePlot_three.addData(three_T_to_A_reverse, "3'T>A");
-            damagePlot_three.addData(three_T_to_C_reverse, "3'T>C");
-            damagePlot_three.addData(three_T_to_G_reverse, "3'T>G");
+        // green (deletions)
+        double[] deletions_mean_3 = getMean(frequencies.getCount_A_0_3_norm(), frequencies.getCount_C_0_3_norm() ,
+                frequencies.getCount_G_0_3_norm(), frequencies.getCount_T_0_3_norm());
+        damagePlot_three.addData(deletions_mean_3, "deletions");
 
 
-        }
+        // gray
+        damagePlot_three.addData(three_A_to_C_reverse, "others");
+        damagePlot_three.addData(three_A_to_G_reverse, "3'A>G");
+        damagePlot_three.addData(three_A_to_T_reverse, "3'A>T");
+        damagePlot_three.addData(three_C_to_A_reverse, "3'C>A");
+        damagePlot_three.addData(three_C_to_G_reverse, "3'C>G");
+        damagePlot_three.addData(three_G_to_C_reverse, "3'G>C");
+        damagePlot_three.addData(three_G_to_T_reverse, "3'G>T");
+        damagePlot_three.addData(three_T_to_A_reverse, "3'T>A");
+        damagePlot_three.addData(three_T_to_C_reverse, "3'T>C");
+        damagePlot_three.addData(three_T_to_G_reverse, "3'T>G");
+
+
 
         LinePlot damagePlot_five  = new LinePlot(threshold, height, LOG, color_DP_C_to_T,
                 color_DP_G_to_A, color_DP_insertions, color_DP_deletions, color_DP_other);
@@ -892,25 +886,20 @@ public class OutputGenerator {
         XYDataset dataset_five = damagePlot_five.createDataset();
 
         double ymax;
-        if(!ssLibProtocolUsed){
-            // set equal y axis range
-            ymax = Math.max(damagePlot_five.getY_max(), damagePlot_three.getY_max());
-        } else {
-            ymax = damagePlot_five.getY_max();
-        }
+
+        // set equal y axis range
+        ymax = Math.max(damagePlot_five.getY_max(), damagePlot_three.getY_max());
+
 
         JFreeChart[] charts;
         // create damage plot five prime
-        chart_DP_5prime = damagePlot_five.createChart("5' end", dataset_five, ymax, threshold);
-        if(!ssLibProtocolUsed){
-            XYDataset dataset_three = damagePlot_three.createDataset();
-            // create damage plot three prime
-            chart_DP_3prime = damagePlot_three.createChart("3' end", dataset_three, ymax, threshold);
-            charts = new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};
-            createSVG("/DamagePlot_three_prime.svg", chart_DP_3prime);
-        } else {
-            charts = new JFreeChart[]{chart_DP_5prime};
-        }
+        chart_DP_5prime = damagePlot_five.createChart("5' end", dataset_five, ymax, threshold, ssLibProtocolUsed);
+        XYDataset dataset_three = damagePlot_three.createDataset();
+        // create damage plot three prime
+        chart_DP_3prime = damagePlot_three.createChart("3' end", dataset_three, ymax, threshold, ssLibProtocolUsed);
+        charts = new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};
+        createSVG("/DamagePlot_three_prime.svg", chart_DP_3prime);
+
 
         createPdf("/DamagePlot.pdf", charts, file);
         createSVG("/DamagePlot_five_prime.svg", chart_DP_5prime);
@@ -974,6 +963,12 @@ public class OutputGenerator {
     }
 
 
+    /**
+     * Save images sc svg. This is only possible when using JFreeChart library.
+     * @param filename
+     * @param chart
+     * @throws IOException
+     */
     public void createSVG(String filename, JFreeChart chart) throws IOException {
 
         int height = (int)(PageSize.A4.getWidth() * (float)0.8);
@@ -1013,25 +1008,13 @@ public class OutputGenerator {
         DecimalFormat df = (DecimalFormat)nf;
 
         String read_per;
-        if(!ssLibProtocolUsed){
-            if(this.species == null){
-                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads)";
-            } else{
-                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Species: " + this.species;
-            }
-
-        } else {
-            if(this.species == null){
-                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | ssLib protocol";
-            } else {
-                read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
-                        (double) (Math.round(ratio_used_reads * 10000)) / 100 + "% of all input reads) | Species: " + this.species + " | ssLib protocol";
-            }
+        if(this.species == null){
+            read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
+                    (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads)";
+        } else{
+            read_per = Chunk.NEWLINE + "Number of used reads: " + df.format(damageProfiler.getNumberOfUsedReads()) + " (" +
+                    (double)(Math.round(ratio_used_reads*10000))/100 + "% of all input reads) | Species: " + this.species;
         }
-
 
         Font fontbold = FontFactory.getFont("Times-Roman", 18, Font.BOLD);
         Font font = FontFactory.getFont("Times-Roman", 14);
@@ -1067,22 +1050,10 @@ public class OutputGenerator {
         document.close();
     }
 
-    public int getThreshold() {
-        return threshold;
-    }
 
-    public double[] getThree_C_to_T_reverse() {
-        return three_C_to_T_reverse;
-    }
-
-    public double[] getThree_G_to_A_reverse() {
-        return three_G_to_A_reverse;
-    }
-
-    public double getMaxYdamapePlot() {
-        return height;
-    }
-
+    /*
+            Getter
+     */
     public JFreeChart[] getDP_chart() {
         if(chart_DP_3prime!=null){
             return new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};

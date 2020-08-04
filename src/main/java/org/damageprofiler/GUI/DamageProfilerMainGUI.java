@@ -73,7 +73,7 @@ public class DamageProfilerMainGUI {
         btn_leftpane_info = new Button("Run Configuration");
         btn_help = new Button("Show help");
         btn_leftpane_lengthDist = new Button("Length Distribution");
-        btn_leftpane_identityDist = new Button("Identity Distribution");
+        btn_leftpane_identityDist = new Button("Edit distance");
 
         // style buttons
         btn_leftpane_info.setPrefHeight(30);

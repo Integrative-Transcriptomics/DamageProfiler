@@ -8,18 +8,13 @@ import org.damageprofiler.GUI.Dialogues.RuntimeEstimatorDialogue;
 import org.damageprofiler.calculations.RuntimeEstimator;
 import org.damageprofiler.calculations.StartCalculations;
 import org.damageprofiler.IO.Communicator;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
-
-import java.lang.reflect.Field;
 
 public class DamageProfilerMainController {
 
@@ -32,7 +27,7 @@ public class DamageProfilerMainController {
     private final Button btn_help;
     private final HelpDialogue help_dialogue;
     private final AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue;
-    private final Button btn_loadSpecies;
+    private final PlottingSettingController plottingSettingController;
     private RunInfoDialogue runInfoDialogue;
     private Communicator communicator;
     private Button btn_inputfile;
@@ -54,8 +49,11 @@ public class DamageProfilerMainController {
      * Constructor
      * @param damageProfilerMainGUI
      * @param progressBarController
+     * @param plottingSettingController
      */
-    public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI, ProgressBarController progressBarController){
+    public DamageProfilerMainController(DamageProfilerMainGUI damageProfilerMainGUI,
+                                        ProgressBarController progressBarController,
+                                        PlottingSettingController plottingSettingController){
 
         this.mainGUI = damageProfilerMainGUI;
         this.progressBarController = progressBarController;
@@ -70,7 +68,6 @@ public class DamageProfilerMainController {
         this.btn_run = mainGUI.getConfig_dialogue().getBtn_run();
         this.btn_estimate_runtime = mainGUI.getConfig_dialogue().getBtn_estimate_runtime();
         this.btn_speciesList = mainGUI.getConfig_dialogue().getBtn_speciesList();
-        this.btn_loadSpecies = mainGUI.getConfig_dialogue().getBtn_loadSpecies();
         this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
         this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
         this.btn_help = mainGUI.getBtn_help();
@@ -88,7 +85,9 @@ public class DamageProfilerMainController {
 
 
         // attributes of advanced plotting settings
+        this.plottingSettingController = plottingSettingController;
         this.advancedPlottingOptionsDialogue = this.mainGUI.getConfig_dialogue().getAdvancedPlottingOptionsDialogue();
+        this.plottingSettingController.addListener(this.advancedPlottingOptionsDialogue);
 
 
         runtimeInfoDialogue = new RuntimeEstimatorDialogue("Runtime information",
@@ -102,11 +101,11 @@ public class DamageProfilerMainController {
 
     private void setColorsPlotting() {
 
-        Color color_c_to_t = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_C_to_T().getValue();
-        Color color_g_to_a = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_G_to_A().getValue();
-        Color color_insertions = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_insertions().getValue();
-        Color color_deletions = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_deletions().getValue();
-        Color color_other = this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue();
+        communicator.setColor_DP_C_to_T(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_C_to_T().getValue());
+        communicator.setColor_DP_G_to_A(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_G_to_A().getValue());
+        communicator.setColor_DP_insertions(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_insertions().getValue());
+        communicator.setColor_DP_deletions(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_deletions().getValue());
+        communicator.setColor_DP_other(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue());
 
     }
 
@@ -115,18 +114,25 @@ public class DamageProfilerMainController {
         btn_inputfile.setOnAction(e -> {
 
             BamFileChooser fqfc = new BamFileChooser(communicator);
-            Tooltip tooltip_input = new Tooltip(communicator.getInput());
-            //setTooltipDelay(tooltip_input);
-            btn_inputfile.setTooltip(tooltip_input);
+            if (communicator.getInput() != null){
+                Tooltip tooltip_input = new Tooltip(communicator.getInput());
+                //setTooltipDelay(tooltip_input);
+                btn_inputfile.setTooltip(tooltip_input);
 
-            if (checkIfInputWasSelected()) {
-                btn_run.setDisable(false);
-                btn_estimate_runtime.setDisable(false);
+                String filepath = communicator.getInput().substring(0, communicator.getInput().lastIndexOf('.'));
+                String filename = filepath.split("/")[filepath.split("/").length-1];
+                mainGUI.getConfig_dialogue().setTextfield_title(filename);
 
-            } else {
-                btn_run.setDisable(true);
-                btn_estimate_runtime.setDisable(true);
+                if (checkIfInputWasSelected()) {
+                    btn_run.setDisable(false);
+                    btn_estimate_runtime.setDisable(false);
+
+                } else {
+                    btn_run.setDisable(true);
+                    btn_estimate_runtime.setDisable(true);
+                }
             }
+
 
         });
 
@@ -421,27 +427,5 @@ public class DamageProfilerMainController {
     }
 
 
-    /**
-     * This method overrides the default tooltip delay and sets it to 0 seconds. So the tooptip
-     * pops up immediately when hovering over the item.
-     *
-     * @param tooltip
-     */
-    public static void setTooltipDelay(Tooltip tooltip) {
-        try {
-            Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
-            fieldBehavior.setAccessible(true);
-            Object objBehavior = fieldBehavior.get(tooltip);
-
-            Field fieldTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-            fieldTimer.setAccessible(true);
-            Timeline objTimer = (Timeline) fieldTimer.get(objBehavior);
-
-            objTimer.getKeyFrames().clear();
-            objTimer.getKeyFrames().add(new KeyFrame(new Duration(0)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 }

@@ -92,6 +92,7 @@ public class ConfigurationDialogue {
         TitledPane pane_advanced_plotting_options = new TitledPane();
         pane_advanced_plotting_options.setText("Advanced options (Plotting)");
 
+
         advancedPlottingOptionsDialogue = new AdvancedPlottingOptionsDialogue();
         pane_advanced_plotting_options.setContent(advancedPlottingOptionsDialogue.getGridPane());
         pane_advanced_plotting_options.setExpanded(false);
@@ -195,6 +196,10 @@ public class ConfigurationDialogue {
 
     public TextField getTextfield_title() {
         return textfield_title;
+    }
+
+    public void setTextfield_title(String textfield_title) {
+        this.textfield_title.setText(textfield_title);
     }
 
     public TextField getTextfield_y_axis_height() {
