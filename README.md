@@ -27,17 +27,9 @@ It creates
 java -jar DamageProfiler-VERSION.jar <arguments> [options]
 ```
 
+Running the jar file without any parameter starts the GUI to configure the run.
 
-Arguments:
-
-
- 
- -yaxis_dp_max <MAX_VALUE>            DamagePlot: Maximal y-axis value.
-
- -only_merged                         Use only mapped and merged (in case of paired-end sequencing) reads to calculate damage plot
-                                      instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will
-                                      be skipped. Default: false
-
+<ins>Arguments:</ins>
 
 **-h**\
 Shows this help page.\
@@ -48,7 +40,8 @@ The input sam/bam file.\
 **-o OUTPUT**\
 The output folder.\
 \
-Options:
+
+<ins>Options:</ins>
 
 **-l LENGTH**\
 Number of bases which are computations.\
@@ -94,11 +87,5 @@ DamagePlot: Color for other bases different to reference.\
 Single-stranded library protocol was used. Default: false.
 
 -------------------------------------------------------
-
-
-
-
-
-Running the jar file without any parameter starts the GUI to configure the run.
 
 Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
