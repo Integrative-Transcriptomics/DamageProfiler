@@ -29,7 +29,7 @@ java -jar DamageProfiler-VERSION.jar <arguments> [options]
 
 Running the jar file without any parameter starts the GUI to configure the run.
 
-<ins>Arguments:</ins>
+<ins>Required Arguments:</ins>
 
 **-h**\
 Shows this help page.\
@@ -38,8 +38,7 @@ Shows this help page.\
 The input sam/bam file.\
 \
 **-o OUTPUT**\
-The output folder.\
-\
+The output folder.
 
 <ins>Options:</ins>
 
