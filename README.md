@@ -42,52 +42,52 @@ Arguments:
 **-h**\
 Shows this help page.\
 \
-**-i <INPUT>**\
+**-i INPUT**\
 The input sam/bam file.\
 \
-**-o <OUTPUT>**\
+**-o OUTPUT**\
 The output folder.\
 \
 Options:
 
-**-l <LENGTH>**\
+**-l LENGTH**\
 Number of bases which are computations.\
 \
 **-only_merged**\
 Use only all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false\
 \
-**-r <REFERENCE>**\
+**-r REFERENCE**\
 The reference file\
 \
-**-s <SPECIE>**\
+**-s SPECIE**\
 RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. \
 Example: -s NC_022116.1\
 \
-**-sf <SPECIES LIST>**\
+**-sf SPECIES LIST**\
 List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.\
 \
-**-t <THRESHOLD>**\
+**-t THRESHOLD**\
 Number of bases which are considered for plotting nucleotide misincorporations.\
 \
-**-title <TITLE>**\
+**-title TITLE**\
 Title used for all plots (Default: file name of input SAM/BAM file).\
 \
-**-yaxis_dp_max <MAX_VALUE>**\
+**-yaxis_dp_max MAX_VALUE**\
 Maximal value on y axis of damage plot (Default: flexible, adapts to the calculated damage).\
 \
-**-color_c_t <COLOR_C_T>**\
+**-color_c_t COLOR_C_T**\
 DamagePlot: Color for C to T misincoporation frequency.\
 \
-*-color_g_a <COLOR_G_A>**\
+**-color_g_a COLOR_G_A**\
 DamagePlot: Color for G to A misincoporation frequency.\
 \
-**-color_instertions <COLOR_C_T>**\
+**-color_instertions COLOR_INSERTIONS**\
 DamagePlot: Color for base insertions.\
 \
-**-color_deletions <COLOR_DELETIONS>**\
+**-color_deletions <COLOR_DELETIONS**\
 DamagePlot: Color for base deletions.\
 \
-**-color_other <COLOR_OTHER>**\
+**-color_other COLOR_OTHER**\
 DamagePlot: Color for other bases different to reference.\
 \
 **-sslib**\
