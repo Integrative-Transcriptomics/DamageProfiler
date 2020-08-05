@@ -91,7 +91,9 @@ DamagePlot: Color for base deletions.\
 DamagePlot: Color for other bases different to reference.\
 \
 **-sslib**\
-Single-stranded library protocol was used. Default: false.\
+Single-stranded library protocol was used. Default: false.
+
+-------------------------------------------------------
 
 
 
