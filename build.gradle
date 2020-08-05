@@ -31,6 +31,8 @@ dependencies {
     compile 'org.jfree:jfreechart-fx:1.+'
 }
 
+mainClassName = "RunDamageProfiler"
+
 jar {
     manifest {
         attributes 'Main-Class': 'RunDamageProfiler'
