@@ -24,7 +24,7 @@ It creates
 ###### How to run
 
 ```
-java -jar DamageProfiler-VERSION.jar <arguments> [options]
+java -jar DamageProfiler-VERSION.jar -i input_file -o output_folder [options]
 ```
 
 Running the jar file without any parameter starts the GUI to configure the run.
@@ -51,8 +51,8 @@ Use only all mapped and merged reads to calculate damage plot instead of using a
 **-r REFERENCE**\
 The reference file\
 \
-**-s SPECIE**\
-RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. \
+**-s SPECIES**\
+Reference sequence name (Reference NAME flag of SAM record). Depending on which database was used for mapping, this is the accession ID of the reference (i.e. NCBI accession ID).\
 Example: -s NC_022116.1\
 \
 **-sf SPECIES LIST**\
