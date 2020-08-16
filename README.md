@@ -29,43 +29,39 @@ java -jar DamageProfiler-VERSION.jar -i input_file -o output_folder [options]
 
 Running the jar file without any parameter starts the GUI to configure the run.
 
-<ins>Required Arguments:</ins>
 
 **-h**\
 Shows this help page.\
 \
+**-version**\
+Shows the version of DamageProfiler.\
+\
 **-i INPUT**\
-The input sam/bam file.\
+The input sam/bam/cram file (Required).\
 \
 **-o OUTPUT**\
-The output folder.
-
-<ins>Options:</ins>
-
-**-l LENGTH**\
-Number of bases which are computations.\
-\
-**-only_merged**\
-Use only all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false\
+The output folder (Required).\
 \
 **-r REFERENCE**\
-The reference file\
-\
-**-s SPECIES**\
-Reference sequence name (Reference NAME flag of SAM record). Depending on which database was used for mapping, this is the accession ID of the reference (i.e. NCBI accession ID).\
-Example: -s NC_022116.1\
-\
-**-sf SPECIES LIST**\
-List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.\
+The reference file (fasta format).\
 \
 **-t THRESHOLD**\
-Number of bases which are considered for plotting nucleotide misincorporations.\
+DamagePlot: Number of bases which are considered for plotting nucleotide misincorporations. Default: 25.\
+\
+**-s SPECIES**\
+Reference sequence name (Reference NAME flag of SAM record). For more details see Documentation.\
+\
+**-sf SPECIES LIST**\
+List with species for which damage profile has to be calculated. For more details see Documentation.\
+\
+**-l LENGTH**\
+Number of bases which are considered for frequency computations. Default: 100.\
 \
 **-title TITLE**\
-Title used for all plots (Default: file name of input SAM/BAM file).\
+Title used for all plots. Default: input filename.\
 \
 **-yaxis_dp_max MAX_VALUE**\
-Maximal value on y axis of damage plot (Default: flexible, adapts to the calculated damage).\
+DamagePlot: Maximal y-axis value.\
 \
 **-color_c_t COLOR_C_T**\
 DamagePlot: Color for C to T misincoporation frequency.\
@@ -73,14 +69,17 @@ DamagePlot: Color for C to T misincoporation frequency.\
 **-color_g_a COLOR_G_A**\
 DamagePlot: Color for G to A misincoporation frequency.\
 \
-**-color_instertions COLOR_INSERTIONS**\
+**-color_instertions COLOR_C_T**\
 DamagePlot: Color for base insertions.\
 \
-**-color_deletions <COLOR_DELETIONS**\
+**-color_deletions COLOR_DELETIONS**\
 DamagePlot: Color for base deletions.\
 \
 **-color_other COLOR_OTHER**\
 DamagePlot: Color for other bases different to reference.\
+\
+**-only_merged**\
+Use only mapped and merged (in case of paired-end sequencing) reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false.\
 \
 **-sslib**\
 Single-stranded library protocol was used. Default: false.
