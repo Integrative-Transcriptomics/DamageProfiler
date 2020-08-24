@@ -49,7 +49,7 @@ public class DOMParser {
 
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
-                    if (eElement.getAttribute("Name").equals("ScientificName")) {
+                    if (eElement.getAttribute("Name").equals("Title")) {
                         species = eElement.getTextContent();
                         break;
                     }

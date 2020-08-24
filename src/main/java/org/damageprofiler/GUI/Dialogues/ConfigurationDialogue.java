@@ -214,7 +214,4 @@ public class ConfigurationDialogue {
         return advancedPlottingOptionsDialogue;
     }
 
-    public Button getBtn_loadSpecies() {
-        return btn_loadSpecies;
-    }
 }

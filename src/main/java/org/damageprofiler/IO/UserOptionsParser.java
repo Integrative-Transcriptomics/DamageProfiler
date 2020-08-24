@@ -1,5 +1,6 @@
 package org.damageprofiler.IO;
 
+import com.google.gson.internal.$Gson$Preconditions;
 import org.apache.commons.cli.*;
 
 
@@ -37,6 +38,7 @@ public class UserOptionsParser {
         options.addOption(Option.builder("i")
                 .argName("INPUT")
                 .desc("The input sam/bam/cram file.")
+                .required()
                 .hasArg()
                 .build());
 
@@ -49,6 +51,7 @@ public class UserOptionsParser {
         options.addOption(Option.builder("o")
                 .argName("OUTPUT")
                 .desc("The output folder.")
+                .required()
                 .hasArg()
                 .build());
 
@@ -65,8 +68,8 @@ public class UserOptionsParser {
                 .build());
 
         options.addOption(Option.builder("sf")
-                .argName("SPECIES LIST")
-                .desc("List with species for which damage profile has to be calculated. For more details see Documentation.")
+                .argName("SPECIES FILE")
+                .desc("List of species reference names (Reference NAME flag of SAM record). For more details see Documentation.")
                 .hasArg()
                 .build());
 
@@ -97,31 +100,31 @@ public class UserOptionsParser {
 
         options.addOption(Option.builder("color_c_t")
                 .argName("COLOR_C_T")
-                .desc("DamagePlot: Color for C to T misincoporation frequency.")
+                .desc("DamagePlot: Color (HEX code) for C to T misincoporation frequency.")
                 .hasArg()
                 .build());
 
         options.addOption(Option.builder("color_g_a")
                 .argName("COLOR_G_A")
-                .desc("DamagePlot: Color for G to A misincoporation frequency.")
+                .desc("DamagePlot: Color (HEX code) for G to A misincoporation frequency.")
                 .hasArg()
                 .build());
 
-        options.addOption(Option.builder("color_instertions")
+        options.addOption(Option.builder("color_insertions")
                 .argName("COLOR_C_T")
-                .desc("DamagePlot: Color for base insertions.")
+                .desc("DamagePlot: Color (HEX code) for base insertions.")
                 .hasArg()
                 .build());
 
         options.addOption(Option.builder("color_deletions")
                 .argName("COLOR_DELETIONS")
-                .desc("DamagePlot: Color for base deletions.")
+                .desc("DamagePlot: Color (HEX code) for base deletions.")
                 .hasArg()
                 .build());
 
         options.addOption(Option.builder("color_other")
                 .argName("COLOR_OTHER")
-                .desc("DamagePlot: Color for other bases different to reference.")
+                .desc("DamagePlot: Color (HEX code) for other bases different to reference.")
                 .hasArg()
                 .build());
 
@@ -129,7 +132,7 @@ public class UserOptionsParser {
         // others
 
         options.addOption(Option.builder("only_merged")
-                .desc("Use only mapped and merged (in case of paired-end sequencing) reads to calculate damage plot " +
+                .desc("Use only mapped and merged (in case of paired-end sequencing) reads to calculate the damage plot " +
                         "instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise " +
                         "it will be skipped. Default: false ")
                 .build());

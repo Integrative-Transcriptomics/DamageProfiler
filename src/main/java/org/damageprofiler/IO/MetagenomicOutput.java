@@ -41,7 +41,7 @@ public class MetagenomicOutput {
         // step 3
         document.open();
 
-        Font fontbold = FontFactory.getFont("Times-Roman", 24, Font.BOLD);
+        Font fontbold = FontFactory.getFont("Calibri", 24, Font.BOLD);
 
         Paragraph para = new Paragraph();
         Chunk c_title = new Chunk("\n\n\n\nSummary of damage patterns\n\n" + sample_name, fontbold);
@@ -51,9 +51,8 @@ public class MetagenomicOutput {
         para.setAlignment(1);
 
         document.add(para);
+        document.setMargins(50,50,50,50);
         document.addTitle("Summary_damage_patterns");
-
-
 
         document.newPage();
 
@@ -63,32 +62,32 @@ public class MetagenomicOutput {
 
         for(String species : species_output_summary.keySet()){
             Paragraph para2 = new Paragraph();
-            Phrase p2 = new Phrase("Results for species:\n\n" + species, FontFactory.getFont("Times-Roman", 22));
-            Phrase p3 = new Phrase("\n\nNumber of mapped reads:" + mapped_reads.get(species), FontFactory.getFont("Times-Roman", 18));
+            Phrase p2 = new Phrase("Results for " + species, FontFactory.getFont("Calibri", 18));
+            p2.setMultipliedLeading((float) 2);
+            Phrase p3 = new Phrase("\n\nNumber of mapped reads: " + mapped_reads.get(species), FontFactory.getFont("Calibri", 16));
+            p3.setMultipliedLeading((float) 2);
             para2.add(p2);
             para2.add(p3);
             document.add(para2);
 
-            double xpos = 0;
             for(int i = 0; i < species_output_summary.get(species).size(); i++){
                 JFreeChart chart = species_output_summary.get(species).get(i);
                 PdfTemplate plot = cb.createTemplate(width, height);
-                Graphics2D g2d = new PdfGraphics2D(plot, width, height);
-                Rectangle2D r2d = new Rectangle2D.Double(0, 0, width, height);
+                Graphics2D g2d = new PdfGraphics2D(plot, width-25, height-25);
+                Rectangle2D r2d = new Rectangle2D.Double(0, 0, width-25, height-25);
                 chart.draw(g2d, r2d);
                 g2d.dispose();
 
 
                 if(i==0){
-                    cb.addTemplate(plot, xpos, 500);
+                    cb.addTemplate(plot, 25, 400);
                 } else if(i==1){
-                    cb.addTemplate(plot, width, 500);
+                    cb.addTemplate(plot, width, 400);
                 } else if(i==2){
-                    cb.addTemplate(plot, xpos, 500-height);
+                    cb.addTemplate(plot, 25, 400-height);
                 } else if(i==3){
-                    cb.addTemplate(plot, width, 500-height);
+                    cb.addTemplate(plot, width, 400-height);
                 }
-
             }
             document.newPage();
         }

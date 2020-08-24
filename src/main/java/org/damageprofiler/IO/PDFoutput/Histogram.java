@@ -56,8 +56,7 @@ public class Histogram {
     }
 
 
-    public JFreeChart createChart(HistogramDataset dataset, String title, String xlab, String ylab,
-                                  double xmin, double xmax, boolean legend){
+    public JFreeChart createChart(HistogramDataset dataset, String title, String xlab, String ylab, boolean legend){
 
         JFreeChart chart = ChartFactory.createHistogram(
                 title,//"Histogram edit distance",
@@ -75,17 +74,6 @@ public class Histogram {
         xyplot.setBackgroundPaint(Color.WHITE);
         xyplot.setDomainGridlinePaint(new Color(150,150,150));
         xyplot.setRangeGridlinePaint(new Color(150,150,150));
-
-
-        if(xmin > -1){
-            ValueAxis axis = xyplot.getDomainAxis();
-            axis.setLowerBound(xmin);
-        }
-
-        if(xmax > -1){
-            ValueAxis axis = xyplot.getDomainAxis();
-            axis.setUpperBound(xmax);
-        }
 
         XYBarRenderer xybarrenderer = (XYBarRenderer)xyplot.getRenderer();
         xybarrenderer.setShadowVisible(false);

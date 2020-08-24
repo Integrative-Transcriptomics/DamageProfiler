@@ -1,5 +1,6 @@
 package org.damageprofiler.controller;
 
+import javafx.geometry.Insets;
 import org.damageprofiler.GUI.*;
 import org.damageprofiler.GUI.Dialogues.AdvancedPlottingOptionsDialogue;
 import org.damageprofiler.GUI.Dialogues.HelpDialogue;
@@ -12,9 +13,10 @@ import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
+
+import javax.swing.plaf.basic.BasicOptionPaneUI;
 
 public class DamageProfilerMainController {
 
@@ -199,7 +201,7 @@ public class DamageProfilerMainController {
 
             }
 
-            runtimeInfoDialogue.setNumberOfRecords(runtimeEstimator.getNumberOfRecords());
+            runtimeInfoDialogue.setNumberOfRecords(runtimeEstimator.getEstimatedNumberOfRecords());
             runtimeInfoDialogue.setResultText(text_estimatedRuntime);
             runtimeInfoDialogue.addComponents();
             runtimeInfoDialogue.show();
@@ -279,6 +281,7 @@ public class DamageProfilerMainController {
 
     }
 
+
     private void clear() {
         btn_leftpane_lengthDist.setDisable(true);
         btn_leftpane_identityDist.setDisable(true);
@@ -331,7 +334,7 @@ public class DamageProfilerMainController {
             progressBarController.activate(startCalculuations);
 
             startCalculuations.setOnSucceeded((EventHandler<Event>) event -> {
-                // replace config with result org.damageprofiler.GUI
+                // replace config with result GUI
                 btn_leftpane_lengthDist.setDisable(false);
                 btn_leftpane_identityDist.setDisable(false);
                 btn_leftpane_damageProfile.setDisable(false);
@@ -418,14 +421,13 @@ public class DamageProfilerMainController {
      */
     private boolean checkIfInputWasSelected() {
         boolean tmp = false;
-        if (communicator.getInput() != null && communicator.getReference() != null && communicator.getOutfolder() != null) {
+        if (communicator.getInput() != null && communicator.getOutfolder() != null) {
             if (communicator.getInput().length() != 0) {
                 tmp = true;
             }
         }
         return tmp;
     }
-
 
 
 }

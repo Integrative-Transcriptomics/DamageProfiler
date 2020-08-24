@@ -17,10 +17,6 @@ public class Communicator {
     private int threshold = 25;
 
     private double yAxis_damageplot = 0.4;
-    private double xaxis_histo_id_min = -1;
-    private double xaxis_histo_id_max = -1;
-    private double xaxis_histo_length_min = -1;
-    private double xaxis_histo_length_max = -1;
     private int length = 100;
     private boolean use_merged_and_mapped_reads = false;
     private boolean use_all_reads = false;
@@ -132,38 +128,6 @@ public class Communicator {
 
     public void setSpecieslist_filepath(String specieslist_filepath) {
         this.specieslist_filepath = specieslist_filepath;
-    }
-
-    public double getXaxis_histo_id_min() {
-        return xaxis_histo_id_min;
-    }
-
-    public void setXaxis_histo_id_min(double xaxis_histo_id_min) {
-        this.xaxis_histo_id_min = xaxis_histo_id_min;
-    }
-
-    public double getXaxis_histo_id_max() {
-        return xaxis_histo_id_max;
-    }
-
-    public void setXaxis_histo_id_max(double xaxis_histo_id_max) {
-        this.xaxis_histo_id_max = xaxis_histo_id_max;
-    }
-
-    public double getXaxis_histo_length_min() {
-        return xaxis_histo_length_min;
-    }
-
-    public void setXaxis_histo_length_min(double xaxis_histo_length_min) {
-        this.xaxis_histo_length_min = xaxis_histo_length_min;
-    }
-
-    public double getXaxis_histo_length_max() {
-        return xaxis_histo_length_max;
-    }
-
-    public void setXaxis_histo_length_max(double xaxis_histo_length_max) {
-        this.xaxis_histo_length_max = xaxis_histo_length_max;
     }
 
     public void setColor_DP_C_to_T(Color color_c_to_t) {

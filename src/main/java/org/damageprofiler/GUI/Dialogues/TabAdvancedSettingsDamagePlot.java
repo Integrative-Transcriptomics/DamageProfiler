@@ -28,6 +28,7 @@ public class TabAdvancedSettingsDamagePlot {
     public TabAdvancedSettingsDamagePlot(String title){
 
         this.tab = new Tab(title);
+        this.tab.setClosable(false);
         btn_reset = new Button("Reset");
 
         fill(   generateColorPicker(Color.RED),

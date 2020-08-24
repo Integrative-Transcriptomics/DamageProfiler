@@ -1,5 +1,7 @@
 package org.damageprofiler.GUI;
 
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
 import org.damageprofiler.GUI.Dialogues.ConfigurationDialogue;
 import org.damageprofiler.IO.Communicator;
 import org.damageprofiler.controller.ProgressBarController;
@@ -50,7 +52,7 @@ public class DamageProfilerMainGUI {
         root.setCenter(scrollPane_adv_config);
         root.setLeft(generateLeftPane());
 
-        this.primaryStage.setScene(new Scene(root, 950, 700));
+        this.primaryStage.setScene(new Scene(root, 1100, 700));
         this.primaryStage.setResizable(true);
         this.primaryStage.show();
 
@@ -63,17 +65,18 @@ public class DamageProfilerMainGUI {
         Image image = new Image(input);
         ImageView imageView = new ImageView(image);
 
-        // Create a Label with label and Icon
-        Label label = new Label("", imageView);
-
+        HBox hbxImg = new HBox();
+        hbxImg.setPadding(new Insets(10,0,10,0));
+        hbxImg.setAlignment(Pos.CENTER);
+        hbxImg.getChildren().add(imageView);
 
 
         VBox leftPanel = new VBox();
         btn_leftpane_damageProfile = new Button("Damage Plot");
-        btn_leftpane_info = new Button("Run Configuration");
+        btn_leftpane_info = new Button("Configuration");
         btn_help = new Button("Show help");
         btn_leftpane_lengthDist = new Button("Length Distribution");
-        btn_leftpane_identityDist = new Button("Edit distance");
+        btn_leftpane_identityDist = new Button("Edit Distance");
 
         // style buttons
         btn_leftpane_info.setPrefHeight(30);
@@ -94,7 +97,8 @@ public class DamageProfilerMainGUI {
         btn_leftpane_identityDist.setPrefWidth(200);
         btn_leftpane_identityDist.setDisable(true);
 
-        leftPanel.getChildren().addAll(label, btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist, btn_leftpane_identityDist, btn_help);
+        leftPanel.getChildren().addAll(hbxImg, btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist,
+                btn_leftpane_identityDist, btn_help);
         leftPanel.setPadding(new Insets(10,10,10,10));
 
         return leftPanel;
@@ -129,4 +133,5 @@ public class DamageProfilerMainGUI {
     public ConfigurationDialogue getConfig_dialogue() { return config_dialogue; }
 
     public String getVersion() { return version; }
+
 }

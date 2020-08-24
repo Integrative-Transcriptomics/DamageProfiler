@@ -1,6 +1,5 @@
 package org.damageprofiler.calculations;
 
-
 import org.damageprofiler.IO.FastACacher;
 import htsjdk.samtools.*;
 import htsjdk.samtools.util.SequenceUtil;
@@ -28,16 +27,13 @@ public class  DamageProfiler {
     private File reference;
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
-    private SpeciesHandler speciesHandler;
     private List<Double> editDistances;
 
     /**
      * constructor
-     * @param speciesHandler
      * @param cache
      */
-    public DamageProfiler(SpeciesHandler speciesHandler, FastACacher cache) {
-        this.speciesHandler = speciesHandler;
+    public DamageProfiler(FastACacher cache) {
         this.cache = cache;
     }
 
@@ -70,7 +66,6 @@ public class  DamageProfiler {
                     } else {
                         inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                                 referenceSequence(reference).validationStringency(ValidationStringency.SILENT).open(input);
-
                     }
                 }
 
@@ -88,7 +83,6 @@ public class  DamageProfiler {
                 this.species = specie;
                 useful_functions = new Functions();
 
-
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
                 LOG.error("Invalid SAM/BAM file. Please check your file.");
@@ -101,14 +95,14 @@ public class  DamageProfiler {
     /**
      * get all sam records of input sam/bam file,
      * distinguish between mapped and mapped/merged and normalize values
-     * after all org.damageprofiler.calculations
+     * after all calculations
      *
      *
      * @param use_only_merged_reads
      * @param use_all_reads
      * @throws Exception
      */
-    public void extractSAMRecords(boolean use_only_merged_reads, boolean use_all_reads) throws Exception{
+    public void extractSAMRecords(boolean use_only_merged_reads, boolean use_all_reads) {
 
         if(use_all_reads && use_only_merged_reads){
             LOG.info("-------------------");
@@ -123,7 +117,7 @@ public class  DamageProfiler {
                 if (this.species == null) {
                     handleRecord(use_only_merged_reads, use_all_reads, record);
                 } else {
-                    if (record.getReferenceName().contains(this.species)) {
+                    if (record.getReferenceName().equals(this.species)) {
                         handleRecord(use_only_merged_reads, use_all_reads, record);
                     }
                 }
@@ -137,9 +131,14 @@ public class  DamageProfiler {
     }
 
 
-
-
-    private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) throws Exception {
+    /**
+     * get the record and filter according mapped_only setting
+     *
+     * @param use_only_merged_reads
+     * @param use_all_reads
+     * @param record
+     */
+    private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) {
 
         if(use_all_reads && !use_only_merged_reads){
             // process all reads
@@ -199,6 +198,7 @@ public class  DamageProfiler {
             }
 
             try{
+
                 byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
                 reference_aligned = new String(ref_seq, "UTF-8");
                 record_aligned = record.getReadString();
@@ -206,9 +206,9 @@ public class  DamageProfiler {
 
             } catch (Exception e){
 
-                System.err.println(record.getReadName() + "\nMD and NM value will be re-calculated. Error: \n" + e);
+                System.err.println(record.getReadName() + "\nMD and NM value will be re-calculated.\nError:" + e);
                 if(!reference.isFile()){
-                    System.err.println("No MD tag defined. Please specify reference file which is needed for MD tag org.damageprofiler.calculations.");
+                    System.err.println("No MD tag defined. Please specify reference file which is needed for MD tag calculations.");
                     System.exit(1);
                 }
 
@@ -235,7 +235,7 @@ public class  DamageProfiler {
         // calculate distance between record and reference
         double hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
 
-        double id = (double)(record_aligned.length()-hamming) / (double)record_aligned.length();
+        double id = record_aligned.length()-hamming / (double)record_aligned.length();
         this.identity.add(id);
         this.editDistances.add(hamming);
 
@@ -267,31 +267,10 @@ public class  DamageProfiler {
         return numberOfUsedReads;
     }
 
-    /**
-     * Determines the name of the species based on the NCBI ref ID.
-     *
-     * @param file
-     * @param ref
-     * @return
-     */
-    public String getSpeciesname(File file, String ref) {
-
-        SamReader input = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
-                validationStringency(ValidationStringency.SILENT).open(file);
-
-        for(SAMRecord record : input) {
-            if(record.getReferenceName().contains(ref)){
-                String spe = speciesHandler.getSpecies(record.getReferenceName());
-                return spe.replace(" ", "_").trim();
-            }
-        }
-        return null;
-    }
-
-    public int getNumberOfRecords() {
-        return numberOfRecords;
-    }
     public List<Double> getEditDistances() {
         return editDistances;
+    }
+    public int getNumberOfRecords(){
+        return numberOfRecords;
     }
 }

@@ -40,10 +40,6 @@ import java.io.IOException;
  */
 public class OutputGenerator {
 
-    private final double x_axis_min_id_histo;
-    private final double x_axis_max_id_histo;
-    private final double x_axis_min_length_histo;
-    private final double x_axis_max_length_histo;
     private final boolean ssLibProtocolUsed;
     private int numberOfUsedReads;
     private final double height;
@@ -77,11 +73,9 @@ public class OutputGenerator {
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String species, int threshold,
-                           int length, double height, double x_axis_min_id_histo, double x_axis_max_id_histo,
-                           double x_axis_min_length_histo, double x_axis_max_length_histo, String input, Logger LOG,
-                           int numberOfRecords, boolean ssLibProtocolUsed, Color color_DP_C_to_T,
-                           Color color_DP_deletions, Color color_DP_G_to_A, Color color_DP_insertions,
-                           Color color_DP_other) {
+                           int length, double height,  String input, Logger LOG, boolean ssLibProtocolUsed,
+                           Color color_DP_C_to_T, Color color_DP_deletions, Color color_DP_G_to_A,
+                           Color color_DP_insertions, Color color_DP_other, int numberOfRecords) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
@@ -90,10 +84,6 @@ public class OutputGenerator {
         this.threshold = threshold;
         this.length = length;
         this.height = height;
-        this.x_axis_min_id_histo = x_axis_min_id_histo;
-        this.x_axis_max_id_histo = x_axis_max_id_histo;
-        this.x_axis_min_length_histo = x_axis_min_length_histo;
-        this.x_axis_max_length_histo = x_axis_max_length_histo;
         this.input = input;
         this.LOG = LOG;
         this.numberOfRecords = numberOfRecords;
@@ -206,7 +196,7 @@ public class OutputGenerator {
     }
 
 
-    public void writeDNAcomp_genome(Frequencies frequencies) throws IOException{
+    public void writeDNAcomp_genome() throws IOException{
 
         BufferedWriter file_dna_comp = new BufferedWriter(new FileWriter(outpath + File.separator + "DNA_comp_genome.txt"));
 
@@ -258,7 +248,7 @@ public class OutputGenerator {
 
           */
 
-        freq_file_sample.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
+        freq_file_sample.write("# table produced by DamageProfiler\n");
         freq_file_sample.write("# using mapped file " + input + "\n");
         freq_file_sample.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
@@ -319,7 +309,7 @@ public class OutputGenerator {
         BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "misincorporation.txt"));
 
 
-        freq_file_ref.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
+        freq_file_ref.write("# table produced by DamageProfiler\n");
         freq_file_ref.write("# using mapped file " + input + "\n");
         freq_file_ref.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
@@ -469,7 +459,7 @@ public class OutputGenerator {
         hist_all.addData(length_all);
         HistogramDataset dataset_all = hist_all.createDataset(new String[]{"all reads"}, max_length);
         length_chart_all = hist_all.createChart(dataset_all, "", "Read length",
-                "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, false);
+                "Occurrences", false);
 
         Histogram hist_separated = new Histogram(LOG);
         if(length_forward.size()>0){
@@ -480,7 +470,7 @@ public class OutputGenerator {
         }
         HistogramDataset dataset_separated = hist_separated.createDataset(new String[]{"+ strand", "- strand"}, max_length);
         length_chart_separated = hist_separated.createChart(dataset_separated, "",
-                "Read length", "Occurrences",  x_axis_min_length_histo, x_axis_max_length_histo, true);
+                "Read length", "Occurrences", true);
 
         LegendTitle lt = length_chart_separated.getLegend();
         lt.setPosition(RectangleEdge.RIGHT);
@@ -506,8 +496,7 @@ public class OutputGenerator {
         hist_all.addData(distances);
 
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
-        editDist_chart = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",
-                x_axis_min_id_histo, x_axis_max_id_histo, false);
+        editDist_chart = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",false);
 
         createPdf("/edit_distance.pdf", new JFreeChart[]{editDist_chart}, file);
         createSVG("/edit_distance.svg", editDist_chart);

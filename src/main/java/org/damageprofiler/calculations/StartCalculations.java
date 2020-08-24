@@ -3,9 +3,9 @@ package org.damageprofiler.calculations;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.itextpdf.text.DocumentException;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
@@ -25,22 +25,17 @@ public class StartCalculations {
     private long currtime_prior_execution;  // start time to get overall runtime
     private boolean calculationsDone = false;
     private Logger LOG;
-    private List<String> specieslist = null;
+    private String[] specieslist = null;
     private boolean use_only_merged_reads;
-    private double height_damageplot; //= 0.4; // set yaxis height to 40% as default
+    private double height_damageplot; // set y-axis height to 40% as default
     private int threshold;
     private int length;
     private String specieslist_filepath;
-    private String species_ref_identifier;
+    private String species_minus_s;
     private String reference;
     private String outfolder;
     private String input;
-    private SpeciesHandler speciesHandler = new SpeciesHandler();
     private boolean use_all_reads;
-    private double xaxis_min_id_histogram;
-    private double xaxis_max_id_histogram;
-    private double xaxis_min_length_histogram;
-    private double xaxis_max_length_histogram;
     private boolean ssLibProtocolUsed;
     private DamageProfiler damageProfiler;
     private OutputGenerator outputGenerator;
@@ -59,7 +54,7 @@ public class StartCalculations {
     private Color color_DP_deletions;
     private Color color_DP_other;
     private String output_folder;
-    private String speciesname = null;
+    private SpeciesListParser speciesListParser;
 
 
     public StartCalculations(){
@@ -81,15 +76,11 @@ public class StartCalculations {
         input = c.getInput();
         outfolder = c.getOutfolder();
         reference = c.getReference();
-        species_ref_identifier = c.getSpecies_ref_identifier();
+        species_minus_s = c.getSpecies_ref_identifier();
         specieslist_filepath = c.getSpecieslist_filepath();
         length = c.getLength();
         threshold = c.getThreshold();
         height_damageplot = c.getyAxis_damageplot();
-        xaxis_min_id_histogram = c.getXaxis_histo_id_min();
-        xaxis_max_id_histogram = c.getXaxis_histo_id_max();
-        xaxis_min_length_histogram = c.getXaxis_histo_length_min();
-        xaxis_max_length_histogram = c.getXaxis_histo_length_max();
         use_only_merged_reads = c.isUse_merged_and_mapped_reads();
         use_all_reads = c.isUse_all_reads();
         ssLibProtocolUsed = c.isSsLibsProtocolUsed();
@@ -103,204 +94,158 @@ public class StartCalculations {
         this.inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
         this.communicator = c;
 
-        SpeciesListParser speciesListParser = new SpeciesListParser(
+        speciesListParser = new SpeciesListParser(
                 specieslist_filepath,
                 LOG
         );
 
-
         if(!this.reference.equals(""))
             readReferenceInCache();
 
+        /*
+                If -s or -sf parameter is set, parse list and run DamageProfiler
+                on each species
+         */
+
         if(specieslist_filepath != null){
-            species_output_summary = new HashMap<>();
-            number_of_used_reads_summary = new HashMap<>();
+            List<String> specieslist_tmp = new ArrayList<>();
+            specieslist_tmp.addAll(speciesListParser.getSpeciesList());
+            specieslist = new String[specieslist_tmp.size()];
+            specieslist_tmp.toArray(specieslist);
 
-            speciesHandler = new SpeciesHandler();
-            /*
-                parse species references (-sf) and run DP for each reference in the file
-             */
-            specieslist = new ArrayList<>();
-            specieslist.addAll(speciesListParser.getSpeciesList());
-
-
-            for (int i = 0; i < specieslist.size(); i++) {
-                String specie_input_string = specieslist.get(i);
-                //String specie_name = species_real_name_list.get(i);
-
-               // start DamageProfiler
-                damageProfiler = new DamageProfiler(speciesHandler, cache);
-
-                String ref = specie_input_string.split("\\|")[0].trim();
-                speciesname = damageProfiler.getSpeciesname(new File(input), ref);
-
-                createOutputFolder(
-                        outfolder,
-                        inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]
-                                + File.separator + ref + "_" + speciesname);
-
-                initPlot();
-
-                // init Logger
-                initLogger(output_folder + "/DamageProfiler_" + ref + "_" + speciesname +".log",
-                        "Calculate damage profile for species " + ref + " (" + speciesname + ")");
-
-
-                // create new output folder
-                // log settings
-                LOG.info("\nAnalysis of file (-i):" + input + "\n"
-                        + "Output folder (-o):" + output_folder + "\n"
-                        + "Reference (-r, optional) :" + reference + "\n"
-                        + "Specie (-s, optional):" + specie_input_string + "\n"
-                        + "Species list (-sf, optional):" + c.getSpecieslist_filepath() + "\n"
-                        + "Length (-l): " + length + "\n"
-                        + "Threshold (-t): " + threshold + "\n"
-                        + "Height yaxis (-yaxis): " + height_damageplot + "\n"
-                        + "x-axis min ID histogram (-xaxis_histo_id_min): " + xaxis_min_id_histogram + "\n"
-                        + "x-axis max ID histogram (-xaxis_histo_id_max): " + xaxis_max_id_histogram + "\n"
-                        + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
-                        + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
-
-                damageProfiler.init(new File(input),
-                        new File(reference),
-                        threshold,
-                        length,
-                        specie_input_string,
-                        LOG);
-
-                damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
-                generateOutput();
-                String spec_no_space = specie_input_string.replace(" ","_");
-                species_output_summary.put(spec_no_space + " (" + speciesname + ")",
-                        List.of(outputGenerator.getChart_DP_5prime(),
-                                outputGenerator.getChart_DP_3prime(),
-                                outputGenerator.getEditDist_chart(),
-                                outputGenerator.getLength_chart_all())
-                );
-
-                number_of_used_reads_summary.put(
-                        spec_no_space + " (" + speciesname + ")",
-                        damageProfiler.getNumberOfUsedReads());
-            }
-
-            // generate metagenomic output summary
-            MetagenomicOutput metagenomicOutput = new MetagenomicOutput();
-            String[] splitted = input.split("/");
-            String filename = splitted[splitted.length-1];
-            metagenomicOutput.generate(outfolder + File.separator +
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1],
-                    species_output_summary, filename, number_of_used_reads_summary);
-
-
-        } else if(species_ref_identifier != null){
-
-            // start DamageProfiler
-            damageProfiler = new DamageProfiler(speciesHandler, cache);
-
-            /*
-                parse species reference (-s) and run DP
-             */
-
-            this.specieslist = new ArrayList<>();
-            specieslist.add(species_ref_identifier);
-            speciesname = damageProfiler.getSpeciesname(new File(input), species_ref_identifier);
-
-            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-
-            createOutputFolder(
-                    outfolder,
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1] +
-                             File.separator + species_ref_identifier + "_" + speciesname);
-
-            initPlot();
-
-            // init Logger
-            initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
-
-
-            // log settings
-            LOG.info("Analysis of file (-i):" + input + "\n"
-                    + "Output folder (-o):" + output_folder + "\n"
-                    + "Reference (-r, optional) :" + reference + "\n"
-                    + "Specie (-s, optional):" + specieslist + "\n"
-                    + "Species list (-sf, optional):" + specieslist_filepath + "\n"
-                    + "Length (-l): " + length + "\n"
-                    + "Threshold (-t): " + threshold + "\n"
-                    + "Height yaxis (-yaxis): " + height_damageplot  + "\n"
-                    + "x-axis min ID histogram (-xaxis_histo_min): " + xaxis_min_id_histogram + "\n"
-                    + "x-axis max ID histogram (-xaxis_histo_max): " + xaxis_max_id_histogram + "\n"
-                    + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
-                    + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
-
-            damageProfiler.init(new File(input),
-                    new File(reference),
-                    threshold,
-                    length,
-                    null,
-                    LOG);
-
-            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
-            speciesListParser.setLOG(LOG);
-            generateOutput();
-
+            parseSpeciesAndRun();
+        } else if (species_minus_s != null) {
+            //species_minus_s = species_minus_s.substring(1,species_minus_s.length()-1);
+            this.specieslist = species_minus_s.split(",");
+            parseSpeciesAndRun();
         } else {
-
-            /*
-                    No species specified --> use all mapped reads
-             */
-            String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
-
-            // create output folder based on file name
-            createOutputFolder(
-                    outfolder,
-                    inputfileNameWithOutExtension.split("/")[inputfileNameWithOutExtension.split("/").length - 1]);
-
-            initPlot();
-
-            // init Logger
-            initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
-
-
-            // log settings
-            LOG.info("Analysis of file (-i):" + input + "\n"
-                    + "Output folder (-o):" + output_folder + "\n"
-                    + "Reference (-r, optional) :" + reference + "\n"
-                    + "Specie (-s, optional):" + specieslist + "\n"
-                    + "Species list (-sf, optional):" + c.getSpecieslist_filepath() + "\n"
-                    + "Length (-l): " + length + "\n"
-                    + "Threshold (-t): " + threshold + "\n"
-                    + "Height yaxis (-yaxis): " + height_damageplot + "\n"
-                    + "x-axis min ID histogram (-xaxis_histo_min): " + xaxis_min_id_histogram + "\n"
-                    + "x-axis max ID histogram (-xaxis_histo_max): " + xaxis_max_id_histogram + "\n"
-                    + "x-axis min length histogram (-xaxis_histo_length_min): " + xaxis_min_length_histogram + "\n"
-                    + "x-axis max length histogram (-xaxis_histo_length_max): " + xaxis_max_length_histogram + "\n");
-
-            // start DamageProfiler
-            damageProfiler = new DamageProfiler(speciesHandler, cache);
-
-            damageProfiler.init(new File(input),
-                    new File(reference),
-                    threshold,
-                    length,
-                    null,
-                    LOG);
-            damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
-            speciesListParser.setLOG(LOG);
-            generateOutput();
+            // Neither parameter -s not -sf are set. Use all mapped reads
+            startDamageProfilerOnSingleSpecies(null);
         }
-
         calculationsDone=true;
-
     }
 
-    private void initPlot() {
+    /**
+     * Start damage patterns calculations for a given species
+     * @param species
+     * @throws IOException
+     * @throws DocumentException
+     */
+    private void startDamageProfilerOnSingleSpecies(String species) throws IOException, DocumentException {
+
+        // create output folder based on file name
+        if (outfolder != null){
+            createOutputFolder(outfolder,null);
+        }
+
         if (communicator.getTitle_plots() == null) {
             inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
         } else {
             inputfileNameWithOutExtension = communicator.getTitle_plots();
         }
+
+        // init Logger
+        initLogger(output_folder + "/DamageProfiler.log", "DamageProfiler v" + VERSION);
+
+        // log settings
+        LOG.info("Analysis of file (-i):" + input + "\n"
+                + "Output folder (-o):" + output_folder + "\n"
+                + "Reference (-r, optional) :" + reference + "\n"
+                + "Species (-s, optional): " + species + "\n"
+                + "Species list (-sf, optional):" + specieslist_filepath + "\n"
+                + "Length (-l): " + length + "\n"
+                + "Threshold (-t): " + threshold + "\n"
+                + "Height y-axis (-yaxis): " + height_damageplot);
+
+        damageProfiler = new DamageProfiler(cache);
+
+        damageProfiler.init(new File(input),
+                new File(reference),
+                threshold,
+                length,
+                species,
+                LOG);
+        damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
+        if(damageProfiler.getNumberOfUsedReads() != 0) {
+            speciesListParser.setLOG(LOG);
+            generateOutput(species);
+        } else {
+            System.err.println("No reads found for " + specieslist[0]);
+        }
     }
 
+
+    /**
+     * Iterate over species list and generate damage patterns for each species.
+     *
+     * @throws IOException
+     * @throws DocumentException
+     */
+    private void parseSpeciesAndRun() throws IOException, DocumentException {
+        if(specieslist.length > 0){
+
+            // if only one species is in list -> run 'normal' DP
+            if (specieslist.length == 1){
+
+                // start DamageProfiler
+                String speciesID = specieslist[0];
+
+                Pattern p = Pattern.compile("[0-9A-Za-z!#$%&+./:;?@^_|~-]");
+                Matcher m = p.matcher(speciesID);
+
+                if (m.find()) {
+                    startDamageProfilerOnSingleSpecies(speciesID);
+                } else {
+                    System.err.println("Reference ID " + speciesID + " doesn't match regex: " + p);
+                }
+
+            } else if (specieslist.length > 1){
+
+                species_output_summary = new HashMap<>();
+                number_of_used_reads_summary = new HashMap<>();
+
+                for (int i = 0; i < specieslist.length; i++) {
+                    String specie_input_string = specieslist[i];
+                    String speciesID = specieslist[i];
+
+                    // start DamageProfiler
+                    startDamageProfilerOnSingleSpecies(speciesID);
+
+                    // collect info for metagenomic summary output
+                    String spec_no_space = specie_input_string.replace(" ","_");
+                    species_output_summary.put(spec_no_space + " (" + speciesID + ")",
+                            List.of(outputGenerator.getChart_DP_5prime(),
+                                    outputGenerator.getChart_DP_3prime(),
+                                    outputGenerator.getEditDist_chart(),
+                                    outputGenerator.getLength_chart_all())
+                    );
+
+                    number_of_used_reads_summary.put(
+                            spec_no_space + " (" + speciesID + ")",
+                            damageProfiler.getNumberOfUsedReads());
+                }
+
+                // generate metagenomic summary output
+                MetagenomicOutput metagenomicOutput = new MetagenomicOutput();
+                String[] splitted = input.split("/");
+                String filename = splitted[splitted.length-1];
+                metagenomicOutput.generate(outfolder,
+                        species_output_summary, filename, number_of_used_reads_summary);
+
+            }
+
+        } else {
+            System.err.println("Species list is empty. Please check '-s' or '-sf' parameter.");
+        }
+    }
+
+
+    /**
+     * Initialize log file
+     *
+     * @param outfolder
+     * @param log
+     */
     private void initLogger(String outfolder, String log) {
 
         logClass = new LogClass();
@@ -319,26 +264,26 @@ public class StartCalculations {
      * @throws IOException
      * @throws DocumentException
      */
-    private void generateOutput() throws IOException, DocumentException {
+    private void generateOutput(String speciesID) throws IOException, DocumentException {
 
         if (damageProfiler.getNumberOfUsedReads() != 0) {
 
             outputGenerator = new OutputGenerator(
                     output_folder,
                     damageProfiler,
-                    speciesname,
+                    speciesID,
                     threshold,
                     length,
                     height_damageplot,
-                    xaxis_min_id_histogram,
-                    xaxis_max_id_histogram,
-                    xaxis_min_length_histogram,
-                    xaxis_max_length_histogram,
                     input,
                     LOG,
-                    damageProfiler.getNumberOfRecords(),
                     ssLibProtocolUsed,
-                    color_DP_C_to_T, color_DP_deletions, color_DP_G_to_A, color_DP_insertions, color_DP_other
+                    color_DP_C_to_T,
+                    color_DP_deletions,
+                    color_DP_G_to_A,
+                    color_DP_insertions,
+                    color_DP_other,
+                    damageProfiler.getNumberOfRecords()
             );
 
             outputGenerator.writeLengthDistribution();
@@ -348,7 +293,7 @@ public class StartCalculations {
             );
             outputGenerator.writeFrequenciesReference(damageProfiler.getFrequencies());
             outputGenerator.writeDNAComp(damageProfiler.getFrequencies());
-            outputGenerator.writeDNAcomp_genome(damageProfiler.getFrequencies());
+            outputGenerator.writeDNAcomp_genome();
             outputGenerator.writeMisincorporations(
                     damageProfiler.getFrequencies(),
                     threshold
@@ -368,7 +313,7 @@ public class StartCalculations {
                     inputfileNameWithOutExtension
             );
             outputGenerator.plotEditDistanceHistogram(
-                    damageProfiler.getEditDistances(), // damageProfiler.getIdentity(),
+                    damageProfiler.getEditDistances(),
                     "Identity distribution",
                     inputfileNameWithOutExtension
             );
@@ -382,18 +327,23 @@ public class StartCalculations {
     }
 
 
+
     /**
      * create output folder.
      * Save all files in subfolder, which has the same name as the input file
      * (without extension)
      *
-     * @param path
+     * @param path_ourDir path to result directory (user specified)
+     * @param species species name and reference ID
      * @throws IOException
      */
-    private void createOutputFolder(String path, String inputfileNameWithOutExtension) {
-
-        // use Pattern.quote(File.separator) to split file path
-        File f = new File(path + File.separator + inputfileNameWithOutExtension);
+    private void createOutputFolder(String path_ourDir, String species) {
+        File f;
+        if(species==null){
+            f = new File(path_ourDir);
+        } else {
+            f = new File(path_ourDir + File.separator + species);
+        }
 
         // create new output directory
         if (!f.isDirectory()) {
@@ -418,6 +368,9 @@ public class StartCalculations {
 
     }
 
+    /*
+        Getter and Setter
+     */
     public boolean isCalculationsDone() {
         return calculationsDone;
     }

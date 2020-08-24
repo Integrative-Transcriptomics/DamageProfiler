@@ -14,12 +14,10 @@ public class SpeciesListParser {
 
     private Logger LOG;
     private String speciesFile;
-    private SpeciesHandler speciesHandler;
 
     public SpeciesListParser(String speciesListFile, Logger LOG) {
         this.speciesFile = speciesListFile;
         this.LOG = LOG;
-        speciesHandler = new SpeciesHandler();
     }
 
 
@@ -58,7 +56,6 @@ public class SpeciesListParser {
      */
     public void setLOG(Logger LOG) {
         this.LOG = LOG;
-        speciesHandler.setLOG(LOG);
     }
 
 

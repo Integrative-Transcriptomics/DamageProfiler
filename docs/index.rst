@@ -6,6 +6,11 @@
 Welcome to DamageProfiler's documentation!
 ==========================================
 
+.. image:: contents/images/logo.png
+   :width: 400px
+   :height: 400px
+   :align: center
+
 This is the main DamageProfiler documentation, where you can find information about the prerequisites, the installation and the usage of this tool.
 
 
@@ -20,6 +25,7 @@ This is the main DamageProfiler documentation, where you can find information ab
 
    contents/generalUsage
 
+   contents/output
 
 Indices and tables
 ==================

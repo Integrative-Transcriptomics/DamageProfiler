@@ -98,9 +98,7 @@ public class LengthDistribution {
         return length_forward;
     }
 
-    public List<Double> getLength_reverse() {
-        return length_reverse;
-    }
+    public List<Double> getLength_reverse() { return length_reverse; }
 
     public List<Double> getLength_all() {
         return length_all;
