@@ -200,7 +200,7 @@ public class OutputGenerator {
 
         BufferedWriter file_dna_comp = new BufferedWriter(new FileWriter(outpath + File.separator + "DNA_comp_genome.txt"));
 
-        file_dna_comp.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
+        file_dna_comp.write("# table produced by DamageProfiler\n");
         file_dna_comp.write("# using mapped file " + input + "\n");
         file_dna_comp.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
         file_dna_comp.write("DNA base frequencies Sample\n");
@@ -229,8 +229,12 @@ public class OutputGenerator {
     }
 
 
-    public void writeDNAComp(Frequencies frequencies) throws IOException{
+    public void writeDNAComp(Frequencies frequencies, List<String> referenceName) throws IOException{
         BufferedWriter freq_file_sample = new BufferedWriter(new FileWriter(outpath + File.separator + "DNA_composition_sample.txt"));
+
+        String ref = "";
+        if(referenceName.size() == 1)
+            ref = referenceName.get(0);
 
         /*
          fill now line per line
@@ -253,13 +257,13 @@ public class OutputGenerator {
         freq_file_sample.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
         // write header
-        freq_file_sample.write("End\tStd\tPos\tA\tC\tG\tT\tTotal\n");
+        freq_file_sample.write("Chr\tEnd\tStd\tPos\tA\tC\tG\tT\tTotal\n");
 
         // fill '3p +'
         for(int i = 0; i < this.length; i++){
             double sum=frequencies.getCount_total_forward_3()[i];
 
-            freq_file_sample.write("3p\t+\t"+(i+1)+"\t"
+            freq_file_sample.write(ref+"\t3p\t+\t"+(i+1)+"\t"
                     +(int)frequencies.getCountA_forward_3()[i]+"\t"+(int)frequencies.getCountC_forward_3()[i]+"\t"
                     +(int)frequencies.getCountG_forward_3()[i]+"\t"+(int)frequencies.getCountT_forward_3()[i]+"\t"
                     +(int)sum+"\n"
@@ -271,7 +275,7 @@ public class OutputGenerator {
         for(int i = 0; i < this.length; i++){
             double sum = frequencies.getCount_total_reverse_3()[i];
 
-            freq_file_sample.write("3p\t-\t"+(i+1)+"\t"
+            freq_file_sample.write(ref+"\t3p\t-\t"+(i+1)+"\t"
                     +(int)frequencies.getCountA_reverse_3()[i]+"\t"+(int)frequencies.getCountC_reverse_3()[i]+"\t"
                     +(int)frequencies.getCountG_reverse_3()[i]+"\t"+(int)frequencies.getCountT_reverse_3()[i]+"\t"
                     +(int)sum+"\n"
@@ -283,31 +287,31 @@ public class OutputGenerator {
         for(int i = 0; i < this.length; i++){
             double sum = frequencies.getCount_total_forward_5()[i];
 
-            freq_file_sample.write("5p\t+\t"+(i+1)+"\t"
+            freq_file_sample.write(ref+"\t5p\t+\t"+(i+1)+"\t"
                     +(int)frequencies.getCountA_forward_5()[i]+"\t"+(int)frequencies.getCountC_forward_5()[i]+"\t"
                     +(int)frequencies.getCountG_forward_5()[i]+"\t"+(int)frequencies.getCountT_forward_5()[i]+"\t"
                     +(int)sum+"\n"
             );
-
         }
 
         // fill '5p -'
         for(int i = 0; i < this.length; i++){
             double sum = frequencies.getCount_total_reverse_5()[i];
 
-            freq_file_sample.write("5p\t-\t"+(i+1)+"\t"
+            freq_file_sample.write(ref+"\t5p\t-\t"+(i+1)+"\t"
                     +(int)frequencies.getCountA_reverse_5()[i]+"\t"+(int)frequencies.getCountC_reverse_5()[i]+"\t"
                     +(int)frequencies.getCountG_reverse_5()[i]+"\t"+(int)frequencies.getCountT_reverse_5()[i]+"\t"
                     +(int)sum+"\n");
-
-
         }
         freq_file_sample.close();
     }
 
-    public void writeFrequenciesReference(Frequencies frequencies) throws IOException{
+    public void writeFrequenciesReference(Frequencies frequencies, List<String> referenceName) throws IOException{
         BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "misincorporation.txt"));
 
+        String ref = "";
+        if(referenceName.size() == 1)
+            ref = referenceName.get(0);
 
         freq_file_ref.write("# table produced by DamageProfiler\n");
         freq_file_ref.write("# using mapped file " + input + "\n");
@@ -338,7 +342,7 @@ public class OutputGenerator {
                     frequencies.getCountG_ref_forward_3()[i]+frequencies.getCountT_ref_forward_3()[i];
 
             if(this.numberOfUsedReads>0){
-                freq_file_ref.write("fwd\t3p\t+\t"+(i+1)+"\t"
+                freq_file_ref.write(ref+"\t3p\t+\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_forward_3()[i]+"\t"+frequencies.getCountC_ref_forward_3()[i]+"\t"
                         +frequencies.getCountG_ref_forward_3()[i]+"\t"+frequencies.getCountT_ref_forward_3()[i]+"\t"
                         +sum+"\t"
@@ -363,7 +367,7 @@ public class OutputGenerator {
                     frequencies.getCountG_ref_reverse_3()[i]+frequencies.getCountT_ref_reverse_3()[i];
 
             if(this.numberOfUsedReads>0){
-                freq_file_ref.write("rev\t3p\t-\t"+(i+1)+"\t"
+                freq_file_ref.write(ref + "\t3p\t-\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_reverse_3()[i]+"\t"+frequencies.getCountC_ref_reverse_3()[i]+"\t"
                         +frequencies.getCountG_ref_reverse_3()[i]+"\t"+frequencies.getCountT_ref_reverse_3()[i]+"\t"
                         +sum+"\t"
@@ -390,7 +394,7 @@ public class OutputGenerator {
                     frequencies.getCountG_ref_forward_5()[i]+frequencies.getCountT_ref_forward_5()[i];
 
             if(this.numberOfUsedReads>0){
-                freq_file_ref.write("fwd\t5p\t+\t"+(i+1)+"\t"
+                freq_file_ref.write(ref+"\t5p\t+\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_forward_5()[i]+"\t"+frequencies.getCountC_ref_forward_5()[i]+"\t"
                         +frequencies.getCountG_ref_forward_5()[i]+"\t"+frequencies.getCountT_ref_forward_5()[i]+"\t"
                         +sum+"\t"
@@ -416,7 +420,7 @@ public class OutputGenerator {
                     frequencies.getCountG_ref_reverse_5()[i]+frequencies.getCountT_ref_reverse_5()[i];
 
             if(this.numberOfUsedReads>0){
-                freq_file_ref.write("rev\t5p\t-\t"+(i+1)+"\t"
+                freq_file_ref.write(ref+"\t5p\t-\t"+(i+1)+"\t"
                         +frequencies.getCountA_ref_reverse_5()[i]+"\t"+frequencies.getCountC_ref_reverse_5()[i]+"\t"
                         +frequencies.getCountG_ref_reverse_5()[i]+"\t"+frequencies.getCountT_ref_reverse_5()[i]+"\t"
                         +sum+"\t"

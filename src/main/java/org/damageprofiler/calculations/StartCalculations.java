@@ -291,8 +291,8 @@ public class StartCalculations {
                     damageProfiler.getFrequencies().getCount_G_A_3_norm(),
                     damageProfiler.getFrequencies().getCount_C_T_5_norm()
             );
-            outputGenerator.writeFrequenciesReference(damageProfiler.getFrequencies());
-            outputGenerator.writeDNAComp(damageProfiler.getFrequencies());
+            outputGenerator.writeFrequenciesReference(damageProfiler.getFrequencies(), damageProfiler.getReferenceName());
+            outputGenerator.writeDNAComp(damageProfiler.getFrequencies(), damageProfiler.getReferenceName());
             outputGenerator.writeDNAcomp_genome();
             outputGenerator.writeMisincorporations(
                     damageProfiler.getFrequencies(),

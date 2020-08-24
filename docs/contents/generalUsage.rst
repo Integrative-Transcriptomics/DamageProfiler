@@ -31,65 +31,83 @@ Options:
     * **-version** 
     Shows the version of DamageProfiler.
 
-    * **-i <INPUT>** 
+    * **-i INPUT** 
     The input sam/bam/cram file.
 
-    * **-r <REFERENCE>** 
+    * **-r REFERENCE** 
     The reference file (fasta format). 
     
-    * **-o <OUTPUT>** 
+    * **-o OUTPUT** 
     The output folder. Please specify the path to the result folder here. The folder structure will be as following: 
    
-    - The mapping file contains the mapping against one reference genome (parameters -s and -sf are not set):
-      The folder specified with '-o' is used as the main result folder. For the actual results, an additional folder within this folder is created, named according the file name. If you run multiple files with the same output folder, the results will not be overwritten but stored separately.
-      
+    - **If neither -s nor -sf are specified:** 
+      The results will directly be stored under the output folder specified with -o
+
       Example:  
 
-      -i mapping_file_sample_A.bam -o /home/neukamm/results_damageprofiler/
-      The result files will then be stored in /home/neukamm/results_damageprofiler/mapping_file_sample_A/.
+      -i mapping_file_sample_A.bam -o /path/to/result/directory/mapping_file_sample_A/
 
-    - The mapping file is a multi-referene/metagenomic mapping file and a list of species was specified via the parameters -s or -sf:
-      Same as above, but for each species, a separate folder is created.
-      
+      The result files will then be stored in /path/to/result/directory/mapping_file_sample_A/
+
+    - **-s is specified:**
+
+      The species must be put in quotation marks (e.g. -s 'NC_032001.1|tax|1917232|')
+
+      Multiple species must be comma separated (e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|').
+
+      If more than one species is specified, the results are stored in separate folders (per species) under the specified output folder (-o).
+
+      If only one single species is specified, the result will directly be stored under the output folder specified with -o.
+
+    - **-sf is specified:**
+
+      Species are given as text file, one per line. No quotation marks needed.
+
+      If more than one species is specified, the results are stored in separate folders (per species) under the specified output folder (-o).
+
+      If only one single species is specified, the result will directly be stored under the output folder specified with -o.
+
       Example:  
  
       -i mapping_file_sample_B.bam -o /home/neukamm/results_damageprofiler/ -s 'NC_002677.1'
-      The results will be stored in /home/neukamm/results_damageprofiler/mapping_file_sample_B/NC_002677.1_Mycobacterium_leprae_TN/
 
-      So if multiple species are specified, all results can be found under one folder: /home/neukamm/results_damageprofiler/mapping_file_sample_B/
+      The results will be stored in /home/neukamm/results_damageprofiler/mapping_file_sample_B/NC_002677.1/
 
+      -i mapping_file_sample_B.bam -o /path/to/result/directory/mapping_file_sample_B/ -s 'NC_002677.1,NC_028801.1'
+
+      The results will be stored in /path/to/result/directory/mapping_file_sample_B/NC_002677.1/ and /path/to/result/directory/mapping_file_sample_B/NC_028801.1/ and a summary pdf will be stored in /path/to/result/directory/mapping_file_sample_B/summary.pdf
     
-    * **-t <THRESHOLD>**
+    * **-t THRESHOLD**
     Number of bases which are considered for plotting nucleotide misincorporations in the damage plot. Default: 25.
 
-    * **-s <SPECIES>**
-    Reference sequence name (Reference NAME flag of SAM record). Depending on which database was used for mapping, this is the accession ID of the reference (i.e. NCBI accession ID).
+    * **-s SPECIES**
+    Reference sequence name (Reference NAME flag of SAM record). Depending on which database was used for mapping, this is the accession ID of the reference (i.e. NCBI accession ID). Commas within the Reference sequence name are not allowed.
 
-    * **-sf <SPECIES FILE>**
-    List with accession IDs of species for which damage profile has to be calculated. This file is a text file, with one species entry per line. 
+    * **-sf SPECIES FILE**
+    List with accession IDs of species for which damage profile has to be calculated. This file is a text file, with one species entry per line. Commas within the Reference sequence name are not allowed.
 
-    * **-l <LENGTH>**
+    * **-l LENGTH**
     Number of bases which are considered for frequency computations. Default: 100.
 
-    * **-title <TITLE>**
+    * **-title TITLE**
     Title used for all plots. Default: input filename.
 
-    * **-yaxis_dp_max <MAX_VALUE>**
+    * **-yaxis_dp_max MAX_VALUE**
     Maximal y-axis value that is visualized in the damage plot.
 
-    * **-color_c_t <COLOR_C_T>** 
+    * **-color_c_t COLOR_C_T** 
     Color for the line representing the C to T misincoporation frequency in the damage plot. The colour should be given as hex colour code (i.e. for magenta, set #ff00ff).
 
-    * **-color_g_a <COLOR_G_A>** 
+    * **-color_g_a COLOR_G_A** 
     Color for the line representing the G to A misincoporation frequency in the damage plot. The colour should be given as hex colour code (i.e. for magenta, set #ff00ff).
 
-    * **-color_instertions <COLOR_C_T>**
+    * **-color_instertions COLOR_C_T**
     Color for the line representing base insertions in the damage plot. The colour should be given as hex colour code (i.e. for magenta, set #ff00ff).
 
-    * **-color_deletions <COLOR_DELETIONS>**
+    * **-color_deletions COLOR_DELETIONS**
     Color for the line representing base deletions in the dmage plot. The colour should be given as hex colour code (i.e. for magenta, set #ff00ff).
 
-    * **-color_other <COLOR_OTHER>**
+    * **-color_other COLOR_OTHER**
     Color for the line representing other bases misincorporations in the damage plot.  The colour should be given as hex colour code (i.e. for magenta, set #ff00ff).
 
     * **-only_merged**

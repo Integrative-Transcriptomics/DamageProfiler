@@ -28,6 +28,7 @@ public class  DamageProfiler {
     LengthDistribution lengthDistribution;
     private ArrayList<Double> identity;
     private List<Double> editDistances;
+    private Set<String> ref_name_list;
 
     /**
      * constructor
@@ -81,7 +82,8 @@ public class  DamageProfiler {
                 this.identity = new ArrayList();
                 this.editDistances = new ArrayList();
                 this.species = specie;
-                useful_functions = new Functions();
+                this.useful_functions = new Functions();
+                this.ref_name_list = new HashSet<>();
 
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
@@ -113,6 +115,7 @@ public class  DamageProfiler {
 
             for(SAMRecord record : inputSam) {
                 numberOfRecords++;
+
 
                 if (this.species == null) {
                     handleRecord(use_only_merged_reads, use_all_reads, record);
@@ -173,6 +176,7 @@ public class  DamageProfiler {
 
     private void processRecord(SAMRecord record) {
         numberOfUsedReads++;
+        ref_name_list.add(record.getReferenceName());
 
         /*
             If MD value is set, use it to reconstruct reference
@@ -273,4 +277,5 @@ public class  DamageProfiler {
     public int getNumberOfRecords(){
         return numberOfRecords;
     }
+    public List<String> getReferenceName(){ return List.copyOf(ref_name_list); }
 }
