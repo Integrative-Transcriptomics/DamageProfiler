@@ -27,6 +27,8 @@ This is the main DamageProfiler documentation, where you can find information ab
 
    contents/output
 
+   contents/graphicaluserinterface
+
 Indices and tables
 ==================
 
