@@ -51,11 +51,12 @@ DamagePlot: Number of bases which are considered for plotting nucleotide misinco
 **-s SPECIES**\
 Reference sequence name (Reference sequence name (SN tag) of the SAM record). Species must be put in 
 quotation marks (e.g. -s 'NC_032001.1|tax|1917232|'), multiple species must be comma separated 
-(e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|,NC_034267.1|tax|1849328|').Please specify either -s or -sf.\
+(e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|,NC_034267.1|tax|1849328|'). Commas within the reference 
+sequence name are not allowed. Please specify either -s or -sf.\
 \
 **-sf FILE SPECIES**\
-Text file containing a list with species (Reference sequence name (SN tag) of the SAM record, one per line) for which damage profile has 
-to be calculated. Please specify either -s or -sf.\
+Text file containing a list with species (Reference sequence name (SN tag) of the SAM record, one per line) for which 
+damage profile has to be calculated. Please specify either -s or -sf.\
 \
 **-l LENGTH**\
 Number of bases which are considered for frequency computations. Default: 100.\

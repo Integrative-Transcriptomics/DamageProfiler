@@ -29,7 +29,9 @@ public class MetagenomicOutput {
      * @throws FileNotFoundException
      * @throws DocumentException
      */
-    public void generate(String output_folder, HashMap<String, List<JFreeChart>> species_output_summary, String sample_name,
+    public void generate(String output_folder, HashMap<String,
+                         List<JFreeChart>> species_output_summary,
+                         String sample_name,
                          HashMap<String, Integer> mapped_reads)
             throws FileNotFoundException, DocumentException {
 

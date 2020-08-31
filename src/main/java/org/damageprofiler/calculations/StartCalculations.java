@@ -135,7 +135,7 @@ public class StartCalculations {
 
         // create output folder based on file name
         if (outfolder != null){
-            createOutputFolder(outfolder,null);
+            createOutputFolder(outfolder, species);
         }
 
         if (communicator.getTitle_plots() == null) {
@@ -168,6 +168,7 @@ public class StartCalculations {
         damageProfiler.extractSAMRecords(use_only_merged_reads, use_all_reads);
         if(damageProfiler.getNumberOfUsedReads() != 0) {
             speciesListParser.setLOG(LOG);
+
             generateOutput(species);
         } else {
             System.err.println("No reads found for " + specieslist[0]);
@@ -213,7 +214,7 @@ public class StartCalculations {
 
                     // collect info for metagenomic summary output
                     String spec_no_space = specie_input_string.replace(" ","_");
-                    species_output_summary.put(spec_no_space + " (" + speciesID + ")",
+                    species_output_summary.put(spec_no_space,
                             List.of(outputGenerator.getChart_DP_5prime(),
                                     outputGenerator.getChart_DP_3prime(),
                                     outputGenerator.getEditDist_chart(),
@@ -221,7 +222,7 @@ public class StartCalculations {
                     );
 
                     number_of_used_reads_summary.put(
-                            spec_no_space + " (" + speciesID + ")",
+                            spec_no_space,
                             damageProfiler.getNumberOfUsedReads());
                 }
 
@@ -229,8 +230,12 @@ public class StartCalculations {
                 MetagenomicOutput metagenomicOutput = new MetagenomicOutput();
                 String[] splitted = input.split("/");
                 String filename = splitted[splitted.length-1];
-                metagenomicOutput.generate(outfolder,
-                        species_output_summary, filename, number_of_used_reads_summary);
+                metagenomicOutput.generate(
+                        outfolder,
+                        species_output_summary,
+                        filename,
+                        number_of_used_reads_summary
+                );
 
             }
 
