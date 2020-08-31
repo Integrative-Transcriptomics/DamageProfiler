@@ -1,22 +1,19 @@
 package org.damageprofiler.controller;
 
-import javafx.geometry.Insets;
-import org.damageprofiler.GUI.*;
-import org.damageprofiler.GUI.Dialogues.AdvancedPlottingOptionsDialogue;
-import org.damageprofiler.GUI.Dialogues.HelpDialogue;
-import org.damageprofiler.GUI.Dialogues.RunInfoDialogue;
-import org.damageprofiler.GUI.Dialogues.RuntimeEstimatorDialogue;
+import org.damageprofiler.gui.*;
+import org.damageprofiler.gui.dialogues.AdvancedPlottingOptionsDialogue;
+import org.damageprofiler.gui.dialogues.HelpDialogue;
+import org.damageprofiler.gui.dialogues.RunInfoDialogue;
+import org.damageprofiler.gui.dialogues.RuntimeEstimatorDialogue;
 import org.damageprofiler.calculations.RuntimeEstimator;
 import org.damageprofiler.calculations.StartCalculations;
-import org.damageprofiler.IO.Communicator;
+import org.damageprofiler.io.Communicator;
 import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
-
-import javax.swing.plaf.basic.BasicOptionPaneUI;
 
 public class DamageProfilerMainController {
 
@@ -29,24 +26,23 @@ public class DamageProfilerMainController {
     private final Button btn_help;
     private final HelpDialogue help_dialogue;
     private final AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue;
-    private final PlottingSettingController plottingSettingController;
-    private RunInfoDialogue runInfoDialogue;
-    private Communicator communicator;
-    private Button btn_inputfile;
-    private Button btn_reference;
-    private Button btn_output;
-    private Button btn_run;
-    private Button btn_speciesList;
-    private TextField textfield_threshold;
-    private TextField textfield_length;
-    private TextField textfield_species;
-    private CheckBox checkbox_use_merged_reads;
-    private CheckBox checkbox_ssLibs_protocol;
-    private TextField textfield_title;
-    private TextField textfield_y_axis_height;
-    private StartCalculations starter = new StartCalculations();
-    private DamageProfilerMainGUI mainGUI;
-    private RuntimeEstimatorDialogue runtimeInfoDialogue;
+    private final RunInfoDialogue runInfoDialogue;
+    private final Communicator communicator;
+    private final Button btn_inputfile;
+    private final Button btn_reference;
+    private final Button btn_output;
+    private final Button btn_run;
+    private final Button btn_speciesList;
+    private final TextField textfield_threshold;
+    private final TextField textfield_length;
+    private final TextField textfield_species;
+    private final CheckBox checkbox_use_merged_reads;
+    private final CheckBox checkbox_ssLibs_protocol;
+    private final TextField textfield_title;
+    private final TextField textfield_y_axis_height;
+    private final StartCalculations starter = new StartCalculations();
+    private final DamageProfilerMainGUI mainGUI;
+    private final RuntimeEstimatorDialogue runtimeInfoDialogue;
     /**
      * Constructor
      * @param damageProfilerMainGUI
@@ -87,29 +83,18 @@ public class DamageProfilerMainController {
 
 
         // attributes of advanced plotting settings
-        this.plottingSettingController = plottingSettingController;
         this.advancedPlottingOptionsDialogue = this.mainGUI.getConfig_dialogue().getAdvancedPlottingOptionsDialogue();
-        this.plottingSettingController.addListener(this.advancedPlottingOptionsDialogue);
+        plottingSettingController.addListener(this.advancedPlottingOptionsDialogue);
 
 
         runtimeInfoDialogue = new RuntimeEstimatorDialogue("Runtime information",
                 "This gives you an estimate of the runtime. For large files with a long runtime,\n" +
                         "it's recommended to use the command line version of DamageProfiler.");
 
-        setColorsPlotting();
         addListener();
 
     }
 
-    private void setColorsPlotting() {
-
-        communicator.setColor_DP_C_to_T(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_C_to_T().getValue());
-        communicator.setColor_DP_G_to_A(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_G_to_A().getValue());
-        communicator.setColor_DP_insertions(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_insertions().getValue());
-        communicator.setColor_DP_deletions(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_deletions().getValue());
-        communicator.setColor_DP_other(this.advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot().getColorPicker_others().getValue());
-
-    }
 
     private void addListener() {
 
@@ -138,9 +123,7 @@ public class DamageProfilerMainController {
 
         });
 
-        btn_help.setOnAction(e -> {
-            mainGUI.getRoot().setCenter(new ScrollPane(this.help_dialogue.getGridPane()));
-        });
+        btn_help.setOnAction(e -> mainGUI.getRoot().setCenter(new ScrollPane(this.help_dialogue.getGridPane())));
 
         btn_reference.setOnAction(e -> {
 
@@ -187,6 +170,8 @@ public class DamageProfilerMainController {
             long estimatedRuntimeInSeconds = runtimeEstimator.getEstimatedRuntimeInSeconds();
             String text_estimatedRuntime;
 
+            runtimeInfoDialogue.setFileSize(runtimeEstimator.getMegabytes());
+
 
             if(estimatedRuntimeInSeconds > 60) {
                 long minutes = estimatedRuntimeInSeconds / 60;
@@ -214,18 +199,12 @@ public class DamageProfilerMainController {
 
         runtimeInfoDialogue.getBtn_cancel().setOnAction(e_cancel -> runtimeInfoDialogue.close());
 
-        btn_run.setOnAction(e -> {
-            runDamageProfiler();
-        });
+        btn_run.setOnAction(e -> runDamageProfiler());
 
         btn_speciesList.setOnAction(e -> {
 
             SpeciesListFileChooser slfc = new SpeciesListFileChooser(communicator);
-            if (checkIfInputWasSelected()) {
-                btn_speciesList.setDisable(false);
-            } else {
-                btn_speciesList.setDisable(true);
-            }
+            btn_speciesList.setDisable(!checkIfInputWasSelected());
 
         });
 
@@ -352,7 +331,7 @@ public class DamageProfilerMainController {
 
     /**
      * The following methods generate the result plots after successful damage profile calculations.
-     *    todo: if plot already created, just reload
+     *
      */
 
     private void generateLengthDist() {

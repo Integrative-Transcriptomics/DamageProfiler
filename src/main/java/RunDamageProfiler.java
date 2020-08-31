@@ -22,7 +22,7 @@ public class RunDamageProfiler {
 
         } else {
             System.setProperty("java.awt.headless", "true");
-            StarterCLI starterCLI = new StarterCLI(VERSION, args);
+            new StarterCLI(VERSION, args);
         }
     }
 }

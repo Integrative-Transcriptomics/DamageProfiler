@@ -1,6 +1,5 @@
-package org.damageprofiler.IO;
+package org.damageprofiler.io;
 
-import com.google.gson.internal.$Gson$Preconditions;
 import org.apache.commons.cli.*;
 
 
@@ -11,8 +10,8 @@ public class UserOptionsParser {
 
     private static final String CLASS_NAME = "User option parser";
     private final String version;
-    private String[] args;
-    private Communicator communicator;
+    private final String[] args;
+    private final Communicator communicator;
 
 
     public UserOptionsParser(String[] args, Communicator c, String version){
@@ -146,7 +145,7 @@ public class UserOptionsParser {
         HelpFormatter formatter = new HelpFormatter();
         formatter.setOptionComparator(null);
         formatter.setWidth(130);
-        CommandLineParser parser = new BasicParser();
+        CommandLineParser parser = new DefaultParser();
 
 
 // ---------------------------------------------------------------------------------------

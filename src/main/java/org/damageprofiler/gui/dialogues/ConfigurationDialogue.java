@@ -1,4 +1,4 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,7 +11,7 @@ import javafx.scene.text.FontWeight;
 public class ConfigurationDialogue {
 
 
-    private GridPane config_gridpane;
+    private final GridPane config_gridpane;
 
     private Button btn_inputfile;
     private Button btn_reference;
@@ -28,9 +28,8 @@ public class ConfigurationDialogue {
     private TextField textfield_title;
     private TextField textfield_y_axis_height;
 
-    private ProgressBar progressBar;
+    private final ProgressBar progressBar;
     private AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue;
-    private Button btn_loadSpecies;
 
 
     public ConfigurationDialogue(ProgressBar progressBar){
@@ -52,7 +51,6 @@ public class ConfigurationDialogue {
         btn_reference = new Button("Select reference");
         btn_output = new Button("Select output");
         btn_speciesList = new Button("Set species file");
-        btn_loadSpecies = new Button("Load Species");
         btn_run = new Button("Run");
         btn_estimate_runtime = new Button("Estimate Runtime");
 

@@ -1,9 +1,9 @@
-package org.damageprofiler.GUI;
+package org.damageprofiler.gui;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
-import org.damageprofiler.GUI.Dialogues.ConfigurationDialogue;
-import org.damageprofiler.IO.Communicator;
+import org.damageprofiler.gui.dialogues.ConfigurationDialogue;
+import org.damageprofiler.io.Communicator;
 import org.damageprofiler.controller.ProgressBarController;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -15,14 +15,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
+import java.util.Objects;
 
 public class DamageProfilerMainGUI {
 
 
     private final String version;
     private final ProgressBarController progressBarController;
-    private Stage primaryStage;
-    private Communicator communicator = new Communicator();
+    private final Communicator communicator = new Communicator();
     private BorderPane root;
     private ConfigurationDialogue config_dialogue;
     private Button btn_leftpane_identityDist;
@@ -39,8 +39,7 @@ public class DamageProfilerMainGUI {
 
     public void init(Stage primaryStage) {
 
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("DamageProfiler v" + version);
+        primaryStage.setTitle("DamageProfiler v" + version);
 
         root = new BorderPane();
 
@@ -52,17 +51,18 @@ public class DamageProfilerMainGUI {
         root.setCenter(scrollPane_adv_config);
         root.setLeft(generateLeftPane());
 
-        this.primaryStage.setScene(new Scene(root, 1100, 700));
-        this.primaryStage.setResizable(true);
-        this.primaryStage.show();
+        primaryStage.setScene(new Scene(root, 1100, 700));
+        primaryStage.setResizable(true);
+        primaryStage.show();
 
     }
 
     private VBox generateLeftPane() {
 
         // Image Source
-        InputStream input= getClass().getClassLoader().getResourceAsStream("logo.png");
-        Image image = new Image(input);
+        InputStream input = getClass().getClassLoader().getResourceAsStream("logo.png");
+        assert input != null;
+        Image image = new Image(Objects.requireNonNull(input));
         ImageView imageView = new ImageView(image);
 
         HBox hbxImg = new HBox();

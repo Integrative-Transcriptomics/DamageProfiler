@@ -1,4 +1,4 @@
-package org.damageprofiler.IO;
+package org.damageprofiler.io;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;

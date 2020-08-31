@@ -1,6 +1,6 @@
-package org.damageprofiler.GUI;
+package org.damageprofiler.gui;
 
-import org.damageprofiler.IO.Communicator;
+import org.damageprofiler.io.Communicator;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -10,10 +10,9 @@ import java.util.List;
 
 public class BamFileChooser {
 
-    private FileChooser fileChooser = new FileChooser();
+    public BamFileChooser(Communicator c) {
 
-    public BamFileChooser(Communicator c){
-
+        FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("BAM", "*.bam"),
                 new FileChooser.ExtensionFilter("SAM", "*.sam")
@@ -22,23 +21,16 @@ public class BamFileChooser {
 
         List<File> f = fileChooser.showOpenMultipleDialog(new Stage());
 
-        ArrayList<String> files = new ArrayList<String>();
+        ArrayList<String> files = new ArrayList<>();
 
-        try{
-
-            for (int i = 0; i < f.size(); i++){
-                files.add(f.get(i).getAbsolutePath());
+        if (f.size() != 0){
+            for (File file : f) {
+                files.add(file.getAbsolutePath());
             }
 
             c.setInput(files.get(0));
-            System.out.println("Input file: " + files.get(0));
-
-        } catch (Exception e){
-            System.err.println(e);
-
         }
 
-
-        }
+    }
 
 }

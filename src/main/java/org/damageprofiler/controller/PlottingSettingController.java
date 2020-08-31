@@ -1,7 +1,7 @@
 package org.damageprofiler.controller;
 
-import org.damageprofiler.GUI.Dialogues.AdvancedPlottingOptionsDialogue;
-import org.damageprofiler.GUI.Dialogues.TabAdvancedSettingsDamagePlot;
+import org.damageprofiler.gui.dialogues.AdvancedPlottingOptionsDialogue;
+import org.damageprofiler.gui.dialogues.TabAdvancedSettingsDamagePlot;
 
 public class PlottingSettingController {
 
@@ -16,10 +16,7 @@ public class PlottingSettingController {
      */
     public void addListener(AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue) {
         TabAdvancedSettingsDamagePlot dp_settings_pane = advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot();
-        dp_settings_pane.getBtn_reset().setOnAction(e ->{
-            dp_settings_pane.reset();
-
-        });
+        dp_settings_pane.getBtn_reset().setOnAction(e -> dp_settings_pane.reset());
 
     }
 }

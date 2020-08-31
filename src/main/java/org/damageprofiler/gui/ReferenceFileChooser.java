@@ -1,6 +1,6 @@
-package org.damageprofiler.GUI;
+package org.damageprofiler.gui;
 
-import org.damageprofiler.IO.Communicator;
+import org.damageprofiler.io.Communicator;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -8,9 +8,10 @@ import java.io.File;
 
 public class ReferenceFileChooser {
 
-    private FileChooser fileChooser = new FileChooser();
 
     public ReferenceFileChooser(Communicator c){
+
+        FileChooser fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Fasta", "*.fa","*.fasta", ".fas")

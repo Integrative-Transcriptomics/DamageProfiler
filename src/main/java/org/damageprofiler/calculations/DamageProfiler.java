@@ -1,11 +1,12 @@
 package org.damageprofiler.calculations;
 
-import org.damageprofiler.IO.FastACacher;
+import org.damageprofiler.io.FastACacher;
 import htsjdk.samtools.*;
 import htsjdk.samtools.util.SequenceUtil;
 import org.apache.log4j.Logger;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -21,12 +22,9 @@ public class  DamageProfiler {
     private Logger LOG=null;
     private int numberOfUsedReads;
     private int numberOfRecords;
-    private int threshold;
-    private int length;
     private Frequencies frequencies;
     private File reference;
     LengthDistribution lengthDistribution;
-    private ArrayList<Double> identity;
     private List<Double> editDistances;
     private Set<String> ref_name_list;
 
@@ -73,14 +71,11 @@ public class  DamageProfiler {
                 numberOfUsedReads = 0;
                 numberOfRecords = 0;
                 this.LOG = LOG;
-                this.threshold = threshold;
-                this.length = length;
-                this.frequencies = new Frequencies(this.length, this.threshold, this.LOG);
+                this.frequencies = new Frequencies(length, threshold, this.LOG);
                 this.reference = reference;
                 this.lengthDistribution = new LengthDistribution(this.LOG);
                 this.lengthDistribution.init();
-                this.identity = new ArrayList();
-                this.editDistances = new ArrayList();
+                this.editDistances = new ArrayList<>();
                 this.species = specie;
                 this.useful_functions = new Functions();
                 this.ref_name_list = new HashSet<>();
@@ -152,7 +147,7 @@ public class  DamageProfiler {
             if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
                 processRecord(record);
             }
-        } else if(!use_only_merged_reads && !use_all_reads) {
+        } else if(!use_only_merged_reads) {
             // process only mapped reads
             if (!record.getReadUnmappedFlag()) {
                 // get all mapped reads
@@ -184,8 +179,8 @@ public class  DamageProfiler {
 
          */
 
-        String reference_aligned="";
-        String record_aligned="";
+        String reference_aligned;
+        String record_aligned;
 
 
         // check if record has MD tag and no reference file is specified
@@ -204,7 +199,7 @@ public class  DamageProfiler {
             try{
 
                 byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
-                reference_aligned = new String(ref_seq, "UTF-8");
+                reference_aligned = new String(ref_seq, StandardCharsets.UTF_8);
                 record_aligned = record.getReadString();
                 proceed(record, record_aligned, reference_aligned);
 
@@ -219,7 +214,7 @@ public class  DamageProfiler {
                 try{
                     SequenceUtil.calculateMdAndNmTags(record, cache.getData().get(record.getReferenceName()), true, true);
                     byte[] ref_seq = SequenceUtil.makeReferenceFromAlignment(record, false);
-                    reference_aligned = new String(ref_seq, "UTF-8");
+                    reference_aligned = new String(ref_seq, StandardCharsets.UTF_8);
                     record_aligned = record.getReadString();
                     proceed(record, record_aligned, reference_aligned);
                     System.err.println("Re-calculation was successful!\n");
@@ -232,7 +227,7 @@ public class  DamageProfiler {
     }
 
 
-    private void proceed(SAMRecord record, String record_aligned, String reference_aligned) throws Exception {
+    private void proceed(SAMRecord record, String record_aligned, String reference_aligned) {
         // report length distribution
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
 
@@ -240,7 +235,6 @@ public class  DamageProfiler {
         double hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
 
         double id = record_aligned.length()-hamming / (double)record_aligned.length();
-        this.identity.add(id);
         this.editDistances.add(hamming);
 
         // calculate frequencies

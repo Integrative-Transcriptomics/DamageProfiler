@@ -1,4 +1,4 @@
-package org.damageprofiler.IO;
+package org.damageprofiler.io;
 
 import javafx.scene.paint.Color;
 

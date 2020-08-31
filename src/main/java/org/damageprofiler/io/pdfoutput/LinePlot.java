@@ -1,4 +1,4 @@
-package org.damageprofiler.IO.PDFoutput;
+package org.damageprofiler.io.pdfoutput;
 
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
@@ -25,15 +25,14 @@ public class LinePlot {
     private final double height;
     private final Logger LOG;
     private double y_max=0.0;
-    private double y_min=0.0;
-    private ArrayList<XYSeries> all_data;
-    private int threshold;
+    private final ArrayList<XYSeries> all_data;
+    private final int threshold;
 
-    private Color awtColor_DP_C_to_T;
-    private Color awtColor_DP_G_to_A;
-    private Color awtColor_DP_insertions;
-    private Color awtColor_DP_deletions;
-    private Color awtColor_DP_other;
+    private final Color awtColor_DP_C_to_T;
+    private final Color awtColor_DP_G_to_A;
+    private final Color awtColor_DP_insertions;
+    private final Color awtColor_DP_deletions;
+    private final Color awtColor_DP_other;
 
 
     public LinePlot(int threshold, double height, Logger LOG, javafx.scene.paint.Color color_DP_C_to_T,
@@ -100,7 +99,6 @@ public class LinePlot {
             if(series.getMaxY() > y_max){y_max=series.getMaxY();}
         }
 
-        y_min = 0.0;
         if(height != 0.0){
             y_max = height;
         }
@@ -193,11 +191,8 @@ public class LinePlot {
 
 
         yAxis.setRange(0.0, yMax+0.015);
-        if(yMax+0.1 > 0.5){
-            yAxis.setTickUnit(new NumberTickUnit(0.05));
-        } else {
-            yAxis.setTickUnit(new NumberTickUnit(0.05));
-        }
+
+        yAxis.setTickUnit(new NumberTickUnit(0.05));
 
 
         switch (title){

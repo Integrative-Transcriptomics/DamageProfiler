@@ -1,6 +1,6 @@
 import org.damageprofiler.calculations.StartCalculations;
-import org.damageprofiler.IO.Communicator;
-import org.damageprofiler.IO.UserOptionsParser;
+import org.damageprofiler.io.Communicator;
+import org.damageprofiler.io.UserOptionsParser;
 
 public class StarterCLI {
 
@@ -8,7 +8,7 @@ public class StarterCLI {
         Communicator c = new Communicator();
         StartCalculations starter = new StartCalculations();
         starter.setVERSION(version);
-        UserOptionsParser userOptions = new UserOptionsParser(args, c, version);
+        new UserOptionsParser(args, c, version);
         starter.start(c);
         System.exit(0);
     }

@@ -1,4 +1,4 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,7 +17,7 @@ public class TabAdvancedSettingsDamagePlot {
     private ColorPicker colorPicker_insertions;
     private ColorPicker colorPicker_deletions;
     private ColorPicker colorPicker_others;
-    private Button btn_reset;
+    private final Button btn_reset;
     private GridPane gridpane;
 
     /**
@@ -127,9 +127,6 @@ public class TabAdvancedSettingsDamagePlot {
         return btn_reset;
     }
 
-    public GridPane getGridpane() {
-        return gridpane;
-    }
 
     public void reset() {
 

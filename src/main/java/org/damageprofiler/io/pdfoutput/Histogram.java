@@ -1,13 +1,11 @@
-package org.damageprofiler.IO.PDFoutput;
+package org.damageprofiler.io.pdfoutput;
 
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 
@@ -23,7 +21,7 @@ public class Histogram {
 
 
     private final Logger LOG;
-    private List<double[]> data_collected;
+    private final List<double[]> data_collected;
 
     public Histogram(Logger LOG){
 

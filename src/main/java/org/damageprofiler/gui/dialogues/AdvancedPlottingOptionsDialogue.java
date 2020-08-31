@@ -1,4 +1,4 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -7,7 +7,6 @@ import javafx.scene.control.TabPane;
 public class AdvancedPlottingOptionsDialogue {
 
     private TabPane tabPane;
-    private Tab tab_DP;
     private TabAdvancedSettingsDamagePlot tabAdvancedSettingsDamagePlot;
 
     /**
@@ -24,7 +23,7 @@ public class AdvancedPlottingOptionsDialogue {
     private void fill() {
 
         tabAdvancedSettingsDamagePlot = new TabAdvancedSettingsDamagePlot("Damage Profile");
-        tab_DP = tabAdvancedSettingsDamagePlot.getTab();
+        Tab tab_DP = tabAdvancedSettingsDamagePlot.getTab();
 
         tabPane = new TabPane();
         tabPane.getTabs().addAll(tab_DP);

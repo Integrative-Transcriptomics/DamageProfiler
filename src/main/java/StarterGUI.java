@@ -1,5 +1,5 @@
 import org.damageprofiler.controller.DamageProfilerMainController;
-import org.damageprofiler.GUI.DamageProfilerMainGUI;
+import org.damageprofiler.gui.DamageProfilerMainGUI;
 import org.damageprofiler.controller.PlottingSettingController;
 import org.damageprofiler.controller.ProgressBarController;
 import javafx.application.Application;

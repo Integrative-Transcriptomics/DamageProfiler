@@ -1,7 +1,7 @@
-package org.damageprofiler.IO;
+package org.damageprofiler.io;
 
-import org.damageprofiler.IO.PDFoutput.Histogram;
-import org.damageprofiler.IO.PDFoutput.LinePlot;
+import org.damageprofiler.io.pdfoutput.Histogram;
+import org.damageprofiler.io.pdfoutput.LinePlot;
 import org.damageprofiler.calculations.DamageProfiler;
 import org.damageprofiler.calculations.Frequencies;
 import com.google.gson.Gson;
@@ -32,42 +32,39 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.awt.geom.Rectangle2D;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by neukamm on 7/8/15.
  */
+
 public class OutputGenerator {
 
     private final boolean ssLibProtocolUsed;
-    private int numberOfUsedReads;
+    private final int numberOfUsedReads;
     private final double height;
     private final Logger LOG;
-    private String outpath;
-    private Frequencies frequencies;
-    private DamageProfiler damageProfiler;
-    private int numberOfRecords;
+    private final String outpath;
+    private final Frequencies frequencies;
+    private final DamageProfiler damageProfiler;
+    private final int numberOfRecords;
     private double max_length;
     private double min_length;
     private String species;
-    private int threshold;
-    private int length;
-    private String input;
-    private HashMap<String,Object> json_map = new HashMap<>();
-    private double[] three_C_to_T_reverse;
-    private double[] three_G_to_A_reverse;
+    private final int threshold;
+    private final int length;
+    private final String input;
+    private final HashMap<String,Object> json_map = new HashMap<>();
     private JFreeChart chart_DP_5prime;
     private JFreeChart chart_DP_3prime;
     private JFreeChart length_chart_all;
     private JFreeChart length_chart_separated;
     private JFreeChart editDist_chart;
 
-    private Color color_DP_C_to_T;
-    private Color color_DP_G_to_A;
-    private Color color_DP_insertions;
-    private Color color_DP_deletions;
-    private Color color_DP_other;
+    private final Color color_DP_C_to_T;
+    private final Color color_DP_G_to_A;
+    private final Color color_DP_insertions;
+    private final Color color_DP_deletions;
+    private final Color color_DP_other;
 
 
 
@@ -152,8 +149,7 @@ public class OutputGenerator {
 
         // fill file
 
-        List<Double> key_list = new ArrayList<>();
-        key_list.addAll(map_forward.keySet());
+        List<Double> key_list = new ArrayList<>(map_forward.keySet());
         Collections.sort(key_list);
 
         HashMap<Double,Integer> yaml_dump_fw = new HashMap<>();
@@ -309,7 +305,7 @@ public class OutputGenerator {
     public void writeFrequenciesReference(Frequencies frequencies, List<String> referenceName) throws IOException{
         BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "misincorporation.txt"));
 
-        String ref = "";
+        String ref="";
         if(referenceName.size() == 1)
             ref = referenceName.get(0);
 
@@ -549,8 +545,8 @@ public class OutputGenerator {
 
         writer.write(title);
         for(int i = 0; i < values.length; i++){
-            Double d = values[i];
-            BigDecimal bd = d == null ? BigDecimal.ZERO : BigDecimal.valueOf(d);
+            double d = values[i];
+            BigDecimal bd = BigDecimal.valueOf(d);
             if(i!=values.length-1) {
                 writer.write(i+1 + "\t" + bd.toPlainString() + "\n");
             } else {
@@ -732,7 +728,7 @@ public class OutputGenerator {
 
     public void writeEditDistance(List<Double> editDistances) throws IOException {
         Collections.sort(editDistances);
-        Set<Double> distances_sorted = new HashSet<Double>(editDistances);
+        Set<Double> distances_sorted = new HashSet<>(editDistances);
         HashMap<Double, Integer> edit_occurrences_map = new HashMap<>();
         for(double dist : distances_sorted){
             int occurrences = Collections.frequency(editDistances, dist);
@@ -766,9 +762,9 @@ public class OutputGenerator {
 
         double[] three_C_to_A_reverse = getSubArray(frequencies.getCount_C_A_3_norm(), threshold);
         double[] three_C_to_G_reverse = getSubArray(frequencies.getCount_C_G_3_norm(), threshold);
-        three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
+        double[] three_C_to_T_reverse = getSubArray(frequencies.getCount_C_T_3_norm(), threshold);
 
-        three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(),threshold);
+        double[] three_G_to_A_reverse = getSubArray(frequencies.getCount_G_A_3_norm(), threshold);
         double[] three_G_to_C_reverse = getSubArray(frequencies.getCount_G_C_3_norm(),threshold);
         double[] three_G_to_T_reverse = getSubArray(frequencies.getCount_G_T_3_norm(),threshold);
 
@@ -792,7 +788,7 @@ public class OutputGenerator {
         three_T_to_C_reverse = reverseArray(three_T_to_C_reverse);
         three_T_to_G_reverse = reverseArray(three_T_to_G_reverse);
 
-        LinePlot damagePlot_three=null;
+        LinePlot damagePlot_three;
 
         // create plots
         damagePlot_three = new LinePlot(threshold, height, LOG, color_DP_C_to_T, color_DP_G_to_A,
@@ -947,9 +943,7 @@ public class OutputGenerator {
 
         double[] out = new double[n];
 
-        for (int i = 0; i < n; i++){
-            out[i] = array[i];
-        }
+        if (n >= 0) System.arraycopy(array, 0, out, 0, n);
 
         return out;
 

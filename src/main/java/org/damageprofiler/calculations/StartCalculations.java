@@ -11,7 +11,7 @@ import com.itextpdf.text.DocumentException;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import javafx.scene.paint.Color;
 import org.apache.log4j.*;
-import org.damageprofiler.IO.*;
+import org.damageprofiler.io.*;
 import org.jfree.chart.JFreeChart;
 
 
@@ -21,8 +21,6 @@ import org.jfree.chart.JFreeChart;
 public class StartCalculations {
 
     private String VERSION;
-    private LogClass logClass;
-    private long currtime_prior_execution;  // start time to get overall runtime
     private boolean calculationsDone = false;
     private Logger LOG;
     private String[] specieslist = null;
@@ -31,7 +29,6 @@ public class StartCalculations {
     private int threshold;
     private int length;
     private String specieslist_filepath;
-    private String species_minus_s;
     private String reference;
     private String outfolder;
     private String input;
@@ -43,8 +40,7 @@ public class StartCalculations {
     private Communicator communicator;
     private IndexedFastaSequenceFile fastaSequenceFile;
     private FastACacher cache;
-    private HashMap<String, List<JFreeChart>> species_output_summary;
-    private HashMap<String, Integer> number_of_used_reads_summary;
+
 
 
     // plot settings
@@ -72,11 +68,10 @@ public class StartCalculations {
      */
     public void start(Communicator c) throws Exception {
 
-        currtime_prior_execution = System.currentTimeMillis();
         input = c.getInput();
         outfolder = c.getOutfolder();
         reference = c.getReference();
-        species_minus_s = c.getSpecies_ref_identifier();
+        String species_minus_s = c.getSpecies_ref_identifier();
         specieslist_filepath = c.getSpecieslist_filepath();
         length = c.getLength();
         threshold = c.getThreshold();
@@ -108,8 +103,7 @@ public class StartCalculations {
          */
 
         if(specieslist_filepath != null){
-            List<String> specieslist_tmp = new ArrayList<>();
-            specieslist_tmp.addAll(speciesListParser.getSpeciesList());
+            List<String> specieslist_tmp = new ArrayList<>(speciesListParser.getSpeciesList());
             specieslist = new String[specieslist_tmp.size()];
             specieslist_tmp.toArray(specieslist);
 
@@ -200,20 +194,18 @@ public class StartCalculations {
                     System.err.println("Reference ID " + speciesID + " doesn't match regex: " + p);
                 }
 
-            } else if (specieslist.length > 1){
+            } else {
 
-                species_output_summary = new HashMap<>();
-                number_of_used_reads_summary = new HashMap<>();
+                HashMap<String, List<JFreeChart>> species_output_summary = new HashMap<>();
+                HashMap<String, Integer>  number_of_used_reads_summary = new HashMap<>();
 
-                for (int i = 0; i < specieslist.length; i++) {
-                    String specie_input_string = specieslist[i];
-                    String speciesID = specieslist[i];
+                for (String specie_input_string : specieslist) {
 
                     // start DamageProfiler
-                    startDamageProfilerOnSingleSpecies(speciesID);
+                    startDamageProfilerOnSingleSpecies(specie_input_string);
 
                     // collect info for metagenomic summary output
-                    String spec_no_space = specie_input_string.replace(" ","_");
+                    String spec_no_space = specie_input_string.replace(" ", "_");
                     species_output_summary.put(spec_no_space,
                             List.of(outputGenerator.getChart_DP_5prime(),
                                     outputGenerator.getChart_DP_3prime(),
@@ -253,7 +245,7 @@ public class StartCalculations {
      */
     private void initLogger(String outfolder, String log) {
 
-        logClass = new LogClass();
+        LogClass logClass = new LogClass();
         logClass.updateLog4jConfiguration(outfolder);
         logClass.setUp();
 

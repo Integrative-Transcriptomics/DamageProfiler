@@ -13,7 +13,7 @@ public class SpeciesListParser {
 
 
     private Logger LOG;
-    private String speciesFile;
+    private final String speciesFile;
 
     public SpeciesListParser(String speciesListFile, Logger LOG) {
         this.speciesFile = speciesListFile;

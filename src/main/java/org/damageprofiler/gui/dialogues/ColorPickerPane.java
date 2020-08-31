@@ -1,10 +1,10 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 
 public class ColorPickerPane {
-    private ColorPicker colorPicker;
+    private final ColorPicker colorPicker;
 
     public ColorPickerPane(Color color){
         colorPicker = new ColorPicker();

@@ -1,4 +1,4 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 
 import javafx.geometry.Insets;
@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 public class HelpDialogue {
 
     private final GridPane gridPane;
-    private Hyperlink link;
 
     public HelpDialogue(){
 
@@ -50,7 +49,7 @@ public class HelpDialogue {
         Label label_details = new Label("Detailed description:\n");
         label_details.setFont(Font.font("Verdana", FontWeight.BOLD, 12));
 
-        link = new Hyperlink();
+        Hyperlink link = new Hyperlink();
         link.setText("Documentation");
         link.setOnAction(event -> new Thread(() -> {
             try {
@@ -60,7 +59,6 @@ public class HelpDialogue {
             }
         }).start());
 
-        // todo: make this nicer
         Label label_helppage = new Label("-h\t\t\t\t\t\t\t\tShows this help page.\n" +
                 " -version\t\t\t\t\t\t\tShows the version of DamageProfiler.\n" +
                 " -i <INPUT>\t\t\t\t\t\tThe input sam/bam/cram file.\n" +

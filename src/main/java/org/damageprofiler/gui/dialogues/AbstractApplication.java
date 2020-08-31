@@ -1,4 +1,4 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 public class AbstractApplication {
 
     private final Stage stage;
-    protected GridPane gridPane;
+    protected final GridPane gridPane;
     protected int row;
 
     public AbstractApplication(String header, String message){

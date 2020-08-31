@@ -1,4 +1,4 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +10,7 @@ import javafx.scene.text.FontWeight;
 
 public class AbstractDialogue {
 
-    protected GridPane gridPane;
+    protected final GridPane gridPane;
     protected int row;
 
     public AbstractDialogue(String message){

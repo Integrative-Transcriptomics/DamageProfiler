@@ -75,10 +75,10 @@ public class LengthDistribution {
         }
 
         if(!length_distribution_map.containsKey(record_length)){
-            length_distribution_map.put((double)record_length, 1.0);
+            length_distribution_map.put(record_length, 1.0);
         } else {
             double count = length_distribution_map.get(record_length);
-            length_distribution_map.put((double)record_length, count + 1);
+            length_distribution_map.put(record_length, count + 1);
         }
     }
 

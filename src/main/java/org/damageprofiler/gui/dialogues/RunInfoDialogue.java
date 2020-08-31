@@ -1,6 +1,6 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
-import org.damageprofiler.IO.Communicator;
+import org.damageprofiler.io.Communicator;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -9,7 +9,7 @@ import javafx.scene.control.Separator;
 public class RunInfoDialogue extends AbstractDialogue {
 
     private final Communicator communicator;
-    private Button btn_new_config;
+    private final Button btn_new_config;
     private ScrollPane scrollPaneRef;
     private ScrollPane scrollPaneInput;
     private ScrollPane scrollPaneOutput;

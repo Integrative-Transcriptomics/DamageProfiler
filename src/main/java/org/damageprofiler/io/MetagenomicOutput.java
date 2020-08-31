@@ -1,4 +1,4 @@
-package org.damageprofiler.IO;
+package org.damageprofiler.io;
 
 import com.itextpdf.awt.PdfGraphics2D;
 import com.itextpdf.text.*;

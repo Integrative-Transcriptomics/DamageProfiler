@@ -1,15 +1,15 @@
-package org.damageprofiler.GUI.Dialogues;
+package org.damageprofiler.gui.dialogues;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class RuntimeEstimatorDialogue extends AbstractApplication {
 
-    private Button btn_proceed;
-    private Button btn_cancel;
+    private final Button btn_proceed;
+    private final Button btn_cancel;
     private int numberOfRecords;
     private String text_estimatedRuntime;
-    private String fileSize;
+    private double fileSize;
 
     public RuntimeEstimatorDialogue(String header, String message) {
         super(header, message);
@@ -21,7 +21,7 @@ public class RuntimeEstimatorDialogue extends AbstractApplication {
 
     public void addComponents(){
 
-        this.gridPane.add(new Label("File size:\t" + fileSize + "mb"), 0,++row, 2,1);
+        this.gridPane.add(new Label("File size:\t" + fileSize + " mb"), 0,++row, 2,1);
         this.gridPane.add(new Label("Number of reads:\t" + numberOfRecords), 0, ++row, 2,1);
         this.gridPane.add(new Label(text_estimatedRuntime), 0, ++row, 2,1);
         this.gridPane.add(btn_cancel, 0, ++row, 1,1);
@@ -40,10 +40,9 @@ public class RuntimeEstimatorDialogue extends AbstractApplication {
     public void setResultText(String text_estimatedRuntime) {
         this.text_estimatedRuntime = text_estimatedRuntime;
     }
-    public void setFileSize(String fileSize) {
+    public void setFileSize(double fileSize) {
         this.fileSize = fileSize;
     }
-
     public Button getBtn_proceed() {
         return btn_proceed;
     }
