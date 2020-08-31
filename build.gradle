@@ -1,15 +1,34 @@
- plugins {
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+
+
+plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'org.beryx.jlink' version '2.12.0'
  }
 
-version '0.5.1'
+version '1.0'
 
 
-repositories {
-    mavenCentral()
-    jcenter()
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    apply plugin: 'com.jfrog.bintray'
+    apply plugin: 'jacoco'
 }
 
 
@@ -41,64 +60,42 @@ jar {
 }
 
 
-//// Uncomment when compiling with java8
-//version '0.5.0-java8'
-//buildscript {
-//    repositories {
-//        jcenter()
-//    }
-//    dependencies {
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8+'
-//    }
-//}
-//
-//allprojects {
-//    repositories {
-//        jcenter()
-//    }
-//    apply plugin: 'maven'
-//    apply plugin: 'maven-publish'
-//    apply plugin: 'java'
-//    apply plugin: 'idea'
-//    apply plugin: 'com.jfrog.bintray'
-//    apply plugin: 'jacoco'
-//}
-//
-//sourceCompatibility = 1.8
-//
-//sourceSets {
-//    main {
-//        java {
-//            srcDir 'src'
-//        }
-//
-//        resources {
-//            srcDirs "src/main/resources"
-//        }
-//    }
-//}
-//
-//
-//dependencies {
-//    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
-//    compile group: 'commons-cli', name: 'commons-cli', version: '1.3.+'
-//    compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.+'
-//    compile group: 'com.github.samtools', name: 'htsjdk', version: '2.+'
-//    compile group: 'com.intellij', name: 'forms_rt', version: '6.0.+'
-//    compile group: 'log4j', name: 'log4j', version: '1.+'
-//    compile group: 'com.github.broadinstitute', name: 'picard', version: '2.+'
-//    compile group: 'org.jfree', name: 'jfreesvg', version: '2.0'
-//    compile group: 'org.apache.commons', name: 'commons-text', version: '1.+'
-//    compile 'org.jfree:jfreechart-fx:1.+'
-//}
-//
-//
-//jar {
-//    manifest {
-//        attributes("Implementation-Title": "DamageProfiler",
-//                "Implementation-Version": version, "main-Class": "RunDamageProfiler")
-//    }
-//    doFirst {
-//        from { configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } }
-//    }
-//}
+ publishing {
+     publications {
+         MyPublication(MavenPublication) {
+             from components.java
+             groupId 'com.uni-tuebingen.de.it.eager'
+             artifactId 'DamageProfiler'
+         }
+     }
+ }
+
+
+ jacocoTestReport {
+     reports {
+         xml.enabled true
+     }
+ }
+
+
+ bintray {
+     user = bintrayUser
+     key = bintrayKey
+     publications = ['MyPublication']
+     publish = true
+     override = true
+     pkg {
+         repo = 'damageprofiler'
+         name = 'DamageProfiler'
+         licenses = ['GPL-3.0']
+         vcsUrl = "https://github.com/Integrative-Transcriptomics/DamageProfiler"
+         version {
+             name = project.version
+             desc = 'Damage calculations for mapped reads.'
+             released  = new Date()
+             vcsTag = project.version
+             attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+         }
+
+     }
+ }
