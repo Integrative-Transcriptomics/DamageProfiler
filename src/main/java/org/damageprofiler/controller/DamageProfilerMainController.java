@@ -1,5 +1,6 @@
 package org.damageprofiler.controller;
 
+import javafx.geometry.Insets;
 import org.damageprofiler.gui.*;
 import org.damageprofiler.gui.dialogues.AdvancedPlottingOptionsDialogue;
 import org.damageprofiler.gui.dialogues.HelpDialogue;
@@ -208,12 +209,6 @@ public class DamageProfilerMainController {
 
         });
 
-//        btn_loadSpecies.setOnAction(e -> {
-//            LoadSpeciesDialogue loadSpeciesDialogue = new LoadSpeciesDialogue(communicator.getInput());
-//
-//
-//        });
-
 
         btn_leftpane_damageProfile.setOnAction(e -> {
             if(starter.isCalculationsDone()){
@@ -244,11 +239,15 @@ public class DamageProfilerMainController {
 
         btn_leftpane_run_config.setOnAction(e -> {
             if(starter.isCalculationsDone()){
-                mainGUI.getRoot().setCenter(runInfoDialogue.getGridPane());
-                // show info (parameter / input / output / ...)
-                // ask for new configuration
+                ScrollPane scrollPane_adv_config = new ScrollPane();
+                scrollPane_adv_config.setPadding(new Insets(10,10,10,10));
+                scrollPane_adv_config.setContent(runInfoDialogue.getGridPane());
+                mainGUI.getRoot().setCenter(scrollPane_adv_config);
             } else {
-                mainGUI.getRoot().setCenter(mainGUI.getConfig_dialogue().getConfig_gridpane());
+                ScrollPane scrollPane_adv_config = new ScrollPane();
+                scrollPane_adv_config.setPadding(new Insets(10,10,10,10));
+                scrollPane_adv_config.setContent(mainGUI.getConfig_dialogue().getConfig_gridpane());
+                mainGUI.getRoot().setCenter(scrollPane_adv_config);
             }
         });
 
