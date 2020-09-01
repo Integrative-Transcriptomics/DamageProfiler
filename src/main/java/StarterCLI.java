@@ -6,8 +6,7 @@ public class StarterCLI {
 
     public StarterCLI(String version, String[] args) throws Exception {
         Communicator c = new Communicator();
-        StartCalculations starter = new StartCalculations();
-        starter.setVERSION(version);
+        StartCalculations starter = new StartCalculations(version);
         new UserOptionsParser(args, c, version);
         starter.start(c);
         System.exit(0);

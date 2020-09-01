@@ -47,6 +47,7 @@ public class OutputGenerator {
     private final Frequencies frequencies;
     private final DamageProfiler damageProfiler;
     private final int numberOfRecords;
+    private final String title;
     private double max_length;
     private double min_length;
     private String species;
@@ -65,14 +66,16 @@ public class OutputGenerator {
     private final Color color_DP_insertions;
     private final Color color_DP_deletions;
     private final Color color_DP_other;
-
-
+    private double mean_length_dist;
+    private double median_length_dist;
+    private double std_length_dist;
 
 
     public OutputGenerator(String outputFolder, DamageProfiler damageProfiler, String species, int threshold,
-                           int length, double height,  String input, Logger LOG, boolean ssLibProtocolUsed,
+                           int length, double height,  String input, Logger log, boolean ssLibProtocolUsed,
                            Color color_DP_C_to_T, Color color_DP_deletions, Color color_DP_G_to_A,
-                           Color color_DP_insertions, Color color_DP_other, int numberOfRecords) {
+                           Color color_DP_insertions, Color color_DP_other, int numberOfRecords,
+                           String title) {
 
         this.outpath = outputFolder;
         this.frequencies = damageProfiler.getFrequencies();
@@ -82,7 +85,7 @@ public class OutputGenerator {
         this.length = length;
         this.height = height;
         this.input = input;
-        this.LOG = LOG;
+        this.LOG = log;
         this.numberOfRecords = numberOfRecords;
         this.ssLibProtocolUsed = ssLibProtocolUsed;
 
@@ -91,11 +94,14 @@ public class OutputGenerator {
         this.color_DP_G_to_A = color_DP_G_to_A;
         this.color_DP_other = color_DP_other;
         this.color_DP_insertions = color_DP_insertions;
+        this.title = title;
 
         // set tax id if specified by user
         if(species != null && !species.equals("")){
             this.species = species;
         }
+
+        LOG.info("Start writing output files:");
     }
 
     /**
@@ -107,6 +113,9 @@ public class OutputGenerator {
      * @throws IOException
      */
     public void writeJSON(String version) throws IOException {
+
+        LOG.info("\tdmgprof.json");
+
         //Add Sample Name to yaml
         String sampleName = input.split("/")[input.split("/").length-1];
 
@@ -137,11 +146,13 @@ public class OutputGenerator {
      */
     public void writeLengthDistribution() throws IOException{
 
+        LOG.info("\tlgdistribution.txt");
+
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
         HashMap<Double, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
         HashMap<Double, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
 
-        lgdist.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
+        lgdist.write("# table produced by DamageProfiler\n");
         lgdist.write("# using mapped file " + input + "\n");
         lgdist.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
         lgdist.write("# Std: strand of reads\n");
@@ -194,6 +205,8 @@ public class OutputGenerator {
 
     public void writeDNAcomp_genome() throws IOException{
 
+        LOG.info("\tDNA_comp_genome.txt");
+
         BufferedWriter file_dna_comp = new BufferedWriter(new FileWriter(outpath + File.separator + "DNA_comp_genome.txt"));
 
         file_dna_comp.write("# table produced by DamageProfiler\n");
@@ -226,6 +239,9 @@ public class OutputGenerator {
 
 
     public void writeDNAComp(Frequencies frequencies, List<String> referenceName) throws IOException{
+
+        LOG.info("\tDNA_composition_sample.txt");
+
         BufferedWriter freq_file_sample = new BufferedWriter(new FileWriter(outpath + File.separator + "DNA_composition_sample.txt"));
 
         String ref = "";
@@ -303,6 +319,8 @@ public class OutputGenerator {
     }
 
     public void writeFrequenciesReference(Frequencies frequencies, List<String> referenceName) throws IOException{
+        LOG.info("\tmisincorporation.txt");
+
         BufferedWriter freq_file_ref = new BufferedWriter(new FileWriter(outpath + File.separator + "misincorporation.txt"));
 
         String ref="";
@@ -448,12 +466,10 @@ public class OutputGenerator {
      * @param length_all
      * @param length_forward
      * @param length_reverse
-     * @param file
      * @throws IOException
      * @throws DocumentException
      */
-    public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse,
-                                    String file) throws  IOException, DocumentException {
+    public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse) throws  IOException, DocumentException {
 
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(length_all);
@@ -475,7 +491,9 @@ public class OutputGenerator {
         LegendTitle lt = length_chart_separated.getLegend();
         lt.setPosition(RectangleEdge.RIGHT);
 
-        createPdf("/Length_plot.pdf", new JFreeChart[]{length_chart_all, length_chart_separated}, file);
+        LOG.info("\tLength_plot.pdf, Length_plot_combined_data.svg, and Length_plot_forward_reverse_separated.svg");
+
+        createPdf("/Length_plot.pdf", new JFreeChart[]{length_chart_all, length_chart_separated});
         createSVG("/Length_plot_combined_data.svg", length_chart_all);
         createSVG("/Length_plot_forward_reverse_separated.svg", length_chart_separated);
 
@@ -487,18 +505,19 @@ public class OutputGenerator {
      *
      * @param distances
      * @param title
-     * @param file
      * @throws DocumentException
      * @throws IOException
      */
-    public void plotEditDistanceHistogram(List<Double> distances, String title, String file) throws DocumentException, IOException{
+    public void plotEditDistanceHistogram(List<Double> distances, String title) throws DocumentException, IOException{
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(distances);
 
         HistogramDataset dataset = hist_all.createDataset(new String[]{title}, 100);
         editDist_chart = hist_all.createChart(dataset,  "", "Edit distance", "Occurrences",false);
 
-        createPdf("/edit_distance.pdf", new JFreeChart[]{editDist_chart}, file);
+        LOG.info("\tedit_distance.pdf and edit_distance.svg");
+
+        createPdf("/edit_distance.pdf", new JFreeChart[]{editDist_chart});
         createSVG("/edit_distance.svg", editDist_chart);
 
     }
@@ -513,9 +532,9 @@ public class OutputGenerator {
      */
     public void writeDamageFiles(double[] gToA_reverse, double[] cToT) throws IOException{
 
-        BufferedWriter writer3Prime;
+        LOG.info("\t3pGtoA_freq.txt and 5pCtoT_freq.txt");
 
-
+        BufferedWriter writer3Prime= new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
         BufferedWriter writer5Prime = new BufferedWriter(new FileWriter(this.outpath + "/5pCtoT_freq.txt"));
 
         //Add stuff to json output file
@@ -524,8 +543,6 @@ public class OutputGenerator {
         // 3p end always included in json file, as it's needed for EAGER2.0 report
         json_map.put("dmg_3p",getSubArray(gToA_reverse,this.threshold));
 
-
-        writer3Prime = new BufferedWriter(new FileWriter(this.outpath + "/3pGtoA_freq.txt"));
         writer3Prime.write("# table produced by DamageProfiler\n");
         writer3Prime.write("# using mapped file " + input + "\n");
         writer3Prime.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
@@ -541,6 +558,14 @@ public class OutputGenerator {
 
     }
 
+    /**
+     * Helper function for writeDamageFiles() that iterates over the values and writes it directly to the file.
+     *
+     * @param title Header line
+     * @param values base substitution frequency
+     * @param writer BufferedWriter for file
+     * @throws IOException File Exception
+     */
     private void writeDamagePattern(String title, double[] values, BufferedWriter writer) throws IOException{
 
         writer.write(title);
@@ -556,6 +581,12 @@ public class OutputGenerator {
 
     }
 
+    /**
+     * Method to calculate some statistics
+     *  - mean of length dist
+     *  - std of length dist
+     *  - median of length dist
+     */
     public void computeSummaryMetrics(){
         HashMap<Double,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurrences
         HashMap<Double, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
@@ -577,29 +608,35 @@ public class OutputGenerator {
             }
         }
 
-        double mean = descriptiveStatistics.getMean();
-        double std = descriptiveStatistics.getStandardDeviation();
-        double median = descriptiveStatistics.getPercentile(50);
+        mean_length_dist = descriptiveStatistics.getMean();
+        std_length_dist = descriptiveStatistics.getStandardDeviation();
+        median_length_dist = descriptiveStatistics.getPercentile(50);
 
         HashMap<String, Double> summ_stats = new HashMap<>();
 
-        summ_stats.put("mean_readlength", mean);
-        summ_stats.put("std", std);
-        summ_stats.put("median", median);
+        summ_stats.put("mean_readlength", mean_length_dist);
+        summ_stats.put("std", std_length_dist);
+        summ_stats.put("median", median_length_dist);
 
         json_map.put("summary_stats", summ_stats);
 
     }
 
 
-
+    /**
+     * Method to write overall base misincorporations from 5' and 3' end, respectively.
+     *
+     * @param frequencies
+     * @param threshold
+     * @throws IOException
+     */
     public void writeMisincorporations(Frequencies frequencies, int threshold) throws IOException {
-
+        LOG.info("\t5p_freq_misincorporations.txt and 3p_freq_misincorporations.txt");
         Locale.setDefault(Locale.US);
 
         BufferedWriter writer5PrimeAll = new BufferedWriter(new FileWriter(this.outpath + "/5p_freq_misincorporations.txt"));
 
-        writer5PrimeAll.write("# table produced by org.damageprofiler.calculations.DamageProfiler\n");
+        writer5PrimeAll.write("# table produced by DamageProfiler\n");
         writer5PrimeAll.write("# using mapped file " + input + "\n");
         writer5PrimeAll.write("# Sample ID: " + input.split("/")[input.split("/").length-1] + "\n");
 
@@ -725,8 +762,14 @@ public class OutputGenerator {
     }
 
 
-
+    /**
+     * Method to write edit distance.
+     *
+     * @param editDistances
+     * @throws IOException
+     */
     public void writeEditDistance(List<Double> editDistances) throws IOException {
+        LOG.info("\teditDistance.txt\n");
         Collections.sort(editDistances);
         Set<Double> distances_sorted = new HashSet<>(editDistances);
         HashMap<Double, Integer> edit_occurrences_map = new HashMap<>();
@@ -749,12 +792,11 @@ public class OutputGenerator {
     /**
      * create damage plot
      *
-     * @param file
      * @throws IOException
      * @throws DocumentException
      */
 
-    public void plotMisincorporations(String file) throws IOException, DocumentException{
+    public void plotMisincorporations() throws IOException, DocumentException{
 
         double[] three_A_to_C_reverse = getSubArray(frequencies.getCount_A_C_3_norm(),threshold);
         double[] three_A_to_G_reverse = getSubArray(frequencies.getCount_A_G_3_norm(),threshold);
@@ -887,10 +929,10 @@ public class OutputGenerator {
         // create damage plot three prime
         chart_DP_3prime = damagePlot_three.createChart("3' end", dataset_three, ymax, threshold, ssLibProtocolUsed);
         charts = new JFreeChart[]{chart_DP_5prime, chart_DP_3prime};
+
+        LOG.info("\tDamagePlot_three_prime.svg, DamagePlot.pdf, and DamagePlot_five_prime.svg");
         createSVG("/DamagePlot_three_prime.svg", chart_DP_3prime);
-
-
-        createPdf("/DamagePlot.pdf", charts, file);
+        createPdf("/DamagePlot.pdf", charts);
         createSVG("/DamagePlot_five_prime.svg", chart_DP_5prime);
 
     }
@@ -976,7 +1018,7 @@ public class OutputGenerator {
      * @throws IOException
      *
      */
-    public void createPdf(String filename, JFreeChart[] charts, String file) throws IOException, DocumentException {
+    public void createPdf(String filename, JFreeChart[] charts) throws IOException, DocumentException {
         // step 1
         Document document = new Document(PageSize.A4.rotate());
 
@@ -989,8 +1031,6 @@ public class OutputGenerator {
         double ratio_used_reads = damageProfiler.getNumberOfUsedReads() / (double)numberOfRecords;
 
         // draw text
-        String[] splitted = file.split("/");
-        String title = splitted[splitted.length-1];
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
         DecimalFormat df = (DecimalFormat)nf;
 
@@ -1069,4 +1109,13 @@ public class OutputGenerator {
         return length_chart_all;
     }
 
+    public double getMeanLength(){return mean_length_dist;}
+
+    public double getMedian_length_dist() {
+        return median_length_dist;
+    }
+
+    public double getStd_length_dist() {
+        return std_length_dist;
+    }
 }

@@ -30,7 +30,7 @@ public class  DamageProfiler {
 
     /**
      * constructor
-     * @param cache
+     * @param cache Cache fasta reference for faster access
      */
     public DamageProfiler(FastACacher cache) {
         this.cache = cache;
@@ -38,16 +38,20 @@ public class  DamageProfiler {
 
     /**
      *
-     * @param input
-     * @param reference
-     * @param threshold
-     * @param length
-     * @param specie
-     * @param LOG
+     * @param input path to input SAM/BAM file
+     * @param reference path to reference file
+     * @param threshold threshold (int) for calculations
+     * @param length length (int) for calculations
+     * @param specie List of one or more species, for which damage patterns has to be calculated
+     * @param LOG Log file
      */
+
+
     public void init(File input, File reference, int threshold, int length, String specie, Logger LOG){
         // read bam/sam/cram file
         if (!input.exists()){
+            LOG.error("SAM/BAM file not found. Please check your file path.\nInput: " +
+                    input.getAbsolutePath());
             System.err.println("SAM/BAM file not found. Please check your file path.\nInput: " +
                     input.getAbsolutePath());
             System.exit(0);
@@ -58,9 +62,12 @@ public class  DamageProfiler {
                     inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
                             validationStringency(ValidationStringency.SILENT).open(input);
 
+                    LOG.info("\tReading file " + input);
+
                 } else if(input.getAbsolutePath().endsWith(".cram")){
                     if(!reference.isFile()){
                         System.err.println("Reference file is needed to reads CRAM files.");
+                        LOG.error("Reference file is needed to reads CRAM files.");
                         System.exit(1);
                     } else {
                         inputSam = SamReaderFactory.make().enable(SamReaderFactory.Option.DONT_MEMORY_MAP_INDEX).
@@ -83,7 +90,6 @@ public class  DamageProfiler {
             } catch (Exception e){
                 System.err.println("Invalid SAM/BAM file. Please check your file.");
                 LOG.error("Invalid SAM/BAM file. Please check your file.");
-                System.err.println(e.toString());
                 System.exit(-1);
             }
         }
@@ -94,60 +100,44 @@ public class  DamageProfiler {
      * distinguish between mapped and mapped/merged and normalize values
      * after all calculations
      *
-     *
-     * @param use_only_merged_reads
-     * @param use_all_reads
-     * @throws Exception
+     * @param use_only_merged_reads boolean: only merged reads will be used for damage calculation
      */
-    public void extractSAMRecords(boolean use_only_merged_reads, boolean use_all_reads) {
-
-        if(use_all_reads && use_only_merged_reads){
-            LOG.info("-------------------");
-            LOG.info("0 reads processed.\nRunning not possible. 'use_only_merged_reads' and 'use_all_reads' was set to 'true'");
-            System.exit(1);
-
-        } else {
-
-            for(SAMRecord record : inputSam) {
-                numberOfRecords++;
+    public void extractSAMRecords(boolean use_only_merged_reads) {
 
 
-                if (this.species == null) {
-                    handleRecord(use_only_merged_reads, use_all_reads, record);
-                } else {
-                    if (record.getReferenceName().equals(this.species)) {
-                        handleRecord(use_only_merged_reads, use_all_reads, record);
-                    }
+        LOG.info("\tStart processing each mapped record in input file");
+
+        for(SAMRecord record : inputSam) {
+            numberOfRecords++;
+
+            if (this.species == null) {
+                handleRecord(use_only_merged_reads, record);
+            } else {
+                if (record.getReferenceName().equals(this.species)) {
+                    handleRecord(use_only_merged_reads, record);
                 }
             }
-
-            frequencies.normalizeValues();
-
-            LOG.info("-------------------");
-            LOG.info("# reads used for damage calculation: " + (numberOfUsedReads ));
         }
+
+        frequencies.normalizeValues();
+
     }
 
 
     /**
      * get the record and filter according mapped_only setting
      *
-     * @param use_only_merged_reads
-     * @param use_all_reads
-     * @param record
+     * @param use_only_merged_reads boolean: use only merged reads
+     * @param record SAM record to process
      */
-    private void handleRecord(boolean use_only_merged_reads, boolean use_all_reads, SAMRecord record) {
+    private void handleRecord(boolean use_only_merged_reads, SAMRecord record) {
 
-        if(use_all_reads && !use_only_merged_reads){
-            // process all reads
-            processRecord(record);
-
-        } else if (use_only_merged_reads && !use_all_reads){
+        if (use_only_merged_reads) {
             // process only mapped and merged reads
             if (!record.getReadUnmappedFlag() && record.getReadName().startsWith("M_")) {
                 processRecord(record);
             }
-        } else if(!use_only_merged_reads) {
+        } else {
             // process only mapped reads
             if (!record.getReadUnmappedFlag()) {
                 // get all mapped reads
@@ -165,8 +155,8 @@ public class  DamageProfiler {
      * In addition, the length distribution table is filled, the frequencies counted and
      * the damage computed.
      *
-     * @param record
-     * @throws IOException
+     * @param record SAM record to process
+     *
      */
 
     private void processRecord(SAMRecord record) {
@@ -206,8 +196,10 @@ public class  DamageProfiler {
             } catch (Exception e){
 
                 System.err.println(record.getReadName() + "\nMD and NM value will be re-calculated.\nError:" + e);
+                LOG.error(record.getReadName() + "\nMD and NM value will be re-calculated.\nError:" + e);
                 if(!reference.isFile()){
                     System.err.println("No MD tag defined. Please specify reference file which is needed for MD tag calculations.");
+                    LOG.error("No MD tag defined. Please specify reference file which is needed for MD tag calculations.");
                     System.exit(1);
                 }
 
@@ -218,9 +210,11 @@ public class  DamageProfiler {
                     record_aligned = record.getReadString();
                     proceed(record, record_aligned, reference_aligned);
                     System.err.println("Re-calculation was successful!\n");
+                    LOG.info("Re-calculation was successful!\n");
 
                 } catch (Exception e1){
                     System.err.println("Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
+                    LOG.warn("Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
                 }
             }
         }
@@ -233,8 +227,6 @@ public class  DamageProfiler {
 
         // calculate distance between record and reference
         double hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
-
-        double id = record_aligned.length()-hamming / (double)record_aligned.length();
         this.editDistances.add(hamming);
 
         // calculate frequencies

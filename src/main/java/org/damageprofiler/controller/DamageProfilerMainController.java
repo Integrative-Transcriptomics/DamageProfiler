@@ -16,6 +16,8 @@ import javafx.scene.control.*;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
 
+import java.text.DecimalFormat;
+
 public class DamageProfilerMainController {
 
     private final Button btn_leftpane_run_config;
@@ -41,7 +43,7 @@ public class DamageProfilerMainController {
     private final CheckBox checkbox_ssLibs_protocol;
     private final TextField textfield_title;
     private final TextField textfield_y_axis_height;
-    private final StartCalculations starter = new StartCalculations();
+    private final StartCalculations starter;
     private final DamageProfilerMainGUI mainGUI;
     private final RuntimeEstimatorDialogue runtimeInfoDialogue;
     /**
@@ -58,7 +60,7 @@ public class DamageProfilerMainController {
         this.progressBarController = progressBarController;
         this.communicator = mainGUI.getCommunicator();
         runInfoDialogue = new RunInfoDialogue("Run configuration", communicator);
-        starter.setVERSION(damageProfilerMainGUI.getVersion());
+        starter = new StartCalculations(damageProfilerMainGUI.getVersion());
         this.help_dialogue = new HelpDialogue();
 
         this.btn_inputfile = mainGUI.getConfig_dialogue().getBtn_inputfile();
@@ -170,8 +172,10 @@ public class DamageProfilerMainController {
             RuntimeEstimator runtimeEstimator = new RuntimeEstimator(communicator.getInput());
             long estimatedRuntimeInSeconds = runtimeEstimator.getEstimatedRuntimeInSeconds();
             String text_estimatedRuntime;
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(2);
 
-            runtimeInfoDialogue.setFileSize(runtimeEstimator.getMegabytes());
+            runtimeInfoDialogue.setFileSize(df.format(runtimeEstimator.getMegabytes()));
 
 
             if(estimatedRuntimeInSeconds > 60) {
@@ -180,9 +184,9 @@ public class DamageProfilerMainController {
                 text_estimatedRuntime = "Estimated Runtime: " + minutes + " minutes, and " + seconds + " seconds.";
             } else {
                 if(estimatedRuntimeInSeconds == 0 ){
-                    text_estimatedRuntime = "Estimated Runtime: Insignificant";
+                    text_estimatedRuntime = "Estimated Runtime:\tInsignificant";
                 } else {
-                    text_estimatedRuntime = "Estimated Runtime: " + estimatedRuntimeInSeconds + " seconds.";
+                    text_estimatedRuntime = "Estimated Runtime:\t" + estimatedRuntimeInSeconds + " seconds.";
                 }
 
             }

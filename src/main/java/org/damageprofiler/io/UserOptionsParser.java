@@ -1,5 +1,6 @@
 package org.damageprofiler.io;
 
+import javafx.scene.paint.Color;
 import org.apache.commons.cli.*;
 
 
@@ -140,6 +141,8 @@ public class UserOptionsParser {
                 .desc("Single-stranded library protocol was used. Default: false")
                 .build());
 
+
+
         String header = "\nDetailed description:\n\n";
 
         HelpFormatter formatter = new HelpFormatter();
@@ -188,12 +191,8 @@ public class UserOptionsParser {
             if (cmd.hasOption('l')) {
                 communicator.setLength(Integer.parseInt(cmd.getOptionValue('l')));
             }
-            if(cmd.hasOption("all_mapped_and_merged_reads")) {
+            if(cmd.hasOption("only_merged")) {
                 communicator.setUse_merged_and_mapped_reads(true);
-            }
-
-            if(cmd.hasOption("use_all_reads")) {
-                communicator.setUse_all_reads(false);
             }
 
             if(cmd.hasOption("sslib")) {
@@ -215,6 +214,25 @@ public class UserOptionsParser {
                 communicator.setThreshold(Integer.parseInt(cmd.getOptionValue('t')));
             }
 
+            if(cmd.hasOption("color_c_t")){
+                communicator.setColor_DP_C_to_T( Color.web(cmd.getOptionValue("color_c_t")));
+            }
+
+            if(cmd.hasOption("color_g_a")){
+                communicator.setColor_DP_G_to_A(Color.web(cmd.getOptionValue("color_g_a")));
+            }
+
+            if(cmd.hasOption("color_insertions")){
+                communicator.setColor_DP_insertions(Color.web(cmd.getOptionValue("color_insertions")));
+            }
+
+            if(cmd.hasOption("color_deletions")){
+                communicator.setColor_DP_deletions(Color.web(cmd.getOptionValue("color_deletions")));
+            }
+
+            if(cmd.hasOption("color_other")){
+                communicator.setColor_DP_other(Color.web(cmd.getOptionValue("color_other")));
+            }
 
         } catch (ParseException e) {
             formatter.printHelp(CLASS_NAME, options);

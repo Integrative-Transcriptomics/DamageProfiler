@@ -19,7 +19,7 @@ public class RuntimeEstimator {
      *
      * @param inputfile
      */
-    public void estimate(String inputfile) {
+    private void estimate(String inputfile) {
 
         double bytes = new File (inputfile).length();
         megabytes = (bytes / 1000 / 1000);

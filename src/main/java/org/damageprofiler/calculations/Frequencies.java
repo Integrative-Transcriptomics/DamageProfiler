@@ -909,12 +909,9 @@ public class Frequencies {
             this.count_0_C_3_norm[i] = setNorm(count_forward_0_C_3[i] + count_reverse_0_C_3[i], sum_ref_3);
             this.count_0_G_3_norm[i] = setNorm(count_forward_0_G_3[i] + count_reverse_0_G_3[i], sum_ref_3);
             this.count_0_T_3_norm[i] = setNorm(count_forward_0_T_3[i] + count_reverse_0_T_3[i], sum_ref_3);
-
-
-
         }
 
-        LOG.info("Values normalized ....");
+        LOG.info("\tBase frequencies are normalized\n");
     }
 
 
@@ -935,8 +932,6 @@ public class Frequencies {
         } else {
             return (count_mis/count_ref);
         }
-
-
     }
 
 

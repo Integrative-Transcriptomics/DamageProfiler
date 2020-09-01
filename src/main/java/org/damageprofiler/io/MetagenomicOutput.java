@@ -6,6 +6,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.apache.log4j.Logger;
 import org.jfree.chart.JFreeChart;
 
 import java.awt.*;
@@ -17,6 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MetagenomicOutput {
+    private Logger LOG;
+
+    public MetagenomicOutput(Logger log){
+        this.LOG = log;
+
+    }
 
     /**
      * Writes summary of the metagenomic results. Only a overview of the results is presented for
@@ -26,13 +33,14 @@ public class MetagenomicOutput {
      * @param species_output_summary
      * @param sample_name
      * @param mapped_reads
+     * @param specieslist
      * @throws FileNotFoundException
      * @throws DocumentException
      */
     public void generate(String output_folder, HashMap<String,
-                         List<JFreeChart>> species_output_summary,
+            List<JFreeChart>> species_output_summary,
                          String sample_name,
-                         HashMap<String, Integer> mapped_reads)
+                         HashMap<String, Integer> mapped_reads, String[] specieslist)
             throws FileNotFoundException, DocumentException {
 
         // step 1
@@ -40,6 +48,7 @@ public class MetagenomicOutput {
 
         // step 2
         PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(output_folder + File.separator + sample_name +"_summary.pdf"));
+        LOG.info("Write metagenomic summary file " + sample_name +"_summary.pdf\n\n");
         // step 3
         document.open();
 
@@ -52,9 +61,27 @@ public class MetagenomicOutput {
         para.add(p1);
         para.setAlignment(1);
 
+
+        // list all species that were considered
+        Paragraph para_species = new Paragraph();
+        para_species.setSpacingBefore(50);
+        para_species.setSpacingAfter(50);
+        String species_string = "";
+        for(String s : specieslist)
+            species_string += s + "\n\t- ";
+
+        Phrase phrase_species = new Phrase("Considered species:\n\t-" + species_string.substring(0, species_string.length()-1), FontFactory.getFont("Calibri", 18));
+
+
+        para_species.add(phrase_species);
+        para_species.setAlignment(1);
+        phrase_species.setMultipliedLeading((float) 3);
+
         document.add(para);
+        document.add(para_species);
         document.setMargins(50,50,50,50);
         document.addTitle("Summary_damage_patterns");
+
 
         document.newPage();
 

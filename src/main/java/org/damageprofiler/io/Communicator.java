@@ -19,7 +19,6 @@ public class Communicator {
     private double yAxis_damageplot = 0.4;
     private int length = 100;
     private boolean use_merged_and_mapped_reads = false;
-    private boolean use_all_reads = false;
     private boolean ssLibsProtocolUsed = false;
 
     // specie filtering
@@ -88,14 +87,6 @@ public class Communicator {
 
     public void setUse_merged_and_mapped_reads(boolean use_merged_and_mapped_reads) {
         this.use_merged_and_mapped_reads = use_merged_and_mapped_reads;
-    }
-
-    public boolean isUse_all_reads() {
-        return use_all_reads;
-    }
-
-    public void setUse_all_reads(boolean use_all_reads) {
-        this.use_all_reads = use_all_reads;
     }
 
     public boolean isSsLibsProtocolUsed() {
@@ -169,5 +160,6 @@ public class Communicator {
     public Color getColor_DP_other() {
         return color_DP_other;
     }
+
 
 }
