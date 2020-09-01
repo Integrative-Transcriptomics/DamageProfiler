@@ -28,13 +28,6 @@ public class RuntimeEstimator {
             double sizeSamRecordInBytes = 80;
             this.estimatedNumberOfRecords = (long) (bytes/sizeSamRecordInBytes);
             estimatedRuntimeInSeconds = (long) (this.estimatedNumberOfRecords /100000 * timePer100000RecordsInSeconds);
-
-            if(estimatedRuntimeInSeconds > 60) {
-                long minutes = estimatedRuntimeInSeconds / 60;
-                System.out.println("Estimated Runtime: " + minutes + " minutes.");
-            } else {
-                System.out.println("Estimated Runtime: " + estimatedRuntimeInSeconds + " seconds.");
-            }
         }
     }
 

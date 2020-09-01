@@ -45,7 +45,7 @@ public class DamageProfilerMainController {
     private final TextField textfield_y_axis_height;
     private final StartCalculations starter;
     private final DamageProfilerMainGUI mainGUI;
-    private final RuntimeEstimatorDialogue runtimeInfoDialogue;
+    private RuntimeEstimatorDialogue runtimeInfoDialogue;
     /**
      * Constructor
      * @param damageProfilerMainGUI
@@ -91,9 +91,11 @@ public class DamageProfilerMainController {
 
 
         runtimeInfoDialogue = new RuntimeEstimatorDialogue("Runtime information",
-                "This gives you an estimate of the runtime. For large files with a long runtime,\n" +
+                "This gives you an estimate of the runtime. If you run a metagenomic analysis on several species, " +
+                        "it will take longer.\n\nFor large files with a long runtime, " +
                         "it's recommended to use the command line version of DamageProfiler.");
 
+        runtimeInfoDialogue.addComponents();
         addListener();
 
     }
@@ -193,7 +195,7 @@ public class DamageProfilerMainController {
 
             runtimeInfoDialogue.setNumberOfRecords(runtimeEstimator.getEstimatedNumberOfRecords());
             runtimeInfoDialogue.setResultText(text_estimatedRuntime);
-            runtimeInfoDialogue.addComponents();
+            runtimeInfoDialogue.update();
             runtimeInfoDialogue.show();
         });
 
@@ -202,7 +204,8 @@ public class DamageProfilerMainController {
             runDamageProfiler();
         });
 
-        runtimeInfoDialogue.getBtn_cancel().setOnAction(e_cancel -> runtimeInfoDialogue.close());
+        runtimeInfoDialogue.getBtn_cancel().setOnAction(e_cancel -> runtimeInfoDialogue.close()
+        );
 
         btn_run.setOnAction(e -> runDamageProfiler());
 

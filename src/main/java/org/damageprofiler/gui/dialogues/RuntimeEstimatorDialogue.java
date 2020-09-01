@@ -7,32 +7,43 @@ import java.text.DecimalFormat;
 
 public class RuntimeEstimatorDialogue extends AbstractApplication {
 
-    private final Button btn_proceed;
-    private final Button btn_cancel;
-    private String numberOfRecords;
-    private String text_estimatedRuntime;
-    private String fileSize;
+    private final Label l_est_runtime;
+    private final Label l_number_of_reads;
+    private final Label l_file_size;
+    private String numberOfRecords="";
+    private String text_estimatedRuntime="";
+    private String fileSize="";
+    private Button btn_proceed;
+    private Button btn_cancel;
 
     public RuntimeEstimatorDialogue(String header, String message) {
         super(header, message);
         btn_proceed = new Button("Proceed");
         btn_cancel = new Button("Cancel");
+        l_file_size = new Label();
+        l_number_of_reads = new Label();
+        l_est_runtime = new Label();
     }
 
 
 
     public void addComponents(){
-
-
-        this.gridPane.add(new Label("File size:\t\t\t" + fileSize + " mb"), 0,++row, 2,1);
-        this.gridPane.add(new Label("Number of reads:\t" + numberOfRecords), 0, ++row, 2,1);
-        this.gridPane.add(new Label(text_estimatedRuntime), 0, ++row, 2,1);
-        this.gridPane.add(btn_cancel, 0, ++row, 1,1);
-        this.gridPane.add(btn_proceed, 1, row, 1,1);
-
-
-
+        l_file_size.setText("File size:\t\t\t" + fileSize + " mb");
+        l_number_of_reads.setText("Number of reads:\t" + numberOfRecords);
+        l_est_runtime.setText(text_estimatedRuntime);
+        this.gridPane.add(l_file_size, 0,2, 2,1);
+        this.gridPane.add(l_number_of_reads, 0, 3, 2,1);
+        this.gridPane.add(l_est_runtime, 0, 4, 2,1);
+        this.gridPane.add(btn_cancel, 0, 5, 1,1);
+        this.gridPane.add(btn_proceed, 1, 5, 1,1);
     }
+
+    public void update(){
+        l_file_size.setText("File size:\t\t\t" + fileSize + " mb");
+        l_number_of_reads.setText("Number of reads:\t" + numberOfRecords);
+        l_est_runtime.setText(text_estimatedRuntime);
+    }
+
 
     /*
             Setter and Getter
