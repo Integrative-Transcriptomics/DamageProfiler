@@ -14,8 +14,6 @@ public class OutputDirChooser {
         File f = dirChooser.showDialog(new Stage());
         if (f != null){
             c.setOutfolder(f.getAbsolutePath());
-            System.out.println("Output folder: " + f.getAbsolutePath());
         }
-
     }
 }

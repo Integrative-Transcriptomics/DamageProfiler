@@ -21,9 +21,6 @@ import java.text.DecimalFormat;
 public class DamageProfilerMainController {
 
     private final Button btn_leftpane_run_config;
-    private final Button btn_leftpane_identityDist;
-    private final Button btn_leftpane_damageProfile;
-    private final Button btn_leftpane_lengthDist;
     private final ProgressBarController progressBarController;
     private final Button btn_estimate_runtime;
     private final Button btn_help;
@@ -45,7 +42,8 @@ public class DamageProfilerMainController {
     private final TextField textfield_y_axis_height;
     private final StartCalculations starter;
     private final DamageProfilerMainGUI mainGUI;
-    private RuntimeEstimatorDialogue runtimeInfoDialogue;
+    private final TabPane tabpane_species;
+    private final RuntimeEstimatorDialogue runtimeInfoDialogue;
     /**
      * Constructor
      * @param damageProfilerMainGUI
@@ -69,11 +67,11 @@ public class DamageProfilerMainController {
         this.btn_run = mainGUI.getConfig_dialogue().getBtn_run();
         this.btn_estimate_runtime = mainGUI.getConfig_dialogue().getBtn_estimate_runtime();
         this.btn_speciesList = mainGUI.getConfig_dialogue().getBtn_speciesList();
-        this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
+       // this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
         this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
         this.btn_help = mainGUI.getBtn_help();
-        this.btn_leftpane_damageProfile = mainGUI.getBtn_leftpane_damageProfile();
-        this.btn_leftpane_lengthDist = mainGUI.getBtn_leftpane_lengthDist();
+        //this.btn_leftpane_damageProfile = mainGUI.getBtn_leftpane_damageProfile();
+        //this.btn_leftpane_lengthDist = mainGUI.getBtn_leftpane_lengthDist();
 
         this.textfield_threshold = mainGUI.getConfig_dialogue().getTextfield_threshold();
         this.textfield_length = mainGUI.getConfig_dialogue().getTextfield_length();
@@ -83,6 +81,8 @@ public class DamageProfilerMainController {
 
         this.checkbox_use_merged_reads = mainGUI.getConfig_dialogue().getCheckbox_use_merged_reads();
         this.checkbox_ssLibs_protocol = mainGUI.getConfig_dialogue().getCheckbox_ssLibs_protocol();
+
+        this.tabpane_species = new TabPane();
 
 
         // attributes of advanced plotting settings
@@ -217,32 +217,27 @@ public class DamageProfilerMainController {
         });
 
 
-        btn_leftpane_damageProfile.setOnAction(e -> {
-            if(starter.isCalculationsDone()){
-                // generate plot
-                generateDamageProfile();
-            }
-        });
-
-
-        btn_leftpane_identityDist.setOnAction(e -> {
-
-            if(starter.isCalculationsDone()){
-                // generate plot
-                generateIdentityDist();
-            }
-
-        });
-
-        btn_leftpane_lengthDist.setOnAction(e -> {
-
-
-            if(starter.isCalculationsDone()){
-                // generate plot
-                generateLengthDist();
-            }
-
-        });
+//        btn_leftpane_damageProfile.setOnAction(e -> {
+//            if(starter.isCalculationsDone()){
+//                generateDamageProfile();
+//            }
+//        });
+//
+//
+//        btn_leftpane_identityDist.setOnAction(e -> {
+//            if(starter.isCalculationsDone()){
+//                // generate plot
+//
+//               generateEditDistance();
+//            }
+//        });
+//
+//        btn_leftpane_lengthDist.setOnAction(e -> {
+//            if(starter.isCalculationsDone()){
+//                // generate plot
+//                generateLengthDist();
+//            }
+//        });
 
         btn_leftpane_run_config.setOnAction(e -> {
             if(starter.isCalculationsDone()){
@@ -268,9 +263,9 @@ public class DamageProfilerMainController {
 
 
     private void clear() {
-        btn_leftpane_lengthDist.setDisable(true);
-        btn_leftpane_identityDist.setDisable(true);
-        btn_leftpane_damageProfile.setDisable(true);
+//        btn_leftpane_lengthDist.setDisable(true);
+//        btn_leftpane_identityDist.setDisable(true);
+//        btn_leftpane_damageProfile.setDisable(true);
         starter.setCalculationsDone(false);
         btn_inputfile.setTooltip(null);
         btn_output.setTooltip(null);
@@ -319,11 +314,47 @@ public class DamageProfilerMainController {
             progressBarController.activate(startCalculuations);
 
             startCalculuations.setOnSucceeded((EventHandler<Event>) event -> {
-                // replace config with result GUI
-                btn_leftpane_lengthDist.setDisable(false);
-                btn_leftpane_identityDist.setDisable(false);
-                btn_leftpane_damageProfile.setDisable(false);
-                generateDamageProfile();
+
+                if(starter.getSpecieslist() == null){
+                    // do normal plot
+                    TabPane tabPane_results = new TabPane();
+
+                    Tab tab_dp_all = new Tab("DamageProfile");
+                    tab_dp_all.setClosable(false);
+                    tab_dp_all.setContent(generateDamageProfile(null));
+
+                    Tab tab_edit = generateEditDistance(null);
+
+                    Tab tab_length = new Tab("Length distribution");
+                    tab_length.setClosable(false);
+                    tab_length.setContent(generateLengthDist(null));
+
+                    tabPane_results.getTabs().addAll(tab_dp_all, tab_edit, tab_length);
+
+                    mainGUI.getRoot().setCenter(tabPane_results);
+                } else {
+
+                    for (String species : starter.getSpecieslist()) {
+
+                        Tab tab_species = new Tab(species);
+                        tab_species.setClosable(false);
+                        TabPane tabpane_per_species_result = new TabPane();
+                        Tab tab_dp_all = new Tab("DamageProfile");
+                        tab_dp_all.setClosable(false);
+                        Tab tab_length = new Tab("Length distribution");
+                        tab_length.setClosable(false);
+
+                        // add results
+                        tab_dp_all.setContent(generateDamageProfile(species));
+                        Tab tab_edit = generateEditDistance(species);
+                        tab_length.setContent(generateLengthDist(species));
+
+                        tabpane_per_species_result.getTabs().addAll(tab_dp_all, tab_edit, tab_length);
+                        tab_species.setContent(tabpane_per_species_result);
+                        tabpane_species.getTabs().add(tab_species);
+                        mainGUI.getRoot().setCenter(tabpane_species);
+                    }
+                }
                 progressBarController.stop();
             });
 
@@ -340,16 +371,23 @@ public class DamageProfilerMainController {
      *
      */
 
-    private void generateLengthDist() {
-
-        JFreeChart[] lengthCharts = starter.getOutputGenerator().getLengthDistPlots();
+    private TabPane generateLengthDist(String species) {
 
         TabPane tabPane_lengthDist = new TabPane();
         Tab allData = new Tab("All data");
         Tab splitData = new Tab("Forward vs. Reverse");
 
-        ChartViewer viewerLengthAll = new ChartViewer(lengthCharts[0]);
-        ChartViewer viewerLengthSep = new ChartViewer(lengthCharts[1]);
+        ChartViewer viewerLengthAll;
+        ChartViewer viewerLengthSep;
+
+        if(species==null){
+            viewerLengthAll = new ChartViewer(starter.getOutputGenerator().getLength_chart_all());
+            viewerLengthSep = new ChartViewer(starter.getOutputGenerator().getLength_chart_sep());
+        } else {
+            viewerLengthAll = new ChartViewer(starter.getSpecies_output_summary().get(species).get(3));
+            viewerLengthSep = new ChartViewer(starter.getSpecies_output_summary().get(species).get(4));
+        }
+        ;
 
         // disable zoom on x-axis
         viewerLengthAll.getCanvas().setDomainZoomable(false);
@@ -357,46 +395,60 @@ public class DamageProfilerMainController {
 
         allData.setContent(viewerLengthAll);
         splitData.setContent(viewerLengthSep);
+        allData.setClosable(false);
+        splitData.setClosable(false);
 
         tabPane_lengthDist.getTabs().addAll(allData, splitData);
 
-        mainGUI.getRoot().setCenter(tabPane_lengthDist);
+        return tabPane_lengthDist;
 
     }
 
-    private void generateIdentityDist() {
-        ChartViewer viewerEditDistance = new ChartViewer(starter.getOutputGenerator().getEditDist_chart());
-        mainGUI.getRoot().setCenter(viewerEditDistance);
-
-    }
-
-    private void generateDamageProfile() {
-
-        JFreeChart[] dpCharts = starter.getOutputGenerator().getDP_chart();
-        if(dpCharts.length==1){
-            ChartViewer viewer5prime = new ChartViewer(dpCharts[0]);
-            viewer5prime.getCanvas().setDomainZoomable(false);
-            mainGUI.getRoot().setCenter(viewer5prime);
-        } else if(dpCharts.length == 2){
-
-            TabPane tabPane_damagePlot = new TabPane();
-            Tab fivePrime = new Tab("5'end");
-            Tab threePrime = new Tab("3'end");
-
-            ChartViewer viewer5prime = new ChartViewer(dpCharts[0]);
-            ChartViewer viewer3prime = new ChartViewer(dpCharts[1]);
-
-            // disable zoom on x-axis
-            viewer5prime.getCanvas().setDomainZoomable(false);
-            viewer3prime.getCanvas().setDomainZoomable(false);
-
-            fivePrime.setContent(viewer5prime);
-            threePrime.setContent(viewer3prime);
-
-            tabPane_damagePlot.getTabs().addAll(fivePrime, threePrime);
-
-            mainGUI.getRoot().setCenter(tabPane_damagePlot);
+    private Tab generateEditDistance(String species) {
+        JFreeChart chart_edit;
+        if(species==null){
+            chart_edit = starter.getOutputGenerator().getEditDist_chart();
+        } else {
+            chart_edit = starter.getSpecies_output_summary().get(species).get(2);
         }
+
+        ChartViewer viewerEditDistance = new ChartViewer(chart_edit);
+        Tab tab_edit_dist = new Tab("Edit distance");
+        tab_edit_dist.setClosable(false);
+        tab_edit_dist.setContent(viewerEditDistance);
+        return tab_edit_dist;
+
+    }
+
+    private TabPane generateDamageProfile(String species) {
+
+        TabPane tabPane_damagePlot = new TabPane();
+
+        Tab fivePrime = new Tab("5'end");
+        Tab threePrime = new Tab("3'end");
+
+        ChartViewer viewer5prime;
+        ChartViewer viewer3prime;
+        if(species==null)  {
+            viewer5prime = new ChartViewer(starter.getOutputGenerator().getChart_DP_5prime());
+            viewer3prime = new ChartViewer(starter.getOutputGenerator().getChart_DP_3prime());
+        } else {
+            viewer5prime = new ChartViewer(starter.getSpecies_output_summary().get(species).get(0));
+            viewer3prime = new ChartViewer(starter.getSpecies_output_summary().get(species).get(1));
+        }
+
+        // disable zoom on x-axis
+        viewer5prime.getCanvas().setDomainZoomable(false);
+        viewer3prime.getCanvas().setDomainZoomable(false);
+
+        fivePrime.setContent(viewer5prime);
+        threePrime.setContent(viewer3prime);
+        fivePrime.setClosable(false);
+        threePrime.setClosable(false);
+
+        tabPane_damagePlot.getTabs().addAll(fivePrime, threePrime);
+
+        return tabPane_damagePlot;
     }
 
 

@@ -1109,6 +1109,10 @@ public class OutputGenerator {
         return length_chart_all;
     }
 
+    public JFreeChart getLength_chart_sep() {
+        return length_chart_separated;
+    }
+
     public double getMeanLength(){return mean_length_dist;}
 
     public double getMedian_length_dist() {

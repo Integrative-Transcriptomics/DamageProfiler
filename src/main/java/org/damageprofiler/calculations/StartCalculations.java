@@ -39,6 +39,7 @@ public class StartCalculations {
     private IndexedFastaSequenceFile fastaSequenceFile;
     private FastACacher cache;
     private SpeciesListParser speciesListParser;
+    private HashMap<String, List<JFreeChart>> species_output_summary;
 
 
 
@@ -276,7 +277,7 @@ public class StartCalculations {
 
             } else {
 
-                HashMap<String, List<JFreeChart>> species_output_summary = new HashMap<>();
+                species_output_summary = new HashMap<>();
                 HashMap<String, Integer>  number_of_used_reads_summary = new HashMap<>();
 
                 for (String specie_input_string : specieslist) {
@@ -290,7 +291,8 @@ public class StartCalculations {
                             List.of(outputGenerator.getChart_DP_5prime(),
                                     outputGenerator.getChart_DP_3prime(),
                                     outputGenerator.getEditDist_chart(),
-                                    outputGenerator.getLength_chart_all())
+                                    outputGenerator.getLength_chart_all(),
+                                    outputGenerator.getLength_chart_sep())
                     );
 
                     number_of_used_reads_summary.put(
@@ -454,5 +456,13 @@ public class StartCalculations {
 
     public OutputGenerator getOutputGenerator() {
         return outputGenerator;
+    }
+
+    public String[] getSpecieslist() {
+        return specieslist;
+    }
+
+    public HashMap<String, List<JFreeChart>> getSpecies_output_summary() {
+        return species_output_summary;
     }
 }
