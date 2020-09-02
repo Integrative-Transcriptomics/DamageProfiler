@@ -126,8 +126,7 @@ public class StartCalculations {
 
 
         speciesListParser = new SpeciesListParser(
-                specieslist_filepath,
-                LOG
+                specieslist_filepath
         );
 
         if(!this.reference.equals(""))
@@ -194,8 +193,6 @@ public class StartCalculations {
 
         damageProfiler.extractSAMRecords(use_only_merged_reads);
         if(damageProfiler.getNumberOfUsedReads() != 0) {
-            speciesListParser.setLOG(LOG);
-
             generateOutput(species, title);
 
             LOG.info("Statistics:");

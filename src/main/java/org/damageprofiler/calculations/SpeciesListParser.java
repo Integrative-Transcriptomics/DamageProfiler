@@ -1,7 +1,5 @@
 package org.damageprofiler.calculations;
 
-import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,13 +9,10 @@ import java.util.List;
 
 public class SpeciesListParser {
 
-
-    private Logger LOG;
     private final String speciesFile;
 
-    public SpeciesListParser(String speciesListFile, Logger LOG) {
+    public SpeciesListParser(String speciesListFile) {
         this.speciesFile = speciesListFile;
-        this.LOG = LOG;
     }
 
 
@@ -54,10 +49,6 @@ public class SpeciesListParser {
     /*
         Getter and Setter
      */
-    public void setLOG(Logger LOG) {
-        this.LOG = LOG;
-    }
-
 
     public List<String> getSpeciesList() {
 
