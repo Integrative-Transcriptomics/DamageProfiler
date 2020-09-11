@@ -68,12 +68,12 @@ Title used for all plots. Default: input filename.\
 DamagePlot: Maximal y-axis value.\
 \
 **-color_c_t COLOR_C_T**\
-DamagePlot: Color (HEX code) for C to T misincoporation frequency.\
+DamagePlot: Color (HEX code) for C to T misincorporation frequency.\
 \
 **-color_g_a COLOR_G_A**\
-DamagePlot: Color (HEX code) for G to A misincoporation frequency.\
+DamagePlot: Color (HEX code) for G to A misincorporation frequency.\
 \
-**-color_instertions COLOR_C_T**\
+**-color_insertions COLOR_C_T**\
 DamagePlot: Color (HEX code) for base insertions.\
 \
 **-color_deletions COLOR_DELETIONS**\
