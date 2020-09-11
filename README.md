@@ -15,76 +15,80 @@ graphical as well as text based representation.
 
 It creates 
 - damage plots
-- a fragment length distribution
-- a read identity distribution 
-- a base frequency table of reference 
-- a table of different base misincorporations and their occurrences
+- fragment length distribution
+- read identity distribution 
+- base frequency table of reference 
+- table of different base misincorporations and their occurrences
 
 
 ###### How to run
 
 ```
-java -jar DamageProfiler-VERSION.jar <arguments> [options]
+java -jar DamageProfiler-VERSION.jar -i input_file -o output_folder [options]
 ```
 
+Running the jar file without any parameter starts the GUI to configure the run.
 
 
-
-Arguments:
-
-**-h,--help**\
+**-h**\
 Shows this help page.\
 \
-**-i,--input <INPUT>**\
-The input sam/bam file.\
+**-version**\
+Shows the version of DamageProfiler.\
 \
-**-o,--output <OUTPUT>**\
-The output folder.\
+**-i INPUT**\
+The input sam/bam/cram file (Required).\
 \
-Options
+**-o OUTPUT**\
+The output folder (Required).\
+\
+**-r REFERENCE**\
+The reference file (fasta format).\
+\
+**-t THRESHOLD**\
+DamagePlot: Number of bases which are considered for plotting nucleotide misincorporations. Default: 25.\
+\
+**-s SPECIES**\
+Reference sequence name (Reference sequence name (SN tag) of the SAM record). Species must be put in 
+quotation marks (e.g. -s 'NC_032001.1|tax|1917232|'), multiple species must be comma separated 
+(e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|,NC_034267.1|tax|1849328|'). Commas within the reference 
+sequence name are not allowed. Please specify either -s or -sf.\
+\
+**-sf FILE SPECIES**\
+Text file containing a list with species (Reference sequence name (SN tag) of the SAM record, one per line) for which 
+damage profile has to be calculated. Please specify either -s or -sf.\
+\
+**-l LENGTH**\
+Number of bases which are considered for frequency computations. Default: 100.\
+\
+**-title TITLE**\
+Title used for all plots. Default: input filename.\
+\
+**-yaxis_dp_max MAX_VALUE**\
+DamagePlot: Maximal y-axis value.\
+\
+**-color_c_t COLOR_C_T**\
+DamagePlot: Color (HEX code) for C to T misincoporation frequency.\
+\
+**-color_g_a COLOR_G_A**\
+DamagePlot: Color (HEX code) for G to A misincoporation frequency.\
+\
+**-color_instertions COLOR_C_T**\
+DamagePlot: Color (HEX code) for base insertions.\
+\
+**-color_deletions COLOR_DELETIONS**\
+DamagePlot: Color (HEX code) for base deletions.\
+\
+**-color_other COLOR_OTHER**\
+DamagePlot: Color (HEX code) for other bases different to reference.\
+\
+**-only_merged**\
+Use only mapped and merged (in case of paired-end sequencing) reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false.\
+\
+**-sslib**\
+Single-stranded library protocol was used. Default: false.
 
-**-l,--length <LENGTH>**\
-Number of bases which are computations.\
-\
-**-merged,--all_mapped_and_merged_reads**\
-Use all mapped and merged reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false\
-\
-**-r,--reference <REFERENCE>**\
-The reference file\
-\
-**-s,--specie <SPECIE>**\
-RefSeq ID of the reference genome. This will just use the reads mapping to the specific reference for creating the damage profile. It can for example be used for MALT output files. In this case, please make sure that you run MALT without *--sparseSAM* option. This would create a sam file with is not readable. \
-Example: -s NC_022116.1
-\
-\
-**-sf,--specieslist file <SPECIES LIST>**\
-List with species (RefSeq IDs) for which damage profile has to be calculated. One species per line, given as text file (.txt). Species must have the same format like *-s* parameter.\
-\
-**-t,--threshold <THRESHOLD>**\
-Number of bases which are considered for plotting nucleotide misincorporations.\
-\
-**-title,--title <TITLE>**\
-Title used for all plots (Default: file name of input SAM/BAM file).\
-\
-**-yaxis_damageplot,--yaxis_damageplot <YAXIS_DAMAGEPLOT>**\
-Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
-**-xaxis_histo_id_min,--xaxis_histo_id_min <XAXIS_HISTO_ID_MIN>**\
-Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
-**-xaxis_histo_id_max,--xaxis_histo_id_max <XAXIS_HISTO_ID_MAX>**\
-Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
-**-xaxis_histo_length_min,--xaxis_histo_length_min <XAXIS_HISTO_LENGTH_MIN>**\
-Maximal value on y axis (Default: flexible, adapts to the calculated damage).\
-\
-**-xaxis_histo_length_max,--xaxis_histo_length_max <XAXIS_HISTO_LENGTH_MAX>**\
-Maximal value on y axis (Default: flexible, adapts to the calculated damage).
+-------------------------------------------------------
 
-
-
-
-
-Running the jar file without any parameter starts a GUI to configure the run.
-
-Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
+A more detailed documentation of DamageProfiler is available at 
+https://damageprofiler.readthedocs.io.

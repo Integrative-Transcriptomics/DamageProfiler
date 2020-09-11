@@ -1,16 +1,14 @@
-import controller.DamageProfilerMainController;
-import GUI.DamageProfilerMainGUI;
-import controller.ProgressBarController;
-import controller.TabPaneAdvPlottingController;
+import org.damageprofiler.controller.DamageProfilerMainController;
+import org.damageprofiler.gui.DamageProfilerMainGUI;
+import org.damageprofiler.controller.PlottingSettingController;
+import org.damageprofiler.controller.ProgressBarController;
 import javafx.application.Application;
-
 import javafx.stage.Stage;
 
 
 public class StarterGUI extends Application {
 
-    private static final String VERSION = "0.4.9";
-
+    private static final String VERSION = "1.0";
 
     @Override
     public void start(Stage primaryStage) {
@@ -21,7 +19,8 @@ public class StarterGUI extends Application {
         DamageProfilerMainGUI damageProfilerMainGUI = new DamageProfilerMainGUI(VERSION, progressBarController);
         damageProfilerMainGUI.init(primaryStage);
 
-        DamageProfilerMainController damageProfilerMainController = new DamageProfilerMainController(damageProfilerMainGUI, progressBarController);
+        PlottingSettingController plottingSettingController = new PlottingSettingController();
+        new DamageProfilerMainController(damageProfilerMainGUI, progressBarController, plottingSettingController);
 
     }
 
