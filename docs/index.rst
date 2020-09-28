@@ -29,6 +29,8 @@ This is the main DamageProfiler documentation, where you can find information ab
 
    contents/graphicaluserinterface
 
+   contents/runtimeestimation
+
 Indices and tables
 ==================
 

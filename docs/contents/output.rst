@@ -14,7 +14,7 @@ The files *DamagePlot_five_prime.svg* and *DamagePlot_three_prime.svg* contain t
 5pCtoT_freq.txt and 3pGtoA_freq.txt
 ------------------------------------
 
-These files are tab separated text files, containing the frequency of Cytisone to Thymine and Guanine to Adenine base miscorporation at the 5' and 3'ends, respectively, on which the damage plot is based. The header covers the first three lines, followed by two columns. The first column is the position, starting from the end of the fragment, and the second column contains the frequency of the respective base exchange.
+These files are tab separated text files, containing the frequency of Cytosine to Thymine and Guanine to Adenine base miscorporation at the 5' and 3'ends, respectively, on which the damage plot is based. The header covers the first three lines, followed by two columns. The first column is the position, starting from the end of the fragment, and the second column contains the frequency of the respective base exchange.
 
 
 Example *5pCtoT_freq.txt*:
@@ -105,9 +105,9 @@ This file contains the edit distance distribution of all mapped reads. The edit 
 
 .. code-block:: bash
 
-	#Edit distances for file: SampleA.bam
+    #Edit distances for file: SampleA.bam
 	Edit distance	Occurrences
-	0.0	55569
+    0.0	55569
 	1.0	16627
 	2.0	3230
 	4.0	58
