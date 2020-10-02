@@ -2,7 +2,7 @@ General Usage
 =============
 
 
-DamageProfiler can be used to calculate and viualize damage patterns in ancient DNA. As input, a mapping file (sam, bam, or cram format) is expected. The result is provided in both graphic and text-based representation. DamageProfiler can be used in offline mode, however, idenitfying the species name when running multi-reference mapping files is not possible. 
+DamageProfiler can be used to calculate and visualize damage patterns in ancient DNA. As input, a mapping file (sam, bam, or cram format) is expected. The result is provided in both graphic and text-based representation. DamageProfiler can be used in offline mode, however, idenitfying the species name when running multi-reference mapping files is not possible.
 
 It creates
 
@@ -51,24 +51,12 @@ Options:
 
     - **-s is specified:**
 
-      The species must be put in quotation marks (e.g. -s 'NC_032001.1|tax|1917232|')
-
-      Multiple species must be comma separated (e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|').
-
       If more than one species is specified, the results are stored in separate folders (per species) under the specified output folder (-o).
 
       If only one single species is specified, the result will directly be stored under the output folder specified with -o.
 
-    - **-sf is specified:**
+      Example:
 
-      Species are given as text file, one per line. No quotation marks needed.
-
-      If more than one species is specified, the results are stored in separate folders (per species) under the specified output folder (-o).
-
-      If only one single species is specified, the result will directly be stored under the output folder specified with -o.
-
-      Example:  
- 
       -i mapping_file_sample_B.bam -o /home/neukamm/results_damageprofiler/ -s 'NC_002677.1'
 
       The results will be stored in /home/neukamm/results_damageprofiler/mapping_file_sample_B/NC_002677.1/
@@ -76,15 +64,38 @@ Options:
       -i mapping_file_sample_B.bam -o /path/to/result/directory/mapping_file_sample_B/ -s 'NC_002677.1,NC_028801.1'
 
       The results will be stored in /path/to/result/directory/mapping_file_sample_B/NC_002677.1/ and /path/to/result/directory/mapping_file_sample_B/NC_028801.1/ and a summary pdf will be stored in /path/to/result/directory/mapping_file_sample_B/summary.pdf
-    
+
+    - **-sf is specified:**
+
+      Species are given as text file, one per line. No quotation marks needed.
+      If more than one species is specified, the results are stored in separate folders (per species) under the specified output folder (-o).
+      If only one single species is specified, the result will directly be stored under the output folder specified with -o.
+
     * **-t THRESHOLD**
     Number of bases which are considered for plotting nucleotide misincorporations in the damage plot. Default: 25.
 
     * **-s SPECIES**
     Reference sequence name (Reference NAME flag of SAM record). Depending on which database was used for mapping, this is the accession ID of the reference (i.e. NCBI accession ID). Commas within the Reference sequence name are not allowed.
+    The species must be put in quotation marks (e.g. -s 'NC_032001.1|tax|1917232|'), multiple species must be comma separated (e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|').
 
     * **-sf SPECIES FILE**
     List with accession IDs of species for which damage profile has to be calculated. This file is a text file, with one species entry per line. Commas within the Reference sequence name are not allowed.
+
+
+    Example:
+
+    -i mapping_file_sample_B.bam -o /home/neukamm/results_damageprofiler/ -sf /path/to/species_file.txt
+
+    and the content of species_file.txt would look like this:
+
+    .. code-block:: bash
+
+        NC_002677.1
+        NC_028801.1
+        NC_023501.3
+        NC_035395.1
+
+
 
     * **-l LENGTH**
     Number of bases which are considered for frequency computations. Default: 100.

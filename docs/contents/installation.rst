@@ -5,9 +5,14 @@ JAR file
 ---------
 The tool can be downloaded from `DamageProfiler's GitHub page <https://github.com/Integrative-Transcriptomics/DamageProfiler/releases>`_.
 After downloading the JAR file, you can start the application via double click on most operating systems (OSX, Windows, and Linux).
-If not, please either `install Java <http://www.oracle.com/technetwork/java/javase/downloads/index.html>`_ on your workstation, or make the file executable: 
+If not, please either install Java 11 or higher on your workstation:
 
-On Ubuntu:
+.. code-block:: console
+
+    sudo apt install default-jdk
+
+or make the file executable:
+
 
 .. code-block:: console
 
@@ -24,6 +29,8 @@ On Ubuntu:
    
    conda install -c bioconda damageprofiler
    conda install -c bioconda/label/cf201901 damageprofiler
+
+At the moment, only DamageProfiler version 0.4.9 is available via bioconda.
 
 
 Old releases
