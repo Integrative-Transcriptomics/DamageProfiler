@@ -241,25 +241,10 @@ public class Frequencies {
     private double[] count_T_G_5_norm;
     private double[] count_T_G_3_norm;
 
-    //private char[] record_char;
-    //private char[] record_char_reverse;
-
-    //private char[] ref_char;
-    //private char[] ref_char_reverse;
-
-    private double countA_sample;
-    private double countC_sample;
-    private double countG_sample;
-    private double countT_sample;
-
-    private double countA_ref;
-    private double countC_ref;
-    private double countG_ref;
-    private double countT_ref;
 
 
     private int length;
-    private int threshold;
+    private final int threshold;
 
 
     public Frequencies(int length, int threshold, Logger LOG){
@@ -504,16 +489,6 @@ public class Frequencies {
         count_reverse_T_C_3 = new double[this.length];
         count_reverse_T_G_3 = new double[this.length];
 
-        countA_ref = 0.0;
-        countC_ref = 0.0;
-        countG_ref = 0.0;
-        countT_ref = 0.0;
-
-        countA_sample = 0.0;
-        countC_sample = 0.0;
-        countG_sample = 0.0;
-        countT_sample = 0.0;
-
 
     }
 
@@ -600,21 +575,13 @@ public class Frequencies {
         }
     }
 
-    /**
-     * Count purine bases
-     * @param ref_left bases left of record
-     * @param ref_right bases right of record
-     */
-    public void countRecordFlankingRegions(String ref_left, String ref_right) {
-
-    }
 
     /**
      * get records from 5' and 3' end, count base misincorporations, distinguish between forward and reverse strand
      * @throws Exception
      */
 
-    public void calculateMisincorporations(SAMRecord record, String record_aligned, String reference_aligned) throws Exception{
+    public void calculateMisincorporations(SAMRecord record, String record_aligned, String reference_aligned) {
 
         // count from 3' end
 
@@ -874,55 +841,50 @@ public class Frequencies {
             int[] countT_ref_5 = IntStream.range(0, this.getCountT_ref_forward_5().length).map(k->(int)this.getCountT_ref_forward_5()[k]+ (int)this.getCountT_ref_reverse_5()[k]).toArray();
             int[] countT_ref_3 = IntStream.range(0, this.getCountT_ref_forward_3().length).map(k->(int)this.getCountT_ref_forward_3()[k]+ (int)this.getCountT_ref_reverse_3()[k]).toArray();
 
-            int[] count0_ref_3 = IntStream.range(0, this.getCount0_ref_forward_3().length).map(k->(int)this.getCount0_ref_forward_3()[k]+ (int)this.getCount0_ref_reverse_3()[k]).toArray();
-            int[] count0_ref_5 = IntStream.range(0, this.getCount0_ref_forward_5().length).map(k->(int)this.getCount0_ref_forward_5()[k]+ (int)this.getCount0_ref_reverse_5()[k]).toArray();
-
-
-
 
             // normalize mismatches
 
-            this.count_A_C_3_norm[i] = setNorm(count_forward_A_C_3[i] + count_reverse_A_C_3[i], (double)countA_ref_3[i]);
-            this.count_A_C_5_norm[i] = setNorm(count_forward_A_C_5[i] + count_reverse_A_C_5[i], (double)countA_ref_5[i]);
+            this.count_A_C_3_norm[i] = setNorm(count_forward_A_C_3[i] + count_reverse_A_C_3[i], countA_ref_3[i]);
+            this.count_A_C_5_norm[i] = setNorm(count_forward_A_C_5[i] + count_reverse_A_C_5[i], countA_ref_5[i]);
 
-            this.count_A_G_3_norm[i] = setNorm(count_forward_A_G_3[i] + count_reverse_A_G_3[i], (double)countA_ref_3[i]);
-            this.count_A_G_5_norm[i] = setNorm(count_forward_A_G_5[i] + count_reverse_A_G_5[i], (double)countA_ref_5[i]);
+            this.count_A_G_3_norm[i] = setNorm(count_forward_A_G_3[i] + count_reverse_A_G_3[i], countA_ref_3[i]);
+            this.count_A_G_5_norm[i] = setNorm(count_forward_A_G_5[i] + count_reverse_A_G_5[i], countA_ref_5[i]);
 
-            this.count_A_T_3_norm[i] = setNorm(count_forward_A_T_3[i] + count_reverse_A_T_3[i], (double)countA_ref_3[i]);
-            this.count_A_T_5_norm[i] = setNorm(count_forward_A_T_5[i] + count_reverse_A_T_5[i], (double)countA_ref_5[i]);
-
-            //
-
-            this.count_C_A_3_norm[i] = setNorm(count_forward_C_A_3[i] + count_reverse_C_A_3[i], (double)countC_ref_3[i]);
-            this.count_C_A_5_norm[i] = setNorm(count_forward_C_A_5[i] + count_reverse_C_A_5[i], (double)countC_ref_5[i]);
-
-            this.count_C_G_3_norm[i] = setNorm(count_forward_C_G_3[i] + count_reverse_C_G_3[i], (double)countC_ref_3[i]);
-            this.count_C_G_5_norm[i] = setNorm(count_forward_C_G_5[i] + count_reverse_C_G_5[i], (double)countC_ref_5[i]);
-
-            this.count_C_T_3_norm[i] = setNorm(count_forward_C_T_3[i] + count_reverse_C_T_3[i], (double)countC_ref_3[i]);
-            this.count_C_T_5_norm[i] = setNorm(count_forward_C_T_5[i] + count_reverse_C_T_5[i], (double)countC_ref_5[i]);
+            this.count_A_T_3_norm[i] = setNorm(count_forward_A_T_3[i] + count_reverse_A_T_3[i], countA_ref_3[i]);
+            this.count_A_T_5_norm[i] = setNorm(count_forward_A_T_5[i] + count_reverse_A_T_5[i], countA_ref_5[i]);
 
             //
 
-            this.count_G_A_3_norm[i] = setNorm(count_forward_G_A_3[i] + count_reverse_G_A_3[i], (double)countG_ref_3[i]);
-            this.count_G_A_5_norm[i] = setNorm(count_forward_G_A_5[i] + count_reverse_G_A_5[i], (double)countG_ref_5[i]);
+            this.count_C_A_3_norm[i] = setNorm(count_forward_C_A_3[i] + count_reverse_C_A_3[i], countC_ref_3[i]);
+            this.count_C_A_5_norm[i] = setNorm(count_forward_C_A_5[i] + count_reverse_C_A_5[i], countC_ref_5[i]);
 
-            this.count_G_C_3_norm[i] = setNorm(count_forward_G_C_3[i] + count_reverse_G_C_3[i], (double)countG_ref_3[i]);
-            this.count_G_C_5_norm[i] = setNorm(count_forward_G_C_5[i] + count_reverse_G_C_5[i], (double)countG_ref_5[i]);
+            this.count_C_G_3_norm[i] = setNorm(count_forward_C_G_3[i] + count_reverse_C_G_3[i], countC_ref_3[i]);
+            this.count_C_G_5_norm[i] = setNorm(count_forward_C_G_5[i] + count_reverse_C_G_5[i], countC_ref_5[i]);
 
-            this.count_G_T_3_norm[i] = setNorm(count_forward_G_T_3[i] + count_reverse_G_T_3[i], (double)countG_ref_3[i]);
-            this.count_G_T_5_norm[i] = setNorm(count_forward_G_T_5[i] + count_reverse_G_T_5[i], (double)countG_ref_5[i]);
+            this.count_C_T_3_norm[i] = setNorm(count_forward_C_T_3[i] + count_reverse_C_T_3[i], countC_ref_3[i]);
+            this.count_C_T_5_norm[i] = setNorm(count_forward_C_T_5[i] + count_reverse_C_T_5[i], countC_ref_5[i]);
 
             //
 
-            this.count_T_A_3_norm[i] = setNorm(count_forward_T_A_3[i] + count_reverse_T_A_3[i], (double)countT_ref_3[i]);
-            this.count_T_A_5_norm[i] = setNorm(count_forward_T_A_5[i] + count_reverse_T_A_5[i], (double)countT_ref_5[i]);
+            this.count_G_A_3_norm[i] = setNorm(count_forward_G_A_3[i] + count_reverse_G_A_3[i], countG_ref_3[i]);
+            this.count_G_A_5_norm[i] = setNorm(count_forward_G_A_5[i] + count_reverse_G_A_5[i], countG_ref_5[i]);
 
-            this.count_T_C_3_norm[i] = setNorm(count_forward_T_C_3[i] + count_reverse_T_C_3[i], (double)countT_ref_3[i]);
-            this.count_T_C_5_norm[i] = setNorm(count_forward_T_C_5[i] + count_reverse_T_C_5[i], (double)countT_ref_5[i]);
+            this.count_G_C_3_norm[i] = setNorm(count_forward_G_C_3[i] + count_reverse_G_C_3[i], countG_ref_3[i]);
+            this.count_G_C_5_norm[i] = setNorm(count_forward_G_C_5[i] + count_reverse_G_C_5[i], countG_ref_5[i]);
 
-            this.count_T_G_3_norm[i] = setNorm(count_forward_T_G_3[i] + count_reverse_T_G_3[i], (double)countT_ref_3[i]);
-            this.count_T_G_5_norm[i] = setNorm(count_forward_T_G_5[i] + count_reverse_T_G_5[i], (double)countT_ref_5[i]);
+            this.count_G_T_3_norm[i] = setNorm(count_forward_G_T_3[i] + count_reverse_G_T_3[i], countG_ref_3[i]);
+            this.count_G_T_5_norm[i] = setNorm(count_forward_G_T_5[i] + count_reverse_G_T_5[i], countG_ref_5[i]);
+
+            //
+
+            this.count_T_A_3_norm[i] = setNorm(count_forward_T_A_3[i] + count_reverse_T_A_3[i], countT_ref_3[i]);
+            this.count_T_A_5_norm[i] = setNorm(count_forward_T_A_5[i] + count_reverse_T_A_5[i], countT_ref_5[i]);
+
+            this.count_T_C_3_norm[i] = setNorm(count_forward_T_C_3[i] + count_reverse_T_C_3[i], countT_ref_3[i]);
+            this.count_T_C_5_norm[i] = setNorm(count_forward_T_C_5[i] + count_reverse_T_C_5[i], countT_ref_5[i]);
+
+            this.count_T_G_3_norm[i] = setNorm(count_forward_T_G_3[i] + count_reverse_T_G_3[i], countT_ref_3[i]);
+            this.count_T_G_5_norm[i] = setNorm(count_forward_T_G_5[i] + count_reverse_T_G_5[i], countT_ref_5[i]);
 
             //
 
@@ -947,12 +909,9 @@ public class Frequencies {
             this.count_0_C_3_norm[i] = setNorm(count_forward_0_C_3[i] + count_reverse_0_C_3[i], sum_ref_3);
             this.count_0_G_3_norm[i] = setNorm(count_forward_0_G_3[i] + count_reverse_0_G_3[i], sum_ref_3);
             this.count_0_T_3_norm[i] = setNorm(count_forward_0_T_3[i] + count_reverse_0_T_3[i], sum_ref_3);
-
-
-
         }
 
-        LOG.info("Values normalized ....");
+        LOG.info("\tBase frequencies are normalized\n");
     }
 
 
@@ -969,12 +928,10 @@ public class Frequencies {
 
         // !! Number of reference bases may not be zero !!
         if(count_ref == 0.0){
-            return count_mis = 0.0;
+            return 0.0;
         } else {
-            return count_mis = (count_mis/count_ref);
+            return (count_mis/count_ref);
         }
-
-
     }
 
 
@@ -1071,10 +1028,6 @@ public class Frequencies {
         return count_G_A_5_norm;
     }
     public double[] getCount_G_A_3_norm() { return count_G_A_3_norm; }
-
-    public int getLength() {
-        return length;
-    }
 
     public double[] getCount_forward_A_C_5() {
         return count_forward_A_C_5;
@@ -1328,38 +1281,6 @@ public class Frequencies {
 
     public double[] getCountT_ref_reverse_3() {
         return countT_ref_reverse_3;
-    }
-
-    public double[] getCount0_forward_3() {
-        return count0_forward_3;
-    }
-
-    public double[] getCount0_reverse_3() {
-        return count0_reverse_3;
-    }
-
-    public double[] getCount0_forward_5() {
-        return count0_forward_5;
-    }
-
-    public double[] getCount0_reverse_5() {
-        return count0_reverse_5;
-    }
-
-    public double[] getCount0_ref_forward_3() {
-        return count0_ref_forward_3;
-    }
-
-    public double[] getCount0_ref_reverse_3() {
-        return count0_ref_reverse_3;
-    }
-
-    public double[] getCount0_ref_forward_5() {
-        return count0_ref_forward_5;
-    }
-
-    public double[] getCount0_ref_reverse_5() {
-        return count0_ref_reverse_5;
     }
 
     public double[] getCount_forward_A_0_5() {
