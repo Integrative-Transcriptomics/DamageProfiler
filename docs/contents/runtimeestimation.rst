@@ -1,6 +1,6 @@
 Runtime Estimation
 ===================
-Bettlachstrasse 112, 2540 Grenchen
+
 How to run
 -----------
 The runtime estimation works only when starting DamageProfiler via the :ref:`graphical user interface <GUI-label>`.
@@ -24,3 +24,4 @@ runtime is less than 1 second. The run can now either be aborted or continued.
 
 How is the runtime calculated
 -------------------------------
+Coming soon
