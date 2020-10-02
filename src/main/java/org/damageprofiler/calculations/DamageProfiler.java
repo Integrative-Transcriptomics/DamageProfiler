@@ -263,5 +263,5 @@ public class  DamageProfiler {
     public int getNumberOfRecords(){
         return numberOfRecords;
     }
-    public List<String> getReferenceName(){ return List.copyOf(ref_name_list); }
+    public List<String> getReferenceName(){return new ArrayList<>(ref_name_list);}
 }

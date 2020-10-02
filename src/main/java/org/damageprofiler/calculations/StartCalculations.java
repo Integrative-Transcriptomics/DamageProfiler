@@ -95,13 +95,10 @@ public class StartCalculations {
         }
 
         initLogger(outfolder + "/DamageProfiler.log");
-        System.out.println("Welcome to DamageProfiler v" + VERSION + "\n");
-        LOG.info(" ///////////////////////////////////////////////////////////////////");
-        LOG.info(" //////////////\t\t\t\t\t/////////////");
-        LOG.info("//////////////\tWelcome to DamageProfiler v" + VERSION + "\t/////////////");
-        LOG.info("//////////////\t\t\t\t\t/////////////");
-        LOG.info("///////////////////////////////////////////////////////////////////\n");
-
+        System.out.println("Welcome to DamageProfiler v" + VERSION );
+        System.out.println("\tInput file:" + input);
+        System.out.println("\tOutput folder:" + outfolder);
+        LOG.info("Welcome to DamageProfiler v" + VERSION + "\n");
 
         // log settings
         LOG.info("Parameters: \n");
@@ -285,7 +282,7 @@ public class StartCalculations {
                     // collect info for metagenomic summary output
                     String spec_no_space = specie_input_string.replace(" ", "_");
                     species_output_summary.put(spec_no_space,
-                            List.of(outputGenerator.getChart_DP_5prime(),
+                            Arrays.asList(outputGenerator.getChart_DP_5prime(),
                                     outputGenerator.getChart_DP_3prime(),
                                     outputGenerator.getEditDist_chart(),
                                     outputGenerator.getLength_chart_all(),
