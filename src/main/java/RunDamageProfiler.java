@@ -1,4 +1,7 @@
 import javafx.application.Application;
+import org.damageprofiler.calculations.StartCalculations;
+import org.damageprofiler.io.Communicator;
+import org.damageprofiler.io.UserOptionsParser;
 
 /**
  * Created by neukamm on 06.10.2016.
