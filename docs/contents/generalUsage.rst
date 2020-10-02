@@ -71,20 +71,6 @@ Options:
       If more than one species is specified, the results are stored in separate folders (per species) under the specified output folder (-o).
       If only one single species is specified, the result will directly be stored under the output folder specified with -o.
 
-      Example:
-
-      -i mapping_file_sample_B.bam -o /home/neukamm/results_damageprofiler/ -sf /path/to/species_file.txt
-
-      and the content of species_file.txt would look like this:
-
-    .. code-block:: bash
-
-        NC_002677.1
-        NC_028801.1
-        NC_023501.3
-        NC_035395.1
-
-
     * **-t THRESHOLD**
     Number of bases which are considered for plotting nucleotide misincorporations in the damage plot. Default: 25.
 
@@ -94,6 +80,22 @@ Options:
 
     * **-sf SPECIES FILE**
     List with accession IDs of species for which damage profile has to be calculated. This file is a text file, with one species entry per line. Commas within the Reference sequence name are not allowed.
+
+
+    Example:
+
+    -i mapping_file_sample_B.bam -o /home/neukamm/results_damageprofiler/ -sf /path/to/species_file.txt
+
+    and the content of species_file.txt would look like this:
+
+    .. code-block:: bash
+
+        NC_002677.1
+        NC_028801.1
+        NC_023501.3
+        NC_035395.1
+
+
 
     * **-l LENGTH**
     Number of bases which are considered for frequency computations. Default: 100.
