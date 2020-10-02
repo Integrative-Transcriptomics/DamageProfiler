@@ -15,10 +15,10 @@ graphical as well as text based representation.
 
 It creates 
 - damage plots
-- a fragment length distribution
-- a read identity distribution 
-- a base frequency table of reference 
-- a table of different base misincorporations and their occurrences
+- fragment length distribution
+- read identity distribution 
+- base frequency table of reference 
+- table of different base misincorporations and their occurrences
 
 
 ###### How to run
@@ -49,10 +49,14 @@ The reference file (fasta format).\
 DamagePlot: Number of bases which are considered for plotting nucleotide misincorporations. Default: 25.\
 \
 **-s SPECIES**\
-Reference sequence name (Reference NAME flag of SAM record). For more details see Documentation.\
+Reference sequence name (Reference sequence name (SN tag) of the SAM record). Species must be put in 
+quotation marks (e.g. -s 'NC_032001.1|tax|1917232|'), multiple species must be comma separated 
+(e.g. -s 'NC_032001.1|tax|1917232|,NC_031076.1|tax|1838137|,NC_034267.1|tax|1849328|'). Commas within the reference 
+sequence name are not allowed. Please specify either -s or -sf.\
 \
-**-sf SPECIES LIST**\
-List with species for which damage profile has to be calculated. For more details see Documentation.\
+**-sf FILE SPECIES**\
+Text file containing a list with species (Reference sequence name (SN tag) of the SAM record, one per line) for which 
+damage profile has to be calculated. Please specify either -s or -sf.\
 \
 **-l LENGTH**\
 Number of bases which are considered for frequency computations. Default: 100.\
@@ -64,19 +68,19 @@ Title used for all plots. Default: input filename.\
 DamagePlot: Maximal y-axis value.\
 \
 **-color_c_t COLOR_C_T**\
-DamagePlot: Color for C to T misincoporation frequency.\
+DamagePlot: Color (HEX code) for C to T misincorporation frequency.\
 \
 **-color_g_a COLOR_G_A**\
-DamagePlot: Color for G to A misincoporation frequency.\
+DamagePlot: Color (HEX code) for G to A misincorporation frequency.\
 \
-**-color_instertions COLOR_C_T**\
-DamagePlot: Color for base insertions.\
+**-color_insertions COLOR_C_T**\
+DamagePlot: Color (HEX code) for base insertions.\
 \
 **-color_deletions COLOR_DELETIONS**\
-DamagePlot: Color for base deletions.\
+DamagePlot: Color (HEX code) for base deletions.\
 \
 **-color_other COLOR_OTHER**\
-DamagePlot: Color for other bases different to reference.\
+DamagePlot: Color (HEX code) for other bases different to reference.\
 \
 **-only_merged**\
 Use only mapped and merged (in case of paired-end sequencing) reads to calculate damage plot instead of using all mapped reads. The SAM/BAM entry must start with 'M_', otherwise it will be skipped. Default: false.\
@@ -86,4 +90,5 @@ Single-stranded library protocol was used. Default: false.
 
 -------------------------------------------------------
 
-Stay tuned, a more detailed description, manual and tutorial of DamageProfiler is coming soon.
+A more detailed documentation of DamageProfiler is available at 
+https://damageprofiler.readthedocs.io.
