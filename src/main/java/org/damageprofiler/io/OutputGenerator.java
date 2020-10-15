@@ -149,8 +149,8 @@ public class OutputGenerator {
         LOG.info("\tlgdistribution.txt");
 
         BufferedWriter lgdist = new BufferedWriter(new FileWriter(this.outpath + "/lgdistribution.txt"));
-        HashMap<Double, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
-        HashMap<Double, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
+        HashMap<Integer, Integer> map_forward = damageProfiler.getLength_distribution_map_forward();
+        HashMap<Integer, Integer> map_reverse = damageProfiler.getLength_distribution_map_reverse();
 
         lgdist.write("# table produced by DamageProfiler\n");
         lgdist.write("# using mapped file " + input + "\n");
@@ -160,16 +160,16 @@ public class OutputGenerator {
 
         // fill file
 
-        List<Double> key_list = new ArrayList<>(map_forward.keySet());
+        List<Integer> key_list = new ArrayList<>(map_forward.keySet());
         Collections.sort(key_list);
 
-        HashMap<Double,Integer> yaml_dump_fw = new HashMap<>();
+        HashMap<Integer,Integer> yaml_dump_fw = new HashMap<>();
 
         if(key_list.size()>0){
             min_length = key_list.get(0);
             max_length = key_list.get(key_list.size()-1);
 
-            for(double key : key_list){
+            for(int key : key_list){
                 lgdist.write("+\t" + key + "\t" + map_forward.get(key) + "\n");
                 yaml_dump_fw.put(key, map_forward.get(key));
             }
@@ -180,7 +180,7 @@ public class OutputGenerator {
         key_list.addAll(map_reverse.keySet());
         Collections.sort(key_list);
 
-        HashMap<Double,Integer> yaml_dump_rv = new HashMap<>();
+        HashMap<Integer,Integer> yaml_dump_rv = new HashMap<>();
 
 
         if(key_list.size()>0){
@@ -191,7 +191,7 @@ public class OutputGenerator {
                 max_length = key_list.get(key_list.size()-1);
 
             }
-            for(double key : key_list){
+            for(int key : key_list){
                 lgdist.write("-\t" + key + "\t" + map_reverse.get(key) + "\n");
                 yaml_dump_rv.put(key, map_reverse.get(key));
             }
@@ -469,7 +469,7 @@ public class OutputGenerator {
      * @throws IOException
      * @throws DocumentException
      */
-    public void plotLengthHistogram(List<Double> length_all, List<Double> length_forward, List<Double> length_reverse) throws  IOException, DocumentException {
+    public void plotLengthHistogram(List<Integer> length_all, List<Integer> length_forward, List<Integer> length_reverse) throws  IOException, DocumentException {
 
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(length_all);
@@ -508,7 +508,7 @@ public class OutputGenerator {
      * @throws DocumentException
      * @throws IOException
      */
-    public void plotEditDistanceHistogram(List<Double> distances, String title) throws DocumentException, IOException{
+    public void plotEditDistanceHistogram(List<Integer> distances, String title) throws DocumentException, IOException{
         Histogram hist_all = new Histogram(LOG);
         hist_all.addData(distances);
 
@@ -588,20 +588,20 @@ public class OutputGenerator {
      *  - median of length dist
      */
     public void computeSummaryMetrics(){
-        HashMap<Double,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurrences
-        HashMap<Double, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
+        HashMap<Integer,Integer> forwardMap = damageProfiler.getLength_distribution_map_forward(); // key = length, value = occurrences
+        HashMap<Integer, Integer>reverseMap = damageProfiler.getLength_distribution_map_reverse();
 
         //Create ArrayList<Integer> of read lengths
         DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics();
 
-        for (double key : forwardMap.keySet()){
+        for (int key : forwardMap.keySet()){
             int occurences = forwardMap.get(key);
             for (int i = 0; i <= occurences; i++) {
                 descriptiveStatistics.addValue(key);
             }
         }
 
-        for (double key : reverseMap.keySet()){
+        for (int key : reverseMap.keySet()){
             int occurences = reverseMap.get(key);
             for (int i = 0; i <= occurences; i++) {
                 descriptiveStatistics.addValue(key);
@@ -768,10 +768,10 @@ public class OutputGenerator {
      * @param editDistances
      * @throws IOException
      */
-    public void writeEditDistance(List<Double> editDistances) throws IOException {
+    public void writeEditDistance(List<Integer> editDistances) throws IOException {
         LOG.info("\teditDistance.txt\n");
         Collections.sort(editDistances);
-        Set<Double> distances_sorted = new HashSet<>(editDistances);
+        Set<Integer> distances_sorted = new HashSet<>(editDistances);
         HashMap<Double, Integer> edit_occurrences_map = new HashMap<>();
         for(double dist : distances_sorted){
             int occurrences = Collections.frequency(editDistances, dist);

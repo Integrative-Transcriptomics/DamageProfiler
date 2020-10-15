@@ -25,7 +25,7 @@ public class  DamageProfiler {
     private Frequencies frequencies;
     private File reference;
     LengthDistribution lengthDistribution;
-    private List<Double> editDistances;
+    private List<Integer> editDistances;
     private Set<String> ref_name_list;
 
     /**
@@ -226,7 +226,7 @@ public class  DamageProfiler {
         this.lengthDistribution.fillDistributionTable(record,record_aligned);
 
         // calculate distance between record and reference
-        double hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
+        int hamming = useful_functions.getHammingDistance(record_aligned, reference_aligned);
         this.editDistances.add(hamming);
 
         // calculate frequencies
@@ -244,20 +244,20 @@ public class  DamageProfiler {
     public Frequencies getFrequencies() {
         return frequencies;
     }
-    public HashMap<Double, Integer> getLength_distribution_map_forward() {return lengthDistribution.getLength_distribution_map_forward(); }
-    public HashMap<Double, Integer> getLength_distribution_map_reverse() {return lengthDistribution.getLength_distribution_map_reverse(); }
-    public List<Double> getLength_forward() {
+    public HashMap<Integer, Integer> getLength_distribution_map_forward() {return lengthDistribution.getLength_distribution_map_forward(); }
+    public HashMap<Integer, Integer> getLength_distribution_map_reverse() {return lengthDistribution.getLength_distribution_map_reverse(); }
+    public List<Integer> getLength_forward() {
         return lengthDistribution.getLength_forward();
     }
-    public List<Double> getLength_all() {
+    public List<Integer> getLength_all() {
         return lengthDistribution.getLength_all();
     }
-    public List<Double> getLength_reverse() { return lengthDistribution.getLength_reverse(); }
+    public List<Integer> getLength_reverse() { return lengthDistribution.getLength_reverse(); }
     public int getNumberOfUsedReads() {
         return numberOfUsedReads;
     }
 
-    public List<Double> getEditDistances() {
+    public List<Integer> getEditDistances() {
         return editDistances;
     }
     public int getNumberOfRecords(){
