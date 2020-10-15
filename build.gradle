@@ -108,4 +108,3 @@ test {
         events "passed", "skipped", "failed"
     }
 }
-
