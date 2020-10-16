@@ -67,11 +67,8 @@ public class DamageProfilerMainController {
         this.btn_run = mainGUI.getConfig_dialogue().getBtn_run();
         this.btn_estimate_runtime = mainGUI.getConfig_dialogue().getBtn_estimate_runtime();
         this.btn_speciesList = mainGUI.getConfig_dialogue().getBtn_speciesList();
-       // this.btn_leftpane_identityDist = mainGUI.getBtn_leftpane_identityDist();
         this.btn_leftpane_run_config = mainGUI.getBtn_leftpane_info();
         this.btn_help = mainGUI.getBtn_help();
-        //this.btn_leftpane_damageProfile = mainGUI.getBtn_leftpane_damageProfile();
-        //this.btn_leftpane_lengthDist = mainGUI.getBtn_leftpane_lengthDist();
 
         this.textfield_threshold = mainGUI.getConfig_dialogue().getTextfield_threshold();
         this.textfield_length = mainGUI.getConfig_dialogue().getTextfield_length();
@@ -108,7 +105,6 @@ public class DamageProfilerMainController {
             BamFileChooser fqfc = new BamFileChooser(communicator);
             if (communicator.getInput() != null){
                 Tooltip tooltip_input = new Tooltip(communicator.getInput());
-                //setTooltipDelay(tooltip_input);
                 btn_inputfile.setTooltip(tooltip_input);
 
                 String filepath = communicator.getInput().substring(0, communicator.getInput().lastIndexOf('.'));
@@ -134,7 +130,6 @@ public class DamageProfilerMainController {
 
             ReferenceFileChooser rfc = new ReferenceFileChooser(communicator);
             Tooltip tooltip_ref = new Tooltip(communicator.getReference());
-            //setTooltipDelay(tooltip_ref);
             btn_reference.setTooltip(tooltip_ref);
 
             if (checkIfInputWasSelected()) {
@@ -153,7 +148,6 @@ public class DamageProfilerMainController {
 
             OutputDirChooser rfc = new OutputDirChooser(communicator);
             Tooltip tooltip_output = new Tooltip(communicator.getOutfolder());
-            //setTooltipDelay(tooltip_output);
             btn_output.setTooltip(tooltip_output);
 
             if (checkIfInputWasSelected()) {
@@ -216,29 +210,6 @@ public class DamageProfilerMainController {
 
         });
 
-
-//        btn_leftpane_damageProfile.setOnAction(e -> {
-//            if(starter.isCalculationsDone()){
-//                generateDamageProfile();
-//            }
-//        });
-//
-//
-//        btn_leftpane_identityDist.setOnAction(e -> {
-//            if(starter.isCalculationsDone()){
-//                // generate plot
-//
-//               generateEditDistance();
-//            }
-//        });
-//
-//        btn_leftpane_lengthDist.setOnAction(e -> {
-//            if(starter.isCalculationsDone()){
-//                // generate plot
-//                generateLengthDist();
-//            }
-//        });
-
         btn_leftpane_run_config.setOnAction(e -> {
             if(starter.isCalculationsDone()){
                 ScrollPane scrollPane_adv_config = new ScrollPane();
@@ -263,9 +234,6 @@ public class DamageProfilerMainController {
 
 
     private void clear() {
-//        btn_leftpane_lengthDist.setDisable(true);
-//        btn_leftpane_identityDist.setDisable(true);
-//        btn_leftpane_damageProfile.setDisable(true);
         starter.setCalculationsDone(false);
         btn_inputfile.setTooltip(null);
         btn_output.setTooltip(null);
@@ -387,7 +355,6 @@ public class DamageProfilerMainController {
             viewerLengthAll = new ChartViewer(starter.getSpecies_output_summary().get(species).get(3));
             viewerLengthSep = new ChartViewer(starter.getSpecies_output_summary().get(species).get(4));
         }
-        ;
 
         // disable zoom on x-axis
         viewerLengthAll.getCanvas().setDomainZoomable(false);
@@ -454,7 +421,7 @@ public class DamageProfilerMainController {
 
     /**
      * This method checks if all mandatory fields are set. Otherwise, it's not possible to run the tool.
-     * @return
+     * @return boolean if input all is specified
      */
     private boolean checkIfInputWasSelected() {
         boolean tmp = false;
@@ -465,6 +432,5 @@ public class DamageProfilerMainController {
         }
         return tmp;
     }
-
 
 }
