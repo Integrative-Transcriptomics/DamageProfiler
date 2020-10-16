@@ -29,7 +29,7 @@ public class Histogram {
         data_collected = new ArrayList<>();
     }
 
-    public void addData(List<Double> data){
+    public void addData(List<Integer> data){
         double[] d = new double[data.size()];
         for(int i = 0; i < data.size(); i++){
             d[i] = data.get(i);

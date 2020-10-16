@@ -13,12 +13,12 @@ import java.util.List;
 public class LengthDistribution {
 
     private final Logger LOG;
-    private HashMap<Double, Integer> length_distribution_map_forward;
-    private HashMap<Double, Integer> length_distribution_map_reverse;
-    private HashMap<Double, Double> length_distribution_map;
-    private List<Double> length_forward;
-    private List<Double> length_reverse;
-    private List<Double> length_all;
+    private HashMap<Integer, Integer> length_distribution_map_forward;
+    private HashMap<Integer, Integer> length_distribution_map_reverse;
+    private HashMap<Integer, Integer> length_distribution_map;
+    private List<Integer> length_forward;
+    private List<Integer> length_reverse;
+    private List<Integer> length_all;
 
 
     public LengthDistribution(Logger LOG){
@@ -47,7 +47,7 @@ public class LengthDistribution {
     public void fillDistributionTable(SAMRecord record, String record_aligned){
 
         // int record_length = record.getReadLength();
-        double record_length = record_aligned.length();
+        int record_length = record_aligned.length();
         length_all.add(record_length);
 
         // check if record is on forward or reverse strand
@@ -75,9 +75,9 @@ public class LengthDistribution {
         }
 
         if(!length_distribution_map.containsKey(record_length)){
-            length_distribution_map.put(record_length, 1.0);
+            length_distribution_map.put(record_length, 1);
         } else {
-            double count = length_distribution_map.get(record_length);
+            int count = length_distribution_map.get(record_length);
             length_distribution_map.put(record_length, count + 1);
         }
     }
@@ -86,21 +86,21 @@ public class LengthDistribution {
             Getter
      */
 
-    public HashMap<Double, Integer> getLength_distribution_map_forward() {
+    public HashMap<Integer, Integer> getLength_distribution_map_forward() {
         return length_distribution_map_forward;
     }
 
-    public HashMap<Double, Integer> getLength_distribution_map_reverse() {
+    public HashMap<Integer, Integer> getLength_distribution_map_reverse() {
         return length_distribution_map_reverse;
     }
 
-    public List<Double> getLength_forward() {
+    public List<Integer> getLength_forward() {
         return length_forward;
     }
 
-    public List<Double> getLength_reverse() { return length_reverse; }
+    public List<Integer> getLength_reverse() { return length_reverse; }
 
-    public List<Double> getLength_all() {
+    public List<Integer> getLength_all() {
         return length_all;
     }
 
