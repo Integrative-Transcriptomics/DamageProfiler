@@ -30,28 +30,31 @@ public class UserOptionsParser {
 
         Options options = new Options();
 
-        options.addOption("h", false, "Shows this help page.");
+        options.addOption(Option.builder("h")
+                .desc("Shows this help page.")
+                .longOpt("help")
+                .build());
 
-        options.addOption(new Option("version", false,
-                "Shows the version of DamageProfiler."));
+        options.addOption(Option.builder("v")
+                .desc("Shows the version of DamageProfiler.")
+                .longOpt("version")
+                .build());
 
         options.addOption(Option.builder("i")
                 .argName("INPUT")
-                .desc("The input sam/bam/cram file.")
-                .required()
+                .desc("REQUIRED. The input sam/bam/cram file.")
+                .hasArg()
+                .build());
+
+        options.addOption(Option.builder("o")
+                .argName("OUTPUT")
+                .desc("REQUIRED. The output folder.")
                 .hasArg()
                 .build());
 
         options.addOption(Option.builder("r")
                 .argName("REFERENCE")
                 .desc("The reference file (fasta format).")
-                .hasArg()
-                .build());
-
-        options.addOption(Option.builder("o")
-                .argName("OUTPUT")
-                .desc("The output folder.")
-                .required()
                 .hasArg()
                 .build());
 
@@ -161,79 +164,81 @@ public class UserOptionsParser {
             if (cmd.hasOption('h')) {
                 formatter.printHelp("DamageProfiler", header, options, null, true);
                 System.exit(0);
-            }
-
-            if(cmd.hasOption("version")) {
+            } else if (cmd.hasOption("version")) {
                 System.out.print("DamageProfiler v" + this.version + "\n");
                 System.exit(0);
-            }
+            } else {
+                if(!cmd.hasOption("-i") || !cmd.hasOption("-o")){
+                    formatter.printHelp("DamageProfiler", header, options, null, true);
+                    System.exit(0);
+                } else {
+                    // input files
 
-            // input files
+                    if (cmd.hasOption('i')) {
+                        communicator.setInput(cmd.getOptionValue('i'));
+                    }
+                    if (cmd.hasOption('r')) {
+                        communicator.setReference(cmd.getOptionValue('r'));
+                    }
+                    if (cmd.hasOption('o')) {
+                        communicator.setOutfolder(cmd.getOptionValue('o'));
+                    }
 
-            if (cmd.hasOption('i')) {
-                communicator.setInput(cmd.getOptionValue('i'));
-            }
-            if (cmd.hasOption('r')) {
-                communicator.setReference(cmd.getOptionValue('r'));
-            }
-            if (cmd.hasOption('o')) {
-                communicator.setOutfolder(cmd.getOptionValue('o'));
-            }
+                    // damage calculation
 
-            // damage calculation
+                    if (cmd.hasOption('s')) {
+                        communicator.setSpecies_ref_identifier(cmd.getOptionValue('s'));
+                    }
+                    if (cmd.hasOption("sf")) {
+                        communicator.setSpecieslist_filepath(cmd.getOptionValue("sf"));
+                    }
+                    if (cmd.hasOption('l')) {
+                        communicator.setLength(Integer.parseInt(cmd.getOptionValue('l')));
+                    }
+                    if(cmd.hasOption("only_merged")) {
+                        communicator.setUse_merged_and_mapped_reads(true);
+                    }
 
-            if (cmd.hasOption('s')) {
-                communicator.setSpecies_ref_identifier(cmd.getOptionValue('s'));
-            }
-            if (cmd.hasOption("sf")) {
-                communicator.setSpecieslist_filepath(cmd.getOptionValue("sf"));
-            }
-            if (cmd.hasOption('l')) {
-                communicator.setLength(Integer.parseInt(cmd.getOptionValue('l')));
-            }
-            if(cmd.hasOption("only_merged")) {
-                communicator.setUse_merged_and_mapped_reads(true);
-            }
+                    if(cmd.hasOption("sslib")) {
+                        communicator.setSsLibsProtocolUsed(true);
+                    }
 
-            if(cmd.hasOption("sslib")) {
-                communicator.setSsLibsProtocolUsed(true);
-            }
+                    // Plotting
 
-            // Plotting
+                    if(cmd.hasOption("title")) {
+                        communicator.setTitle_plots(cmd.getOptionValue("title"));
+                    }
 
-            if(cmd.hasOption("title")) {
-                communicator.setTitle_plots(cmd.getOptionValue("title"));
-            }
-
-            if(cmd.hasOption("yaxis_dp_max")) {
-                communicator.setyAxis_damageplot(Double.parseDouble(cmd.getOptionValue("yaxis_dp_max")));
-            }
+                    if(cmd.hasOption("yaxis_dp_max")) {
+                        communicator.setyAxis_damageplot(Double.parseDouble(cmd.getOptionValue("yaxis_dp_max")));
+                    }
 
 
-            if (cmd.hasOption('t')) {
-                communicator.setThreshold(Integer.parseInt(cmd.getOptionValue('t')));
-            }
+                    if (cmd.hasOption('t')) {
+                        communicator.setThreshold(Integer.parseInt(cmd.getOptionValue('t')));
+                    }
 
-            if(cmd.hasOption("color_c_t")){
-                communicator.setColor_DP_C_to_T( Color.web(cmd.getOptionValue("color_c_t")));
-            }
+                    if(cmd.hasOption("color_c_t")){
+                        communicator.setColor_DP_C_to_T( Color.web(cmd.getOptionValue("color_c_t")));
+                    }
 
-            if(cmd.hasOption("color_g_a")){
-                communicator.setColor_DP_G_to_A(Color.web(cmd.getOptionValue("color_g_a")));
-            }
+                    if(cmd.hasOption("color_g_a")){
+                        communicator.setColor_DP_G_to_A(Color.web(cmd.getOptionValue("color_g_a")));
+                    }
 
-            if(cmd.hasOption("color_insertions")){
-                communicator.setColor_DP_insertions(Color.web(cmd.getOptionValue("color_insertions")));
-            }
+                    if(cmd.hasOption("color_insertions")){
+                        communicator.setColor_DP_insertions(Color.web(cmd.getOptionValue("color_insertions")));
+                    }
 
-            if(cmd.hasOption("color_deletions")){
-                communicator.setColor_DP_deletions(Color.web(cmd.getOptionValue("color_deletions")));
-            }
+                    if(cmd.hasOption("color_deletions")){
+                        communicator.setColor_DP_deletions(Color.web(cmd.getOptionValue("color_deletions")));
+                    }
 
-            if(cmd.hasOption("color_other")){
-                communicator.setColor_DP_other(Color.web(cmd.getOptionValue("color_other")));
+                    if(cmd.hasOption("color_other")){
+                        communicator.setColor_DP_other(Color.web(cmd.getOptionValue("color_other")));
+                    }
+                }
             }
-
         } catch (ParseException e) {
             formatter.printHelp(CLASS_NAME, options);
             System.err.println(e.getMessage());

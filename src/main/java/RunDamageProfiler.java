@@ -8,7 +8,7 @@ import org.damageprofiler.io.UserOptionsParser;
  */
 public class RunDamageProfiler {
 
-    private static final String VERSION = "1.0";
+    private static final String VERSION = "1.1";
 
     public static void main(String[] args) throws Exception {
 
