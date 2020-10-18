@@ -30,10 +30,10 @@ java -jar DamageProfiler-VERSION.jar -i input_file -o output_folder [options]
 Running the jar file without any parameter starts the GUI to configure the run.
 
 
-**-h**\
+**-h, --help**\
 Shows this help page.\
 \
-**-version**\
+**-v, --version**\
 Shows the version of DamageProfiler.\
 \
 **-i INPUT**\
