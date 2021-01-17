@@ -390,7 +390,7 @@ public class OutputGenerator {
                         +frequencies.getCount_reverse_A_C_3()[i]+"\t"+frequencies.getCount_reverse_A_T_3()[i]+"\t"
                         +frequencies.getCount_reverse_C_G_3()[i]+"\t"+frequencies.getCount_reverse_C_A_3()[i]+"\t"
                         +frequencies.getCount_reverse_T_G_3()[i]+"\t"+frequencies.getCount_reverse_T_A_3()[i]+"\t"
-                        +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]
+                        +frequencies.getCount_reverse_G_C_3()[i]+"\t"+frequencies.getCount_reverse_G_T_3()[i]+"\t"
                         +frequencies.getCount_reverse_A_0_3()[i]+"\t"+frequencies.getCount_reverse_T_0_3()[i]+"\t"
                         +frequencies.getCount_reverse_C_0_3()[i]+"\t"+frequencies.getCount_reverse_G_0_3()[i]+"\t"
                         +frequencies.getCount_reverse_0_A_3()[i]+"\t"+frequencies.getCount_reverse_0_T_3()[i]+"\t"
