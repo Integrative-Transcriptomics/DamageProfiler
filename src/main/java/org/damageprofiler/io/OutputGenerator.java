@@ -417,7 +417,7 @@ public class OutputGenerator {
                         +frequencies.getCount_forward_A_C_5()[i]+"\t"+frequencies.getCount_forward_A_T_5()[i]+"\t"
                         +frequencies.getCount_forward_C_G_5()[i]+"\t"+frequencies.getCount_forward_C_A_5()[i]+"\t"
                         +frequencies.getCount_forward_T_G_5()[i]+"\t"+frequencies.getCount_forward_T_A_5()[i]+"\t"
-                        +frequencies.getCount_forward_G_C_5()[i]+"\t"+frequencies.getCount_forward_G_T_5()[i]+
+                        +frequencies.getCount_forward_G_C_5()[i]+"\t"+frequencies.getCount_forward_G_T_5()[i]+"\t"
                         +frequencies.getCount_forward_A_0_5()[i]+"\t"+frequencies.getCount_forward_T_0_5()[i]+"\t"
                         +frequencies.getCount_forward_C_0_5()[i]+"\t"+frequencies.getCount_forward_G_0_5()[i]+"\t"
                         +frequencies.getCount_forward_0_A_5()[i]+"\t"+frequencies.getCount_forward_0_T_5()[i]+"\t"
@@ -443,7 +443,7 @@ public class OutputGenerator {
                         +frequencies.getCount_reverse_A_C_5()[i]+"\t"+frequencies.getCount_reverse_A_T_5()[i]+"\t"
                         +frequencies.getCount_reverse_C_G_5()[i]+"\t"+frequencies.getCount_reverse_C_A_5()[i]+"\t"
                         +frequencies.getCount_reverse_T_G_5()[i]+"\t"+frequencies.getCount_reverse_T_A_5()[i]+"\t"
-                        +frequencies.getCount_reverse_G_C_5()[i]+"\t"+frequencies.getCount_reverse_G_T_5()[i]+
+                        +frequencies.getCount_reverse_G_C_5()[i]+"\t"+frequencies.getCount_reverse_G_T_5()[i]+"\t"
                         +frequencies.getCount_reverse_A_0_5()[i]+"\t"+frequencies.getCount_reverse_T_0_5()[i]+"\t"
                         +frequencies.getCount_reverse_C_0_5()[i]+"\t"+frequencies.getCount_reverse_G_0_5()[i]+"\t"
                         +frequencies.getCount_reverse_0_A_5()[i]+"\t"+frequencies.getCount_reverse_0_T_5()[i]+"\t"
