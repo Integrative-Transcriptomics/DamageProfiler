@@ -9,6 +9,13 @@ This method can be used to calculate damage profiles of mapped ancient DNA reads
 Main author: Judith Neukamm <judith.neukamm@uzh.ch>\
 Contributor: Alexander Peltzer, James A. Fellows Yates, and Alexander Hübner.
 
+###### Citation
+
+If you use the tool, please cite the publication:
+
+**DamageProfiler** Neukamm, J., Peltzer, A., & Nieselt, K. (2020). DamageProfiler: Fast damage pattern calculation for ancient DNA. Bioinformatics (btab190). [https://doi.org/10.1093/bioinformatics/btab190](https://doi.org/10.1093/bioinformatics/btab190)
+
+
 ###### Method
 DamageProfiler calculates damage profiles of mapped reads and provides a 
 graphical as well as text based representation. 
