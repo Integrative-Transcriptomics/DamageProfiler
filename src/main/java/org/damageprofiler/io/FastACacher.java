@@ -1,21 +1,20 @@
 package org.damageprofiler.io;
 
-import htsjdk.samtools.reference.*;
+import htsjdk.samtools.reference.ReferenceSequence;
+import htsjdk.samtools.reference.ReferenceSequenceFile;
+import htsjdk.samtools.reference.ReferenceSequenceFileFactory;
 import java.io.File;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
 
 /** Created by peltzer on 25/06/15. */
 public class FastACacher {
-  private final Logger LOG;
   private final HashMap<String, byte[]> data = new HashMap<>();
 
-  public FastACacher(File f, Logger LOG) {
-    ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(f);
-    this.LOG = LOG;
+  public FastACacher(final File f) {
+    final ReferenceSequenceFile refSeq = ReferenceSequenceFileFactory.getReferenceSequenceFile(f);
 
     while (true) {
-      ReferenceSequence rs = refSeq.nextSequence();
+      final ReferenceSequence rs = refSeq.nextSequence();
       if (rs == null) {
         break;
       } else {
@@ -28,9 +27,9 @@ public class FastACacher {
     return data;
   }
 
-  public String getKeyName(String reference_name) {
+  public String getKeyName(final String reference_name) {
     String name = reference_name;
-    String[] reference_name_splitted = reference_name.split("ref");
+    final String[] reference_name_splitted = reference_name.split("ref");
 
     if (reference_name_splitted.length > 1) {
       name = reference_name_splitted[1].substring(1, reference_name_splitted[1].length() - 1);

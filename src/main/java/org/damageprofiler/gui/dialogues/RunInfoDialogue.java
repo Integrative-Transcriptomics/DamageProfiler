@@ -14,7 +14,7 @@ public class RunInfoDialogue extends AbstractDialogue {
   private ScrollPane scrollPaneInput;
   private ScrollPane scrollPaneOutput;
 
-  public RunInfoDialogue(String message, Communicator communicator) {
+  public RunInfoDialogue(final String message, final Communicator communicator) {
     super(message);
     this.communicator = communicator;
     btn_new_config = new Button("New configuration");
@@ -27,9 +27,9 @@ public class RunInfoDialogue extends AbstractDialogue {
     scrollPaneOutput = new ScrollPane(new Label(communicator.getOutfolder()));
     scrollPaneRef = new ScrollPane(new Label(communicator.getReference()));
 
-    Label label_input = new Label("Input file: ");
-    Label label_output = new Label("Output folder: ");
-    Label label_ref = new Label("Reference file: ");
+    final Label label_input = new Label("Input file: ");
+    final Label label_output = new Label("Output folder: ");
+    final Label label_ref = new Label("Reference file: ");
 
     gridPane.add(label_input, 0, ++row, 1, 1);
     gridPane.add(scrollPaneInput, 1, row, 2, 1);

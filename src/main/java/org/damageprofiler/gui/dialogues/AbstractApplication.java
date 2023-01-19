@@ -1,27 +1,25 @@
 package org.damageprofiler.gui.dialogues;
 
-import java.io.InputStream;
-import java.util.Objects;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.damageprofiler.services.ImageUtils;
 
 public class AbstractApplication {
 
   private final Stage stage;
   protected final GridPane gridPane;
   protected int row;
-  private StackPane layout;
+  private final StackPane layout;
 
-  public AbstractApplication(String header, String message) {
+  public AbstractApplication(final String header, final String message) {
 
     stage = new Stage();
     stage.setTitle(header);
@@ -34,25 +32,22 @@ public class AbstractApplication {
     gridPane.setVgap(10);
     gridPane.setPadding(new Insets(10, 10, 10, 10));
     layout = new StackPane();
-    Scene dialogScene = new Scene(layout, 600, 250);
+    final Scene dialogScene = new Scene(layout, 600, 250);
     stage.setScene(dialogScene);
 
     fillGrid(message);
   }
 
-  private void fillGrid(String message) {
+  private void fillGrid(final String message) {
 
-    Label mssg = new Label();
+    final Label mssg = new Label();
     mssg.setWrapText(true);
     mssg.setText(message);
     row = 0;
     gridPane.add(mssg, 0, row, 2, 1);
     gridPane.add(new Separator(), 0, ++row, 2, 1);
 
-    InputStream input = getClass().getClassLoader().getResourceAsStream("logo.png");
-    assert input != null;
-    Image image = new Image(Objects.requireNonNull(input));
-    ImageView imageView = new ImageView(image);
+    final ImageView imageView = ImageUtils.loadLogo();
     imageView.setOpacity(0.3);
     layout.getChildren().setAll(imageView, gridPane);
   }

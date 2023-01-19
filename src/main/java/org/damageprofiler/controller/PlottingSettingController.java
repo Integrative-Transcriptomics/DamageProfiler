@@ -7,13 +7,8 @@ public class PlottingSettingController {
 
   public PlottingSettingController() {}
 
-  /**
-   * Adding all listener to advancedPlottingOptionsDialogue
-   *
-   * @param advancedPlottingOptionsDialogue
-   */
-  public void addListener(AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue) {
-    TabAdvancedSettingsDamagePlot dp_settings_pane =
+  public void addListener(final AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue) {
+    final TabAdvancedSettingsDamagePlot dp_settings_pane =
         advancedPlottingOptionsDialogue.getTabAdvancedSettingsDamagePlot();
     dp_settings_pane.getBtn_reset().setOnAction(e -> dp_settings_pane.reset());
   }

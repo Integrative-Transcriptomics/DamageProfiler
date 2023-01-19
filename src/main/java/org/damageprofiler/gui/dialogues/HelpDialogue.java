@@ -28,7 +28,6 @@ public class HelpDialogue {
     fill();
   }
 
-  /** Fill dialogue with help content */
   private void fill() {
     Label label_title = new Label("Welcome to DamageProfiler help page");
     label_title.setFont(Font.font("Verdana", FontWeight.BOLD, 14));

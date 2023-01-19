@@ -2,7 +2,6 @@ package org.damageprofiler.io.pdfoutput;
 
 import java.awt.*;
 import java.util.ArrayList;
-import org.apache.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
@@ -16,15 +15,12 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-/** Created by neukamm on 6/26/15. */
 public class LinePlot {
 
   private final double height;
-  private final Logger LOG;
   private double y_max = 0.0;
   private final ArrayList<XYSeries> all_data;
   private final int threshold;
-
   private final Color awtColor_DP_C_to_T;
   private final Color awtColor_DP_G_to_A;
   private final Color awtColor_DP_insertions;
@@ -32,16 +28,14 @@ public class LinePlot {
   private final Color awtColor_DP_other;
 
   public LinePlot(
-      int threshold,
-      double height,
-      Logger LOG,
-      javafx.scene.paint.Color color_DP_C_to_T,
-      javafx.scene.paint.Color color_DP_G_to_A,
-      javafx.scene.paint.Color color_DP_insertions,
-      javafx.scene.paint.Color color_DP_deletions,
-      javafx.scene.paint.Color color_DP_other) {
-    this.LOG = LOG;
-    all_data = new ArrayList<>();
+      final int threshold,
+      final double height,
+      final javafx.scene.paint.Color color_DP_C_to_T,
+      final javafx.scene.paint.Color color_DP_G_to_A,
+      final javafx.scene.paint.Color color_DP_insertions,
+      final javafx.scene.paint.Color color_DP_deletions,
+      final javafx.scene.paint.Color color_DP_other) {
+    this.all_data = new ArrayList<>();
     this.threshold = threshold;
     this.height = height;
 
@@ -78,12 +72,12 @@ public class LinePlot {
   }
 
   /**
-   * add data as series, each serie has a name, all series are collected
+   * add data as series, each series has a name, all series are collected
    *
    * @param data array to collect all data
    * @param name of the series
    */
-  public void addData(double[] data, String name) {
+  public void addData(final double[] data, final String name) {
 
     final XYSeries series = new XYSeries(name);
     for (int i = 0; i < threshold; i++) {
@@ -93,8 +87,8 @@ public class LinePlot {
   }
 
   /**
-   * to create a dataset, iterate over all series and and add them. max and min value of y axis is
-   * also set
+   * to create a dataset, iterate over all series and add them. max and min value of y-axis is also
+   * set
    *
    * @return dataset
    */
@@ -102,7 +96,7 @@ public class LinePlot {
 
     final XYSeriesCollection dataset = new XYSeriesCollection();
 
-    for (XYSeries series : all_data) {
+    for (final XYSeries series : all_data) {
       dataset.addSeries(series);
       if (series.getMaxY() > y_max) {
         y_max = series.getMaxY();
@@ -116,19 +110,12 @@ public class LinePlot {
     return dataset;
   }
 
-  /**
-   * Creates a chart.
-   *
-   * @param dataset the data for the chart.
-   * @param ssLibProtocolUsed
-   * @return a chart.
-   */
   public JFreeChart createChart(
-      String title,
+      final String title,
       final XYDataset dataset,
-      double yMax,
-      int threshold,
-      boolean ssLibProtocolUsed) {
+      final double yMax,
+      final int threshold,
+      final boolean ssLibProtocolUsed) {
 
     // create the chart...
     final JFreeChart chart =
@@ -156,7 +143,7 @@ public class LinePlot {
       renderer.setSeriesShapesVisible(i, false);
     }
 
-    LegendItemCollection legendItemsOld = plot.getLegendItems();
+    final LegendItemCollection legendItemsOld = plot.getLegendItems();
     final LegendItemCollection legendItemsNew = new LegendItemCollection();
 
     legendItemsNew.add(legendItemsOld.get(0));
@@ -194,8 +181,8 @@ public class LinePlot {
     plot.setDomainGridlinePaint(Color.gray);
 
     // set range of axis
-    NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
-    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+    final NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
+    final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
 
     xAxis.setRange(0.00, threshold - 1);
     xAxis.setTickUnit(new NumberTickUnit(1.0));
@@ -207,26 +194,26 @@ public class LinePlot {
 
     switch (title) {
       case ("3' end"):
-        String[] axis_three_prime = new String[threshold];
+        final String[] axis_three_prime = new String[threshold];
         int position_three_prime = 0;
         for (int i = threshold; i > 0; i--) {
           axis_three_prime[position_three_prime] = "-" + i;
           position_three_prime++;
         }
 
-        SymbolAxis rangeAxis_three_prime = new SymbolAxis("", axis_three_prime);
+        final SymbolAxis rangeAxis_three_prime = new SymbolAxis("", axis_three_prime);
         plot.setDomainAxis(rangeAxis_three_prime);
         break;
 
       case ("5' end"):
-        String[] axis_five_prime = new String[threshold];
+        final String[] axis_five_prime = new String[threshold];
         int position_five_prime = 0;
         for (int i = 1; i < threshold + 1; i++) {
           axis_five_prime[position_five_prime] = String.valueOf(i);
           position_five_prime++;
         }
 
-        SymbolAxis rangeAxis_five_prime = new SymbolAxis("", axis_five_prime);
+        final SymbolAxis rangeAxis_five_prime = new SymbolAxis("", axis_five_prime);
         plot.setDomainAxis(rangeAxis_five_prime);
         break;
     }

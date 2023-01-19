@@ -7,19 +7,18 @@ import org.damageprofiler.gui.DamageProfilerMainGUI;
 
 public class StarterGUI extends Application {
 
+  @Override
+  public void start(final Stage primaryStage) {
 
-    @Override
-    public void start(final Stage primaryStage) {
+    final ProgressBarController progressBarController = new ProgressBarController();
+    progressBarController.create();
 
-        final ProgressBarController progressBarController = new ProgressBarController();
-        progressBarController.create();
+    final DamageProfilerMainGUI damageProfilerMainGUI =
+        new DamageProfilerMainGUI(progressBarController);
+    damageProfilerMainGUI.init(primaryStage);
 
-        final DamageProfilerMainGUI damageProfilerMainGUI =
-                new DamageProfilerMainGUI(progressBarController);
-        damageProfilerMainGUI.init(primaryStage);
-
-        final PlottingSettingController plottingSettingController = new PlottingSettingController();
-        new DamageProfilerMainController(
-                damageProfilerMainGUI, progressBarController, plottingSettingController);
-    }
+    final PlottingSettingController plottingSettingController = new PlottingSettingController();
+    new DamageProfilerMainController(
+        damageProfilerMainGUI, progressBarController, plottingSettingController);
+  }
 }

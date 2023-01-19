@@ -18,15 +18,12 @@ public class AdvancedPlottingOptionsDialogue {
   private void fill() {
 
     tabAdvancedSettingsDamagePlot = new TabAdvancedSettingsDamagePlot("Damage Profile");
-    Tab tab_DP = tabAdvancedSettingsDamagePlot.getTab();
+    final Tab tab_DP = tabAdvancedSettingsDamagePlot.getTab();
 
     tabPane = new TabPane();
     tabPane.getTabs().addAll(tab_DP);
   }
 
-  /*
-         Getter
-  */
   public TabPane getGridPane() {
     return tabPane;
   }

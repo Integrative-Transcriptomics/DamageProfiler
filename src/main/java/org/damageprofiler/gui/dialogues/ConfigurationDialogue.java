@@ -11,14 +11,12 @@ import javafx.scene.text.FontWeight;
 public class ConfigurationDialogue {
 
   private final GridPane config_gridpane;
-
   private Button btn_inputfile;
   private Button btn_reference;
   private Button btn_output;
   private Button btn_run;
   private Button btn_estimate_runtime;
   private Button btn_speciesList;
-
   private TextField textfield_threshold;
   private TextField textfield_length;
   private TextField textfield_species;
@@ -30,7 +28,7 @@ public class ConfigurationDialogue {
   private final ProgressBar progressBar;
   private AdvancedPlottingOptionsDialogue advancedPlottingOptionsDialogue;
 
-  public ConfigurationDialogue(ProgressBar progressBar) {
+  public ConfigurationDialogue(final ProgressBar progressBar) {
 
     config_gridpane = new GridPane();
     config_gridpane.setAlignment(Pos.CENTER);
@@ -51,22 +49,22 @@ public class ConfigurationDialogue {
     btn_run = new Button("Run");
     btn_estimate_runtime = new Button("Estimate Runtime");
 
-    Label label_threshold = new Label("Number of bases (x-axis)");
-    Label label_yaxis = new Label("Height y-axis");
-    Label label_length = new Label("Set number of bases");
-    Label label_specie = new Label("Enter RefSeq ID ");
-    Label label_title = new Label("Set title");
+    final Label label_threshold = new Label("Number of bases (x-axis)");
+    final Label label_yaxis = new Label("Height y-axis");
+    final Label label_length = new Label("Set number of bases");
+    final Label label_specie = new Label("Enter RefSeq ID ");
+    final Label label_title = new Label("Set title");
 
-    Label label_plot = new Label("Plot");
+    final Label label_plot = new Label("Plot");
     label_plot.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
-    Label label_files = new Label("Files");
+    final Label label_files = new Label("Files");
     label_files.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
-    Label label_calculations = new Label("Calculations");
+    final Label label_calculations = new Label("Calculations");
     label_calculations.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
-    Label label_title_config = new Label("Configuration");
+    final Label label_title_config = new Label("Configuration");
     label_title_config.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
     textfield_threshold = new TextField();
@@ -84,16 +82,16 @@ public class ConfigurationDialogue {
     textfield_threshold.setText("25");
     textfield_y_axis_height.setText("0.4");
 
-    TitledPane pane_advanced_plotting_options = new TitledPane();
+    final TitledPane pane_advanced_plotting_options = new TitledPane();
     pane_advanced_plotting_options.setText("Advanced options (Plotting)");
 
     advancedPlottingOptionsDialogue = new AdvancedPlottingOptionsDialogue();
     pane_advanced_plotting_options.setContent(advancedPlottingOptionsDialogue.getGridPane());
     pane_advanced_plotting_options.setExpanded(false);
 
-    TitledPane pane_advanced_calculation_options = new TitledPane();
+    final TitledPane pane_advanced_calculation_options = new TitledPane();
     pane_advanced_calculation_options.setText("Advanced options (Calculation)");
-    HBox hbox_length_calc = new HBox();
+    final HBox hbox_length_calc = new HBox();
     hbox_length_calc.setPadding(new Insets(10, 10, 10, 10));
     hbox_length_calc.getChildren().addAll(label_length, textfield_length);
     pane_advanced_calculation_options.setContent(hbox_length_calc);
@@ -118,7 +116,6 @@ public class ConfigurationDialogue {
     config_gridpane.add(label_title, 0, ++row, 1, 1);
     config_gridpane.add(textfield_title, 1, row, 2, 1);
     config_gridpane.add(label_yaxis, 0, ++row, 1, 1);
-    // config_gridpane.add(checkbox_dynamic_y_axis_height, 1, row, 1,1);
     config_gridpane.add(textfield_y_axis_height, 1, row, 2, 1);
     config_gridpane.add(label_threshold, 0, ++row, 1, 1);
     config_gridpane.add(textfield_threshold, 1, row, 2, 1);
@@ -132,7 +129,6 @@ public class ConfigurationDialogue {
     config_gridpane.add(label_specie, 0, ++row, 1, 1);
     config_gridpane.add(textfield_species, 1, row, 2, 1);
     config_gridpane.add(btn_speciesList, 1, ++row, 1, 1);
-    // config_gridpane.add(btn_loadSpecies, 3, row, 1,1);
     config_gridpane.add(pane_advanced_calculation_options, 0, ++row, 3, 1);
 
     config_gridpane.add(new Separator(), 0, ++row, 3, 1);
@@ -189,7 +185,7 @@ public class ConfigurationDialogue {
     return textfield_title;
   }
 
-  public void setTextfield_title(String textfield_title) {
+  public void setTextfield_title(final String textfield_title) {
     this.textfield_title.setText(textfield_title);
   }
 

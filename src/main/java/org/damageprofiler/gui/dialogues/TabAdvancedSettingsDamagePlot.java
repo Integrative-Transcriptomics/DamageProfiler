@@ -20,11 +20,6 @@ public class TabAdvancedSettingsDamagePlot {
   private final Button btn_reset;
   private GridPane gridpane;
 
-  /**
-   * Tab pane to configure the visualization of the damage profile (misincorporation frequencies)
-   *
-   * @param title
-   */
   public TabAdvancedSettingsDamagePlot(String title) {
 
     this.tab = new Tab(title);
@@ -39,15 +34,6 @@ public class TabAdvancedSettingsDamagePlot {
         generateColorPicker(Color.GREY));
   }
 
-  /**
-   * Fill grid pane with all components
-   *
-   * @param c_t
-   * @param g_a
-   * @param insertions
-   * @param deletions
-   * @param others
-   */
   public void fill(
       ColorPicker c_t,
       ColorPicker g_a,
@@ -86,12 +72,6 @@ public class TabAdvancedSettingsDamagePlot {
     tab.setContent(gridpane);
   }
 
-  /**
-   * Generate and return color picker
-   *
-   * @param color
-   * @return
-   */
   public ColorPicker generateColorPicker(Color color) {
     ColorPickerPane colorPickerPane = new ColorPickerPane(color);
     return colorPickerPane.getPicker();

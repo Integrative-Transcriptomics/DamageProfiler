@@ -12,10 +12,10 @@ public class RuntimeEstimatorDialogue extends AbstractApplication {
   private String numberOfRecords = "";
   private String text_estimatedRuntime = "";
   private String fileSize = "";
-  private Button btn_proceed;
-  private Button btn_cancel;
+  private final Button btn_proceed;
+  private final Button btn_cancel;
 
-  public RuntimeEstimatorDialogue(String header, String message) {
+  public RuntimeEstimatorDialogue(final String header, final String message) {
     super(header, message);
     btn_proceed = new Button("Proceed");
     btn_cancel = new Button("Cancel");
@@ -44,17 +44,17 @@ public class RuntimeEstimatorDialogue extends AbstractApplication {
   /*
          Setter and Getter
   */
-  public void setNumberOfRecords(int numberOfRecords) {
+  public void setNumberOfRecords(final int numberOfRecords) {
 
-    DecimalFormat df = new DecimalFormat("###,###");
+    final DecimalFormat df = new DecimalFormat("###,###");
     this.numberOfRecords = df.format(numberOfRecords);
   }
 
-  public void setResultText(String text_estimatedRuntime) {
+  public void setResultText(final String text_estimatedRuntime) {
     this.text_estimatedRuntime = text_estimatedRuntime;
   }
 
-  public void setFileSize(String fileSize) {
+  public void setFileSize(final String fileSize) {
     this.fileSize = fileSize;
   }
 

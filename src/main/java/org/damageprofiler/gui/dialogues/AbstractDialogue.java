@@ -13,7 +13,7 @@ public class AbstractDialogue {
   protected final GridPane gridPane;
   protected int row;
 
-  public AbstractDialogue(String message) {
+  public AbstractDialogue(final String message) {
     gridPane = new GridPane();
     gridPane.setAlignment(Pos.CENTER);
     gridPane.setHgap(10);
@@ -23,9 +23,9 @@ public class AbstractDialogue {
     fillGrid(message);
   }
 
-  private void fillGrid(String message) {
+  private void fillGrid(final String message) {
 
-    Label label_message = new Label(message);
+    final Label label_message = new Label(message);
     label_message.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
     row = 0;

@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 public class ColorPickerPane {
   private final ColorPicker colorPicker;
 
-  public ColorPickerPane(Color color) {
+  public ColorPickerPane(final Color color) {
     colorPicker = new ColorPicker();
     colorPicker.setValue(color);
   }
