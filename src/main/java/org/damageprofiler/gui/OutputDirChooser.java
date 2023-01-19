@@ -6,12 +6,17 @@ import javafx.stage.Stage;
 import org.damageprofiler.io.Communicator;
 
 public class OutputDirChooser {
+  private final Communicator communicator;
 
-  public OutputDirChooser(Communicator c) {
-    DirectoryChooser dirChooser = new DirectoryChooser();
-    File f = dirChooser.showDialog(new Stage());
+  public OutputDirChooser(final Communicator c) {
+    this.communicator = c;
+  }
+
+  public void open() {
+    final DirectoryChooser dirChooser = new DirectoryChooser();
+    final File f = dirChooser.showDialog(new Stage());
     if (f != null) {
-      c.setOutfolder(f.getAbsolutePath());
+      communicator.setOutfolder(f.getAbsolutePath());
     }
   }
 }

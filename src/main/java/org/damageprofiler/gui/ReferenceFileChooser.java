@@ -7,17 +7,22 @@ import org.damageprofiler.io.Communicator;
 
 public class ReferenceFileChooser {
 
-  public ReferenceFileChooser(Communicator c) {
+  private final Communicator communicator;
 
-    FileChooser fileChooser = new FileChooser();
+  public ReferenceFileChooser(final Communicator c) {
+    this.communicator = c;
+  }
+
+  public void open() {
+    final FileChooser fileChooser = new FileChooser();
 
     fileChooser
         .getExtensionFilters()
         .addAll(new FileChooser.ExtensionFilter("Fasta", "*.fa", "*.fasta", ".fas"));
 
-    File f = fileChooser.showOpenDialog(new Stage());
+    final File f = fileChooser.showOpenDialog(new Stage());
     if (f != null) {
-      c.setReference(f.getAbsolutePath());
+      communicator.setReference(f.getAbsolutePath());
     }
   }
 }

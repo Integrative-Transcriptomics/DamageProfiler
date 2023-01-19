@@ -4,11 +4,11 @@ import org.damageprofiler.io.UserOptionsParser;
 
 public class StarterCLI {
 
-  public StarterCLI(final String[] args) throws Exception {
-    final Communicator c = new Communicator();
+  public StarterCLI(final String[] commandLineArguments) throws Exception {
+    final Communicator communicator = new Communicator();
     final StartCalculations starter = new StartCalculations();
-    new UserOptionsParser(args, c);
-    starter.start(c);
+    new UserOptionsParser(commandLineArguments, communicator);
+    starter.start(communicator);
     System.exit(0);
   }
 }

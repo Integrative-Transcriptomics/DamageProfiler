@@ -8,26 +8,31 @@ import javafx.stage.Stage;
 import org.damageprofiler.io.Communicator;
 
 public class BamFileChooser {
+  private final Communicator communicator;
 
-  public BamFileChooser(Communicator c) {
+  public BamFileChooser(final Communicator c) {
+    this.communicator = c;
+  }
 
-    FileChooser fileChooser = new FileChooser();
+  public void open() {
+
+    final FileChooser fileChooser = new FileChooser();
     fileChooser
         .getExtensionFilters()
         .addAll(
             new FileChooser.ExtensionFilter("BAM", "*.bam"),
             new FileChooser.ExtensionFilter("SAM", "*.sam"));
 
-    List<File> f = fileChooser.showOpenMultipleDialog(new Stage());
+    final List<File> f = fileChooser.showOpenMultipleDialog(new Stage());
 
-    ArrayList<String> files = new ArrayList<>();
+    final ArrayList<String> files = new ArrayList<>();
 
     if (f.size() != 0) {
-      for (File file : f) {
+      for (final File file : f) {
         files.add(file.getAbsolutePath());
       }
 
-      c.setInput(files.get(0));
+      this.communicator.setInput(files.get(0));
     }
   }
 }

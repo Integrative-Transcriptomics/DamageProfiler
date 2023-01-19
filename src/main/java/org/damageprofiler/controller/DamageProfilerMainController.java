@@ -44,13 +44,6 @@ public class DamageProfilerMainController {
   private final TabPane tabpane_species;
   private final RuntimeEstimatorDialogue runtimeInfoDialogue;
 
-  /**
-   * Constructor
-   *
-   * @param damageProfilerMainGUI
-   * @param progressBarController
-   * @param plottingSettingController
-   */
   public DamageProfilerMainController(
       final DamageProfilerMainGUI damageProfilerMainGUI,
       final ProgressBarController progressBarController,
@@ -104,6 +97,7 @@ public class DamageProfilerMainController {
     btn_inputfile.setOnAction(
         e -> {
           final BamFileChooser fqfc = new BamFileChooser(communicator);
+          fqfc.open();
           if (communicator.getInput() != null) {
             final Tooltip tooltip_input = new Tooltip(communicator.getInput());
             btn_inputfile.setTooltip(tooltip_input);
@@ -113,7 +107,7 @@ public class DamageProfilerMainController {
             final String filename = filepath.split("/")[filepath.split("/").length - 1];
             mainGUI.getConfig_dialogue().setTextfield_title(filename);
 
-            if (checkIfInputWasSelected()) {
+            if (checkIfInputAndOutputSelected()) {
               btn_run.setDisable(false);
               btn_estimate_runtime.setDisable(false);
 
@@ -130,10 +124,11 @@ public class DamageProfilerMainController {
     btn_reference.setOnAction(
         e -> {
           final ReferenceFileChooser rfc = new ReferenceFileChooser(communicator);
+          rfc.open();
           final Tooltip tooltip_ref = new Tooltip(communicator.getReference());
           btn_reference.setTooltip(tooltip_ref);
 
-          if (checkIfInputWasSelected()) {
+          if (checkIfInputAndOutputSelected()) {
             btn_run.setDisable(false);
             btn_estimate_runtime.setDisable(false);
           } else {
@@ -145,10 +140,11 @@ public class DamageProfilerMainController {
     btn_output.setOnAction(
         e -> {
           final OutputDirChooser rfc = new OutputDirChooser(communicator);
+          rfc.open();
           final Tooltip tooltip_output = new Tooltip(communicator.getOutfolder());
           btn_output.setTooltip(tooltip_output);
 
-          if (checkIfInputWasSelected()) {
+          if (checkIfInputAndOutputSelected()) {
             btn_run.setDisable(false);
             btn_estimate_runtime.setDisable(false);
 
@@ -203,7 +199,8 @@ public class DamageProfilerMainController {
     btn_speciesList.setOnAction(
         e -> {
           final SpeciesListFileChooser slfc = new SpeciesListFileChooser(communicator);
-          btn_speciesList.setDisable(!checkIfInputWasSelected());
+          slfc.open();
+          btn_speciesList.setDisable(!checkIfInputAndOutputSelected());
         });
 
     btn_leftpane_run_config.setOnAction(
@@ -283,7 +280,7 @@ public class DamageProfilerMainController {
 
     try {
       // add progress indicator
-      final Task startCalculuations =
+      final Task startCalculations =
           new Task() {
             @Override
             protected Object call() throws Exception {
@@ -293,9 +290,9 @@ public class DamageProfilerMainController {
             }
           };
 
-      progressBarController.activate(startCalculuations);
+      progressBarController.activate(startCalculations);
 
-      startCalculuations.setOnSucceeded(
+      startCalculations.setOnSucceeded(
           (EventHandler<Event>)
               event -> {
                 if (starter.getSpecieslist() == null) {
@@ -341,7 +338,7 @@ public class DamageProfilerMainController {
                 progressBarController.stop();
               });
 
-      new Thread(startCalculuations).start();
+      new Thread(startCalculations).start();
 
     } catch (final Exception e1) {
       e1.printStackTrace();
@@ -434,13 +431,10 @@ public class DamageProfilerMainController {
    *
    * @return boolean if input all is specified
    */
-  private boolean checkIfInputWasSelected() {
-    boolean tmp = false;
-    if (communicator.getInput() != null && communicator.getOutfolder() != null) {
-      if (communicator.getInput().length() != 0) {
-        tmp = true;
-      }
-    }
-    return tmp;
+  private boolean checkIfInputAndOutputSelected() {
+    return communicator.getInput() != null
+        && communicator.getOutfolder() != null
+        && !communicator.getInput().isEmpty()
+        && !communicator.getOutfolder().isEmpty();
   }
 }

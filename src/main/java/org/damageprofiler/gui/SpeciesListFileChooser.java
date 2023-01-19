@@ -7,13 +7,19 @@ import org.damageprofiler.io.Communicator;
 
 public class SpeciesListFileChooser {
 
-  public SpeciesListFileChooser(Communicator c) {
+  private final Communicator communicator;
 
-    FileChooser fileChooser = new FileChooser();
+  public SpeciesListFileChooser(final Communicator c) {
+    this.communicator = c;
+  }
 
-    File f = fileChooser.showOpenDialog(new Stage());
+  public void open() {
+
+    final FileChooser fileChooser = new FileChooser();
+
+    final File f = fileChooser.showOpenDialog(new Stage());
     if (f != null) {
-      c.setSpecieslist_filepath(f.getAbsolutePath());
+      communicator.setSpecieslist_filepath(f.getAbsolutePath());
     }
   }
 }
