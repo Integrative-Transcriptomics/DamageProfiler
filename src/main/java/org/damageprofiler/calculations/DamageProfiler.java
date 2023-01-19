@@ -2,12 +2,11 @@ package org.damageprofiler.calculations;
 
 import htsjdk.samtools.*;
 import htsjdk.samtools.util.SequenceUtil;
-import org.apache.log4j.Logger;
-import org.damageprofiler.io.FastACacher;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import org.apache.log4j.Logger;
+import org.damageprofiler.io.FastACacher;
 
 public class DamageProfiler {
 
@@ -91,7 +90,6 @@ public class DamageProfiler {
     }
   }
 
-
   public void extractSAMRecords(final boolean use_only_merged_reads) {
 
     logger.info("\tStart processing each mapped record in input file");
@@ -126,7 +124,6 @@ public class DamageProfiler {
       }
     }
   }
-
 
   private void processRecord(final SAMRecord record) {
     numberOfUsedReads++;
@@ -190,7 +187,8 @@ public class DamageProfiler {
         } catch (final Exception e1) {
           System.err.println(
               "Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
-          logger.warn("Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
+          logger.warn(
+              "Re-calculation failed. Record " + record.getReadName() + " will be skipped.\n");
         }
       }
     }

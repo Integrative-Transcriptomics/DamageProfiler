@@ -2,12 +2,6 @@ package org.damageprofiler.calculations;
 
 import com.itextpdf.text.DocumentException;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
-import javafx.scene.paint.Color;
-import org.apache.log4j.Logger;
-import org.damageprofiler.io.*;
-import org.damageprofiler.services.Version;
-import org.jfree.chart.JFreeChart;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.scene.paint.Color;
+import org.apache.log4j.Logger;
+import org.damageprofiler.io.*;
+import org.damageprofiler.services.Version;
+import org.jfree.chart.JFreeChart;
 
 /** Created by neukamm on 11.11.2016. */
 public class StartCalculations {
@@ -67,7 +66,6 @@ public class StartCalculations {
     color_DP_deletions = c.getColor_DP_deletions();
     color_DP_other = c.getColor_DP_other();
 
-
     if (c.getTitle_plots() == null) {
       final String inputfileNameWithOutExtension = input.substring(0, input.lastIndexOf('.'));
       final String[] splitted = inputfileNameWithOutExtension.split("/");
@@ -101,7 +99,6 @@ public class StartCalculations {
     logger.info("\tTitle:\t\t\t\t" + title);
     logger.info("\tssLib protocol used:\t\t" + c.isSsLibsProtocolUsed());
     logger.info("\tUse only merged reads:\t\t" + c.isUse_merged_and_mapped_reads() + "\n");
-
 
     final SpeciesListParser speciesListParser = new SpeciesListParser(specieslist_filepath);
 
@@ -300,7 +297,7 @@ public class StartCalculations {
               length,
               height_damageplot,
               input,
-                  logger,
+              logger,
               ssLibProtocolUsed,
               color_DP_C_to_T,
               color_DP_deletions,
@@ -358,7 +355,8 @@ public class StartCalculations {
 
   private void readReferenceInCache() throws FileNotFoundException {
     // read reference file as indexed reference
-    final IndexedFastaSequenceFile fastaSequenceFile = new IndexedFastaSequenceFile(new File(this.reference));
+    final IndexedFastaSequenceFile fastaSequenceFile =
+        new IndexedFastaSequenceFile(new File(this.reference));
     // store reference in cache to get faster access
     cache = new FastACacher(new File(reference));
   }

@@ -2,9 +2,8 @@ package org.damageprofiler.calculations;
 
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.util.SequenceUtil;
-import org.apache.log4j.Logger;
-
 import java.util.stream.IntStream;
+import org.apache.log4j.Logger;
 
 public class Frequencies {
   private final Logger logger;
@@ -605,7 +604,7 @@ public class Frequencies {
   }
 
   public void calculateMisincorporations(
-          final SAMRecord record, final String record_aligned, final String reference_aligned) {
+      final SAMRecord record, final String record_aligned, final String reference_aligned) {
 
     // count from 3' end
 
@@ -739,28 +738,28 @@ public class Frequencies {
   }
 
   private void comparePos(
-          final char[] seq,
-          final char[] ref,
-          final double[] a_c,
-          final double[] a_g,
-          final double[] a_t,
-          final double[] c_a,
-          final double[] c_g,
-          final double[] c_t,
-          final double[] g_a,
-          final double[] g_c,
-          final double[] g_t,
-          final double[] t_a,
-          final double[] t_c,
-          final double[] t_g,
-          final double[] a_o,
-          final double[] c_o,
-          final double[] g_o,
-          final double[] t_o,
-          final double[] o_a,
-          final double[] o_c,
-          final double[] o_g,
-          final double[] o_t) {
+      final char[] seq,
+      final char[] ref,
+      final double[] a_c,
+      final double[] a_g,
+      final double[] a_t,
+      final double[] c_a,
+      final double[] c_g,
+      final double[] c_t,
+      final double[] g_a,
+      final double[] g_c,
+      final double[] g_t,
+      final double[] t_a,
+      final double[] t_c,
+      final double[] t_g,
+      final double[] a_o,
+      final double[] c_o,
+      final double[] g_o,
+      final double[] t_o,
+      final double[] o_a,
+      final double[] o_c,
+      final double[] o_g,
+      final double[] o_t) {
 
     if (seq.length < this.length) {
       this.length = seq.length;
@@ -861,14 +860,14 @@ public class Frequencies {
   }
 
   private void countBaseFrequency(
-          final char[] rec,
-          final int length,
-          final double[] countA,
-          final double[] countC,
-          final double[] countG,
-          final double[] countT,
-          final double[] count0,
-          final double[] countS) {
+      final char[] rec,
+      final int length,
+      final double[] countA,
+      final double[] countC,
+      final double[] countG,
+      final double[] countT,
+      final double[] count0,
+      final double[] countS) {
     int position = 0;
     while (position < length && position < rec.length) {
       switch (rec[position]) {
@@ -962,70 +961,94 @@ public class Frequencies {
       // normalize mismatches
 
       this.count_A_C_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_C_3[i] + count_reverse_A_C_3[i], countA_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_C_3[i] + count_reverse_A_C_3[i], countA_ref_3[i]);
       this.count_A_C_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_C_5[i] + count_reverse_A_C_5[i], countA_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_C_5[i] + count_reverse_A_C_5[i], countA_ref_5[i]);
 
       this.count_A_G_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_G_3[i] + count_reverse_A_G_3[i], countA_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_G_3[i] + count_reverse_A_G_3[i], countA_ref_3[i]);
       this.count_A_G_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_G_5[i] + count_reverse_A_G_5[i], countA_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_G_5[i] + count_reverse_A_G_5[i], countA_ref_5[i]);
 
       this.count_A_T_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_T_3[i] + count_reverse_A_T_3[i], countA_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_T_3[i] + count_reverse_A_T_3[i], countA_ref_3[i]);
       this.count_A_T_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_T_5[i] + count_reverse_A_T_5[i], countA_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_T_5[i] + count_reverse_A_T_5[i], countA_ref_5[i]);
 
       //
 
       this.count_C_A_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_A_3[i] + count_reverse_C_A_3[i], countC_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_A_3[i] + count_reverse_C_A_3[i], countC_ref_3[i]);
       this.count_C_A_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_A_5[i] + count_reverse_C_A_5[i], countC_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_A_5[i] + count_reverse_C_A_5[i], countC_ref_5[i]);
 
       this.count_C_G_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_G_3[i] + count_reverse_C_G_3[i], countC_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_G_3[i] + count_reverse_C_G_3[i], countC_ref_3[i]);
       this.count_C_G_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_G_5[i] + count_reverse_C_G_5[i], countC_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_G_5[i] + count_reverse_C_G_5[i], countC_ref_5[i]);
 
       this.count_C_T_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_T_3[i] + count_reverse_C_T_3[i], countC_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_T_3[i] + count_reverse_C_T_3[i], countC_ref_3[i]);
       this.count_C_T_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_T_5[i] + count_reverse_C_T_5[i], countC_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_T_5[i] + count_reverse_C_T_5[i], countC_ref_5[i]);
 
       //
 
       this.count_G_A_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_A_3[i] + count_reverse_G_A_3[i], countG_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_A_3[i] + count_reverse_G_A_3[i], countG_ref_3[i]);
       this.count_G_A_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_A_5[i] + count_reverse_G_A_5[i], countG_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_A_5[i] + count_reverse_G_A_5[i], countG_ref_5[i]);
 
       this.count_G_C_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_C_3[i] + count_reverse_G_C_3[i], countG_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_C_3[i] + count_reverse_G_C_3[i], countG_ref_3[i]);
       this.count_G_C_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_C_5[i] + count_reverse_G_C_5[i], countG_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_C_5[i] + count_reverse_G_C_5[i], countG_ref_5[i]);
 
       this.count_G_T_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_T_3[i] + count_reverse_G_T_3[i], countG_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_T_3[i] + count_reverse_G_T_3[i], countG_ref_3[i]);
       this.count_G_T_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_T_5[i] + count_reverse_G_T_5[i], countG_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_T_5[i] + count_reverse_G_T_5[i], countG_ref_5[i]);
 
       //
 
       this.count_T_A_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_A_3[i] + count_reverse_T_A_3[i], countT_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_A_3[i] + count_reverse_T_A_3[i], countT_ref_3[i]);
       this.count_T_A_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_A_5[i] + count_reverse_T_A_5[i], countT_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_A_5[i] + count_reverse_T_A_5[i], countT_ref_5[i]);
 
       this.count_T_C_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_C_3[i] + count_reverse_T_C_3[i], countT_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_C_3[i] + count_reverse_T_C_3[i], countT_ref_3[i]);
       this.count_T_C_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_C_5[i] + count_reverse_T_C_5[i], countT_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_C_5[i] + count_reverse_T_C_5[i], countT_ref_5[i]);
 
       this.count_T_G_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_G_3[i] + count_reverse_T_G_3[i], countT_ref_3[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_G_3[i] + count_reverse_T_G_3[i], countT_ref_3[i]);
       this.count_T_G_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_G_5[i] + count_reverse_T_G_5[i], countT_ref_5[i]);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_G_5[i] + count_reverse_T_G_5[i], countT_ref_5[i]);
 
       //
 
@@ -1035,13 +1058,17 @@ public class Frequencies {
               + (double) countC_ref_5[i]
               + (double) countA_ref_5[i];
       this.count_A_0_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_0_5[i] + count_reverse_A_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_0_5[i] + count_reverse_A_0_5[i], sum_ref_5);
       this.count_C_0_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_0_5[i] + count_reverse_C_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_0_5[i] + count_reverse_C_0_5[i], sum_ref_5);
       this.count_G_0_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_0_5[i] + count_reverse_G_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_0_5[i] + count_reverse_G_0_5[i], sum_ref_5);
       this.count_T_0_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_0_5[i] + count_reverse_T_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_0_5[i] + count_reverse_T_0_5[i], sum_ref_5);
 
       final double sum_ref_3 =
           (double) countT_ref_3[i]
@@ -1049,37 +1076,50 @@ public class Frequencies {
               + (double) countC_ref_3[i]
               + (double) countA_ref_3[i];
       this.count_A_0_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_A_0_3[i] + count_reverse_A_0_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_A_0_3[i] + count_reverse_A_0_3[i], sum_ref_3);
       this.count_C_0_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_C_0_3[i] + count_reverse_C_0_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_C_0_3[i] + count_reverse_C_0_3[i], sum_ref_3);
       this.count_G_0_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_G_0_3[i] + count_reverse_G_0_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_G_0_3[i] + count_reverse_G_0_3[i], sum_ref_3);
       this.count_T_0_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_T_0_3[i] + count_reverse_T_0_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_T_0_3[i] + count_reverse_T_0_3[i], sum_ref_3);
 
       this.count_0_A_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_A_5[i] + count_reverse_0_A_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_A_5[i] + count_reverse_0_A_5[i], sum_ref_5);
       this.count_0_C_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_C_5[i] + count_reverse_C_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_C_5[i] + count_reverse_C_0_5[i], sum_ref_5);
       this.count_0_G_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_G_5[i] + count_reverse_G_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_G_5[i] + count_reverse_G_0_5[i], sum_ref_5);
       this.count_0_T_5_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_T_5[i] + count_reverse_T_0_5[i], sum_ref_5);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_T_5[i] + count_reverse_T_0_5[i], sum_ref_5);
 
       this.count_0_A_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_A_3[i] + count_reverse_0_A_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_A_3[i] + count_reverse_0_A_3[i], sum_ref_3);
       this.count_0_C_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_C_3[i] + count_reverse_0_C_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_C_3[i] + count_reverse_0_C_3[i], sum_ref_3);
       this.count_0_G_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_G_3[i] + count_reverse_0_G_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_G_3[i] + count_reverse_0_G_3[i], sum_ref_3);
       this.count_0_T_3_norm[i] =
-          normalizeBaseOccurrenceForOnePosition(count_forward_0_T_3[i] + count_reverse_0_T_3[i], sum_ref_3);
+          normalizeBaseOccurrenceForOnePosition(
+              count_forward_0_T_3[i] + count_reverse_0_T_3[i], sum_ref_3);
     }
 
     logger.info("\tBase frequencies are normalized\n");
   }
 
-  private double normalizeBaseOccurrenceForOnePosition(final double count_mis, final double count_ref) {
+  private double normalizeBaseOccurrenceForOnePosition(
+      final double count_mis, final double count_ref) {
 
     // !! Number of reference bases may not be zero !!
     if (count_ref == 0.0) {

@@ -3,11 +3,20 @@ package org.damageprofiler.io;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.itextpdf.awt.PdfGraphics2D;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.*;
+import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+import java.io.*;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.List;
 import javafx.scene.paint.Color;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
@@ -22,16 +31,6 @@ import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUtils;
-
-import java.awt.Rectangle;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.*;
 
 /** Created by neukamm on 7/8/15. */
 public class OutputGenerator {

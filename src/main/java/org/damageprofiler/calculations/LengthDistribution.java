@@ -1,7 +1,6 @@
 package org.damageprofiler.calculations;
 
 import htsjdk.samtools.SAMRecord;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,8 +15,7 @@ public class LengthDistribution {
   private List<Integer> length_reverse;
   private List<Integer> length_all;
 
-  public LengthDistribution() {
-  }
+  public LengthDistribution() {}
 
   public void init() {
 
