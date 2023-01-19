@@ -1,138 +1,139 @@
 package org.damageprofiler.gui;
 
-import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
-import org.damageprofiler.gui.dialogues.ConfigurationDialogue;
-import org.damageprofiler.io.Communicator;
-import org.damageprofiler.controller.ProgressBarController;
+import java.io.InputStream;
+import java.util.Objects;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
-import java.io.InputStream;
-import java.util.Objects;
+import org.damageprofiler.controller.ProgressBarController;
+import org.damageprofiler.gui.dialogues.ConfigurationDialogue;
+import org.damageprofiler.io.Communicator;
 
 public class DamageProfilerMainGUI {
 
+  private final String version;
+  private final ProgressBarController progressBarController;
+  private final Communicator communicator = new Communicator();
+  private BorderPane root;
+  private ConfigurationDialogue config_dialogue;
+  // private Button btn_leftpane_identityDist;
+  private Button btn_leftpane_info;
+  // private Button btn_leftpane_damageProfile;
+  // private Button btn_leftpane_lengthDist;
+  private Button btn_help;
 
-    private final String version;
-    private final ProgressBarController progressBarController;
-    private final Communicator communicator = new Communicator();
-    private BorderPane root;
-    private ConfigurationDialogue config_dialogue;
-    //private Button btn_leftpane_identityDist;
-    private Button btn_leftpane_info;
-    //private Button btn_leftpane_damageProfile;
-    //private Button btn_leftpane_lengthDist;
-    private Button btn_help;
+  public DamageProfilerMainGUI(String version, ProgressBarController progressBarController) {
+    this.version = version;
+    this.progressBarController = progressBarController;
+  }
 
+  public void init(Stage primaryStage) {
 
-    public DamageProfilerMainGUI(String version, ProgressBarController progressBarController) {
-        this.version = version;
-        this.progressBarController = progressBarController;
-    }
+    primaryStage.setTitle("DamageProfiler v" + version);
 
-    public void init(Stage primaryStage) {
+    root = new BorderPane();
 
-        primaryStage.setTitle("DamageProfiler v" + version);
+    config_dialogue = new ConfigurationDialogue(progressBarController.getProgressBar());
 
-        root = new BorderPane();
+    ScrollPane scrollPane_adv_config = new ScrollPane();
+    scrollPane_adv_config.setPadding(new Insets(10, 10, 10, 10));
+    scrollPane_adv_config.setContent(config_dialogue.getConfig_gridpane());
+    root.setCenter(scrollPane_adv_config);
+    root.setLeft(generateLeftPane());
 
-        config_dialogue = new ConfigurationDialogue(progressBarController.getProgressBar());
+    primaryStage.setScene(new Scene(root, 1100, 700));
+    primaryStage.setResizable(true);
+    primaryStage.show();
+  }
 
-        ScrollPane scrollPane_adv_config = new ScrollPane();
-        scrollPane_adv_config.setPadding(new Insets(10,10,10,10));
-        scrollPane_adv_config.setContent(config_dialogue.getConfig_gridpane());
-        root.setCenter(scrollPane_adv_config);
-        root.setLeft(generateLeftPane());
+  private VBox generateLeftPane() {
 
-        primaryStage.setScene(new Scene(root, 1100, 700));
-        primaryStage.setResizable(true);
-        primaryStage.show();
+    // Image Source
+    InputStream input = getClass().getClassLoader().getResourceAsStream("logo.png");
+    assert input != null;
+    Image image = new Image(Objects.requireNonNull(input));
+    ImageView imageView = new ImageView(image);
 
-    }
+    HBox hbxImg = new HBox();
+    hbxImg.setPadding(new Insets(10, 0, 10, 0));
+    hbxImg.setAlignment(Pos.CENTER);
+    hbxImg.getChildren().add(imageView);
 
-    private VBox generateLeftPane() {
+    VBox leftPanel = new VBox();
+    // btn_leftpane_damageProfile = new Button("Damage Plot");
+    btn_leftpane_info = new Button("Configuration");
+    btn_help = new Button("Show help");
+    // btn_leftpane_lengthDist = new Button("Length Distribution");
+    // btn_leftpane_identityDist = new Button("Edit Distance");
 
-        // Image Source
-        InputStream input = getClass().getClassLoader().getResourceAsStream("logo.png");
-        assert input != null;
-        Image image = new Image(Objects.requireNonNull(input));
-        ImageView imageView = new ImageView(image);
+    // style buttons
+    btn_leftpane_info.setPrefHeight(30);
+    btn_leftpane_info.setPrefWidth(200);
 
-        HBox hbxImg = new HBox();
-        hbxImg.setPadding(new Insets(10,0,10,0));
-        hbxImg.setAlignment(Pos.CENTER);
-        hbxImg.getChildren().add(imageView);
+    btn_help.setPrefHeight(30);
+    btn_help.setPrefWidth(200);
 
+    //        btn_leftpane_damageProfile.setPrefHeight(30);
+    //        btn_leftpane_damageProfile.setPrefWidth(200);
+    //        btn_leftpane_damageProfile.setDisable(true);
+    //
+    //        btn_leftpane_lengthDist.setPrefHeight(30);
+    //        btn_leftpane_lengthDist.setPrefWidth(200);
+    //        btn_leftpane_lengthDist.setDisable(true);
+    //
+    //        btn_leftpane_identityDist.setPrefHeight(30);
+    //        btn_leftpane_identityDist.setPrefWidth(200);
+    //        btn_leftpane_identityDist.setDisable(true);
 
-        VBox leftPanel = new VBox();
-        //btn_leftpane_damageProfile = new Button("Damage Plot");
-        btn_leftpane_info = new Button("Configuration");
-        btn_help = new Button("Show help");
-        //btn_leftpane_lengthDist = new Button("Length Distribution");
-        //btn_leftpane_identityDist = new Button("Edit Distance");
+    // leftPanel.getChildren().addAll(hbxImg, btn_leftpane_info, btn_leftpane_damageProfile,
+    // btn_leftpane_lengthDist,
+    //        btn_leftpane_identityDist, btn_help);
+    leftPanel.getChildren().addAll(hbxImg, btn_leftpane_info, btn_help);
+    leftPanel.setPadding(new Insets(10, 10, 10, 10));
 
-        // style buttons
-        btn_leftpane_info.setPrefHeight(30);
-        btn_leftpane_info.setPrefWidth(200);
+    return leftPanel;
+  }
 
-        btn_help.setPrefHeight(30);
-        btn_help.setPrefWidth(200);
+  public Communicator getCommunicator() {
+    return communicator;
+  }
 
-//        btn_leftpane_damageProfile.setPrefHeight(30);
-//        btn_leftpane_damageProfile.setPrefWidth(200);
-//        btn_leftpane_damageProfile.setDisable(true);
-//
-//        btn_leftpane_lengthDist.setPrefHeight(30);
-//        btn_leftpane_lengthDist.setPrefWidth(200);
-//        btn_leftpane_lengthDist.setDisable(true);
-//
-//        btn_leftpane_identityDist.setPrefHeight(30);
-//        btn_leftpane_identityDist.setPrefWidth(200);
-//        btn_leftpane_identityDist.setDisable(true);
+  public BorderPane getRoot() {
+    return root;
+  }
 
-        //leftPanel.getChildren().addAll(hbxImg, btn_leftpane_info, btn_leftpane_damageProfile, btn_leftpane_lengthDist,
-        //        btn_leftpane_identityDist, btn_help);
-        leftPanel.getChildren().addAll(hbxImg, btn_leftpane_info, btn_help);
-        leftPanel.setPadding(new Insets(10,10,10,10));
+  //    public Button getBtn_leftpane_identityDist() {
+  //        return btn_leftpane_identityDist;
+  //    }
 
-        return leftPanel;
-    }
+  public Button getBtn_leftpane_info() {
+    return btn_leftpane_info;
+  }
 
+  //    public Button getBtn_leftpane_damageProfile() {
+  //        return btn_leftpane_damageProfile;
+  //    }
+  //
+  //    public Button getBtn_leftpane_lengthDist() {
+  //        return btn_leftpane_lengthDist;
+  //    }
 
+  public Button getBtn_help() {
+    return btn_help;
+  }
 
-    public Communicator getCommunicator() {
-        return communicator;
-    }
+  public ConfigurationDialogue getConfig_dialogue() {
+    return config_dialogue;
+  }
 
-    public BorderPane getRoot() {
-        return root;
-    }
-
-//    public Button getBtn_leftpane_identityDist() {
-//        return btn_leftpane_identityDist;
-//    }
-
-    public Button getBtn_leftpane_info() { return btn_leftpane_info; }
-
-//    public Button getBtn_leftpane_damageProfile() {
-//        return btn_leftpane_damageProfile;
-//    }
-//
-//    public Button getBtn_leftpane_lengthDist() {
-//        return btn_leftpane_lengthDist;
-//    }
-
-    public Button getBtn_help() { return btn_help; }
-
-    public ConfigurationDialogue getConfig_dialogue() { return config_dialogue; }
-
-    public String getVersion() { return version; }
-
+  public String getVersion() {
+    return version;
+  }
 }

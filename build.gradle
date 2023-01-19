@@ -1,107 +1,73 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-    }
-}
-
-
 plugins {
+    id 'java'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'org.beryx.jlink' version '2.12.0'
- }
-
-version '1.1-java11'
-
-
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-    apply plugin: 'maven-publish'
-    apply plugin: 'java'
-    apply plugin: 'idea'
-    apply plugin: 'com.jfrog.bintray'
-    apply plugin: 'jacoco'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.beryx.jlink' version '2.25.0'
+    id 'com.github.sherter.google-java-format' version '0.9'
+    id 'maven-publish'
 }
 
+group 'com.example'
+version '1.2-SNAPSHOT'
 
- javafx {
-     version = "14"
-     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.base', 'javafx.media', 'javafx.swing','javafx.web']
- }
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '5.9.1'
+}
+
+sourceCompatibility = '11'
+targetCompatibility = '11'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    mainModule = 'com.example.dp'
+    mainClass = 'com.example.dp.HelloApplication'
+}
+
+javafx {
+    version = '17.0.2'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
 
 dependencies {
-    implementation group: 'log4j', name: 'log4j', version: '1.+'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.+'
-    implementation group: 'commons-cli', name: 'commons-cli', version: '1.3.+'
-    implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.+'
-    implementation group: 'com.github.samtools', name: 'htsjdk', version: '2.+'
-    implementation group: 'com.intellij', name: 'forms_rt', version: '5.+'
-    implementation group: 'com.github.broadinstitute', name: 'picard', version: '2.+'
-    implementation group: 'org.jfree', name: 'jfreesvg', version: '2.0'
-    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.+'
-    implementation 'org.jfree:jfreechart-fx:1.+'
+    implementation('org.controlsfx:controlsfx:11.1.1')
+    implementation('net.synedra:validatorfx:0.3.1') {
+        exclude(group: 'org.openjfx')
+    }
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.5.0'
+    implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.3'
+    implementation group: 'com.github.samtools', name: 'htsjdk', version: '3.0.4'
+    implementation group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
+    implementation group: 'com.github.broadinstitute', name: 'picard', version: '2.27.5'
+    implementation group: 'org.jfree', name: 'jfreesvg', version: '3.4.3'
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+    implementation group: 'org.jfree', name: 'jfreechart-fx', version: '1.0.1'
     testImplementation(platform('org.junit:junit-bom:5.6.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
 
-//jar {
-//    manifest {
-//        attributes 'Main-Class': 'RunDamageProfiler'
-//    }
-//    from {
-//        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//}
-//
-//
-// publishing {
-//     publications {
-//         MyPublication(MavenPublication) {
-//             from components.java
-//             groupId 'com.uni-tuebingen.de.it.eager'
-//             artifactId 'DamageProfiler'
-//         }
-//     }
-// }
-//
-//
-// jacocoTestReport {
-//     reports {
-//         xml.enabled true
-//     }
-// }
-//
-//
-// bintray {
-//     user = bintrayUser
-//     key = bintrayKey
-//     publications = ['MyPublication']
-//     publish = true
-//     override = true
-//     pkg {
-//         repo = 'damageprofiler'
-//         name = 'DamageProfiler'
-//         licenses = ['GPL-3.0']
-//         vcsUrl = "https://github.com/Integrative-Transcriptomics/DamageProfiler"
-//         version {
-//             name = project.version
-//             desc = 'Damage calculations for mapped reads.'
-//             released  = new Date()
-//             vcsTag = project.version
-//             attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
-//         }
-//
-//     }
-// }
-//
-//test {
-//    useJUnitPlatform()
-//    testLogging {
-//        events "passed", "skipped", "failed"
-//    }
-//}
+test {
+    useJUnitPlatform()
+}
+
+jlink {
+    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        name = 'app'
+    }
+}
+
+jlinkZip {
+    group = 'distribution'
+}

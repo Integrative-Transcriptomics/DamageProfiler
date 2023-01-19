@@ -1,4 +1,3 @@
 package org.damageprofiler.calculations;
 
-public class TestLengthDistribution {
-}
+public class TestLengthDistribution {}

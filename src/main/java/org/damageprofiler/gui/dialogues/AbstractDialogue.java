@@ -10,30 +10,30 @@ import javafx.scene.text.FontWeight;
 
 public class AbstractDialogue {
 
-    protected final GridPane gridPane;
-    protected int row;
+  protected final GridPane gridPane;
+  protected int row;
 
-    public AbstractDialogue(String message){
-        gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER);
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(15,15,15,15));
+  public AbstractDialogue(String message) {
+    gridPane = new GridPane();
+    gridPane.setAlignment(Pos.CENTER);
+    gridPane.setHgap(10);
+    gridPane.setVgap(10);
+    gridPane.setPadding(new Insets(15, 15, 15, 15));
 
-        fillGrid(message);
-    }
+    fillGrid(message);
+  }
 
-    private void fillGrid(String message) {
+  private void fillGrid(String message) {
 
-        Label label_message = new Label(message);
-        label_message.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
+    Label label_message = new Label(message);
+    label_message.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
 
-        row = 0;
-        gridPane.add(label_message, 0,row,2,1);
-        gridPane.add(new Separator(), 0,++row,2,1);
-    }
+    row = 0;
+    gridPane.add(label_message, 0, row, 2, 1);
+    gridPane.add(new Separator(), 0, ++row, 2, 1);
+  }
 
-    public GridPane getGridPane() {
-        return gridPane;
-    }
+  public GridPane getGridPane() {
+    return gridPane;
+  }
 }
